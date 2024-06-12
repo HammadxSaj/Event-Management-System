@@ -1,0 +1,53 @@
+
+.home-page{
+    background-color: #123456;
+    padding: 14rem 0rem;
+    text-align: center;
+}
+
+.home-page h1 {
+    color: aliceblue;
+    font-weight: 200;
+    font-size: 3rem;
+    letter-spacing: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.home-page h2 {
+    color:antiquewhite;
+    font-size: 5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.home-page p {
+    color: burlywood;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.buttons button {
+    padding: 1rem 1.5rem;
+    border-radius: 4rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/*upon hoover, buttons expand smoothly*/
+.buttons button:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
+    
+
+@media (max-width: 800px) {
+    .home-page {
+        padding: 10rem 0rem;
+    }
+}

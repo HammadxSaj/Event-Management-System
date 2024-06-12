@@ -1,0 +1,18 @@
+.container2 {
+    margin-top: 50px;
+}
+
+h1 {
+    color: #ff007f;
+    font-weight: bold;
+}
+
+
+.illustration {
+    text-align: center;
+}
+
+.illustration img {
+    max-width: 100%;
+    height: auto;
+} 

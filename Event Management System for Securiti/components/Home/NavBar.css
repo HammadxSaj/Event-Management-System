@@ -1,0 +1,28 @@
+
+
+.custom-NavBar{
+    background-color: #123456;
+}
+
+.custom-signup-button{
+    color: #fcfcfc;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+/*upon hover change color of signup button*/
+.custom-signup-button:hover{
+    color: #afa9a9;
+}
+
+
+.custom-login-button{
+    color: #fcfcfc;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/*upon hover change color of login button*/
+.custom-login-button:hover{
+    color: #afa9a9;
+}

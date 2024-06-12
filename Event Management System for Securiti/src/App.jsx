@@ -1,10 +1,13 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
-import SignIn from './components/auth/SignIn';
-import SignUp from './components/auth/SignUp';
-
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import SignIn from './components/auth/SignIn'
+import SignUp from './components/auth/SignIn'
+import HomePageNav from '../components/Home/HomepageNav'
+import NavBar from '../components/Home/NavBar'
+import HomePageWhite from '../components/Home/Homepagewhite'
 
 
 function App() {
@@ -12,15 +15,11 @@ function App() {
 
   return (
     <>
-      <div>
-      
-     
-   
-        <SignIn/>
-        <SignUp/>
-
-        
-      </div>
+        <NavBar/>
+        <HomePageNav/>
+        <HomePageWhite/>
+        {/* <SignIn/>
+        <SignUp/>       */}
     </>
   );
 }

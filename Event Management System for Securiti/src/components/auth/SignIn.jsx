@@ -21,10 +21,6 @@ const SignIn = () => {
 
     }
 
-
-
-
-
   return (
     <div className = 'sign-in-container'>
         <form onSubmit={signin}>
