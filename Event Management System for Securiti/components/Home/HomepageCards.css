@@ -1,6 +1,6 @@
 .fade-enter {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(50%);
 }
 
 .fade-enter-active {
@@ -16,6 +16,6 @@
 
 .fade-exit-active {
     opacity: 0;
-    transform: translateX(-100%);
+    transform: translateX(-50%);
     transition: opacity 300ms, transform 300ms;
 }
