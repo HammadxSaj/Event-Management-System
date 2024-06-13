@@ -12,12 +12,12 @@ function NavBar() {
   return (
     <Navbar expand='lg' className='custom-NavBar' style={{paddingTop: 30}}>
       <Container>
-        <Navbar.Brand onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+        <Navbar.Brand onClick={() => navigate('/')} style={{ cursor: 'pointer', fontSize: 25}}>
           <img
             alt="../../assets/LogoCropped.png"
             src="src/assets/LogoCropped.png"
-            width="30"
-            height="30"
+            width="40"
+            height="40"
             className="d-inline-block align-top"
           />{' '}
           Eventiti

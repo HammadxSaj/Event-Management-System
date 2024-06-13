@@ -95,7 +95,7 @@
   
   .auth-background {
     flex: 1;
-    background-image: url('/Users/areesha.amir/Documents/GitHub/Event-Management-System/Event Management System for Securiti/components/Assets/peoplee.png'); /* Update this path */
+    background-image: url('../../assets/registration.jpg'); /* Update this path */
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -135,3 +135,18 @@
     font-size: 14px;
     margin-top: 5px;
   }
+
+  .login-button {
+      background-color: #72A0C1;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      /* Smooth transition effect */
+    }
+  
+  .login-button:hover {
+      background-color: #5A8AA1;
+      /* Darker shade on hover */
+    }

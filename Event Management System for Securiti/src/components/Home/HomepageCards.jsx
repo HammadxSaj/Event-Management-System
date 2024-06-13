@@ -6,6 +6,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import FeatureCard from './FeatureCard';
 import './HomepageCards.css';
 
+
 const features = [
   {
     title: "Event Creation Made Easy",
