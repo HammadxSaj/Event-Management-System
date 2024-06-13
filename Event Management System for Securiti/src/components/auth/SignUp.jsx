@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { getAuth } from 'firebase/auth';
+import { getAuth, AuthErrorCodes } from 'firebase/auth';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
@@ -35,12 +35,16 @@ const SignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log("User registered:", userCredential.user);
-        
+
         // Optionally redirect or show a success message
       })
-      .catch((error) => {
+       .catch((error) => {
+        if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
+          setErrorMessage("Email already registered. Sign in or try using a different e-mail.");
+        } else {
+          setErrorMessage(error.message); // Handle other errors
+        }
         console.error("Registration failed:", error.message);
-        // Handle error: Display error message to the user
       });
   };
   return (
@@ -51,6 +55,7 @@ const SignUp = () => {
       <div className='auth-form'>
         <img src={logo} alt="Logo" className='logo'/>
         <h1>Create Your Account</h1>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <form onSubmit={signup}>
           <p>Email</p>
           <input type="email" placeholder="example@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />

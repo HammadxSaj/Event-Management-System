@@ -78,7 +78,7 @@
     top: 20px;
     left: 20px;
     padding: 10px 20px;
-    background-color: black;
+    background-color: rgb(13, 40, 56);
     color: white;
     border: none;
     border-radius: 4px;
@@ -95,7 +95,7 @@
   
   .auth-background {
     flex: 1;
-    background-image: url('../../assets/registration.jpg'); /* Update this path */
+    background-image: url('/Users/areesha.amir/Documents/GitHub/Event-Management-System/Event Management System for Securiti/components/Assets/peoplee.png'); /* Update this path */
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -107,7 +107,7 @@
   
   .sign-up-button {
     padding: 10px 20px;
-    background-color: black;
+    background-color:rgb(13, 40, 56);
     color: white;
     border: none;
     border-radius: 4px;
@@ -130,3 +130,8 @@
     margin-top: 1px;
   }
   
+  .error-message {
+    color: red; /* Set color to red for error messages */
+    font-size: 14px;
+    margin-top: 5px;
+  }
