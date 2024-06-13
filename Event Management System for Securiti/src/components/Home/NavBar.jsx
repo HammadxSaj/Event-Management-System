@@ -4,26 +4,29 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import './NavBar.css';
+import { useNavigate } from 'react-router-dom';
 
 function NavBar() {
+  const navigate = useNavigate()
+
   return (
-    <Navbar className='custom-NavBar' style={{paddingTop: 20}}>
+    <Navbar expand='lg' className='custom-NavBar' style={{paddingTop: 30}}>
       <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
           <img
-            alt=""
-            src="/img/logo.svg"
+            alt="../../assets/LogoCropped.png"
+            src="src/assets/LogoCropped.png"
             width="30"
             height="30"
             className="d-inline-block align-top"
           />{' '}
-          Event Management System
+          Eventiti
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link href="#signup" className='custom-signup-button'>Signup</Nav.Link>
-            <Nav.Link href="#login" className='custom-login-button'>Login</Nav.Link>
+            <Nav.Link className='custom-signup-button' onClick={() => navigate('/signup')}>Signup</Nav.Link>
+            <Nav.Link className='custom-login-button' onClick={() => navigate('/signin')}>Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

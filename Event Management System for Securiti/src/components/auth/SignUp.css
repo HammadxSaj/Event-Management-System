@@ -95,7 +95,7 @@
   
   .auth-background {
     flex: 1;
-    background-image: url('/Users/areesha.amir/Documents/GitHub/Event-Management-System/Event Management System for Securiti/components/Assets/registration.jpg'); /* Update this path */
+    background-image: url('../../assets/registration.jpg'); /* Update this path */
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;

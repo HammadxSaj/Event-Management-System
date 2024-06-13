@@ -26,3 +26,10 @@
 .custom-login-button:hover{
     color: #afa9a9;
 }
+
+@media (max-width: 992px) {
+    .custom-NavBar .nav-link {
+        margin: 10px 0;
+        /* Add margin to nav links in dropdown */
+    }
+}

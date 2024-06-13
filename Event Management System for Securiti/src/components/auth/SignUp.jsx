@@ -5,7 +5,7 @@ import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import './SignUp.css'; // Make sure SignUp.css exists and contains necessary styles
-import logo from '/Users/areesha.amir/Documents/GitHub/Event-Management-System/Event Management System for Securiti/components/Assets/Logo.png';
+import logo from '../../assets/Logo.png'
 
 const auth = getAuth(); // Initialize Firebase Auth instance
 

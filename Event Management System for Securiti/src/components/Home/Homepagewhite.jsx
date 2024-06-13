@@ -2,8 +2,11 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Homepagewhite.css'
 import './HomepageNav.css'
+import { useNavigate} from 'react-router-dom';
 
 function HomePageWhite (){
+
+  const navigate = useNavigate()
     return (
     <div className="container2" style={{paddingBottom: 20}}>
       <div className="row align-items-center">
@@ -17,7 +20,7 @@ function HomePageWhite (){
             <h1>Automate your Event Managment</h1>
             <p>Our app empowers you to unleash your ability to organize and be part of remarkable events. Whether you're planning a get-together, lunch, or a picnic, our platform provides the tools and features you need to make your events a resounding success.</p>
             <div className='buttons'>
-              <button style={{backgroundColor: '#646cff', color: 'white'}}>Get Started</button>
+              <button style={{backgroundColor: '#646cff', color: 'white'}} onClick={() => navigate('/signup')}>Get Started</button>
             </div>
           </div>
         </div>

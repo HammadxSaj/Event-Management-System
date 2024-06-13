@@ -3,7 +3,7 @@ import { auth } from '../../Firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getAuth } from 'firebase/auth';
 
-
+//const auth = getAuth();
  
 const SignIn = () => {
     const [email,setEmail] = useState("")
