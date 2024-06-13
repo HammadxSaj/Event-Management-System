@@ -8,6 +8,9 @@ import SignUp from './components/auth/SignUp'
 import HomePageNav from '../components/Home/HomepageNav'
 import NavBar from '../components/Home/NavBar'
 import HomePageWhite from '../components/Home/Homepagewhite'
+import HomepageCards from '../components/Home/HomepageCards';
+import Footer from '../components/Home/Footer';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 
 
 function App() {

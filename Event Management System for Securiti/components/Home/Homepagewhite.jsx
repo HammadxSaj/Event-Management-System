@@ -5,7 +5,7 @@ import './HomepageNav.css'
 
 function HomePageWhite (){
     return (
-    <div className="container2">
+    <div className="container2" style={{paddingBottom: 20}}>
       <div className="row align-items-center">
         <div className="col-md-6">
           <div className="illustration">
@@ -15,7 +15,7 @@ function HomePageWhite (){
         <div className="col-md-6">
           <div className="text-center text-md-left" style={{paddingRight: 20, paddingLeft: 20}}>
             <h1>Automate your Event Managment</h1>
-            <p>Our app empowers you to unleash your ability to organize and be part of remarkable events. Whether you're planning a solo exhibition, a live performance, or a collaborative workshop, our platform provides the tools and features you need to make your events a resounding success.</p>
+            <p>Our app empowers you to unleash your ability to organize and be part of remarkable events. Whether you're planning a get-together, lunch, or a picnic, our platform provides the tools and features you need to make your events a resounding success.</p>
             <div className='buttons'>
               <button style={{backgroundColor: '#646cff', color: 'white'}}>Get Started</button>
             </div>
