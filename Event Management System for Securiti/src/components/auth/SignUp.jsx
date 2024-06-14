@@ -7,6 +7,7 @@ import { eye } from 'react-icons-kit/feather/eye';
 import './SignUp.css'; // Make sure SignUp.css exists and contains necessary styles
 import logo from '../../assets/Logo.png';
 import { useNavigate } from 'react-router-dom';
+import ErrorMessage from './ErrorMessage';
 
 const auth = getAuth(); // Initialize Firebase Auth instance
 
@@ -28,12 +29,17 @@ const SignUp = () => {
     return emailRegex.test(email);
   };
 
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // At least 6 characters, 1 letter, and 1 number
+    return passwordRegex.test(password);
+  };
+
   const signup = (e) => {
     e.preventDefault(); // Prevent form submission
     setErrorMessage(null); // Clear previous error message
 
-    if (email.length === 0) {
-      setErrorMessage("Email is required.");
+    if (email.trim().length === 0 || password.trim().length === 0) {
+      setErrorMessage("Please fill in both email and password fields.");
       return;
     }
 
@@ -42,8 +48,8 @@ const SignUp = () => {
       return;
     }
 
-    if (password.length < 6) {
-      setErrorMessage("Password should be at least 6 characters long.");
+    if (!isValidPassword(password)) {
+      setErrorMessage("Password should be at least 6 characters long and include at least one letter and one number.");
       return;
     }
 
@@ -66,7 +72,7 @@ const SignUp = () => {
       <div className='auth-form'>
         <img src={logo} alt="Logo" className='logo' />
         <h1>Create Your Account</h1>
-        {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>} {/* Display error message */}
+        {errorMessage && <ErrorMessage message={errorMessage} />} {/* Display error message */}
         <form onSubmit={signup}>
           <p>Email</p>
           <input type="email" placeholder="example@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -91,11 +97,11 @@ const SignUp = () => {
           <button type='submit'>Sign Up</button> {/* Submit button inside the form */}
           <button
             className='login-button'
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/signin')}
           >
             Already Registered? Log in
-          </button>        
-          </form>
+          </button>
+        </form>
       </div>
       <div className='auth-background'>
         {/* <button className='sign-up-button'>Sign Up</button> */}
