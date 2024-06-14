@@ -57,7 +57,7 @@ const SignUp = () => {
       .then((userCredential) => {
         console.log("User registered:", userCredential.user);
         // Optionally redirect or show a success message
-        navigate('/'); // Redirect to home page or any other page
+        navigate('/admin');
       })
       .catch((error) => {
         console.error("Registration failed:", error.message);

@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
 import Home from './components/Home/Home'
+import Admin from './components/auth/Admin';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
@@ -23,6 +24,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/admin" element = {<Admin/>}/>
     </Routes>
 
   </BrowserRouter>

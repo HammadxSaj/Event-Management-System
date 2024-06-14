@@ -36,7 +36,7 @@ const SignIn = () => {
       .then((userCredential) => {
         console.log("User logged in:", userCredential.user);
         setErrorMessage(null); // Clear any previous error messages
-        navigate('/'); // Redirect to home or dashboard after successful login
+        navigate('/admin');
       })
       .catch((error) => {
         console.log("Sign in error:", error);
