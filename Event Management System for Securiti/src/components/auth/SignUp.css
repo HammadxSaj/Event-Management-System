@@ -95,7 +95,7 @@
   
   .auth-background {
     flex: 1;
-    background-image: url('../../assets/registration.jpg'); /* Update this path */
+    background-image: url('../../assets/peoplee.png'); /* Update this path */
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;

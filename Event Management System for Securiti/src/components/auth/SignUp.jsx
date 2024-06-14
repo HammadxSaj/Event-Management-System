@@ -97,7 +97,6 @@ const SignUp = () => {
           </button>        
           </form>
       </div>
-      {/* Optional auth-background section with a button */}
       <div className='auth-background'>
         {/* <button className='sign-up-button'>Sign Up</button> */}
       </div>
