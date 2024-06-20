@@ -1,5 +1,4 @@
-
-.home-page{
+.home-page {
     background-color: #123456;
     padding: 6rem 0rem;
     text-align: center;
@@ -14,7 +13,7 @@
 }
 
 .home-page h2 {
-    color:antiquewhite;
+    color: antiquewhite;
     font-size: 5rem;
     font-weight: 400;
     margin-bottom: 1rem;
@@ -44,7 +43,7 @@
     transform: scale(1.1);
     transition: transform 0.3s;
 }
-    
+
 
 @media (max-width: 800px) {
     .home-page {
