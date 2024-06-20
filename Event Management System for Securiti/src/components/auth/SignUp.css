@@ -1,152 +1,162 @@
 /* SignUp.css */
 .auth-container {
-    font-family: 'Poppins',sans-serif;
-    display: flex;
-    min-height: 90vh;
-    
-  }
-  
-  .auth-form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #ffffff;
-  }
-  
-  .auth-form form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
-  }
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  min-height: 90vh;
 
-  .auth-form p {
-    margin: 0 0 5px 0;
-    font-size: 14px;
-    color: #aaa; /* Matching the color of the placeholder text */
-    font-family: 'Open Sans', sans-serif;
-  }
-  
-  .auth-form h1 {
-    font-family: 'Poppins',sans-serif;
-    margin-bottom: 20 px;
-    font-size: 24px;
-    color: rgb(13, 40, 56);
-    
+}
 
-  }
-  
-  .auth-form input {
-    font-family: 'Poppins',sans-serif;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    border-radius: 15px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Optional: Add box shadow for depth */
-  }
-  
-  .auth-form input[type="password"] {
-    font-family: 'Poppins', sans-serif;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    border-radius: 15px;
-    width: 100%; /* Ensure the input takes up full width */
+.auth-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #ffffff;
+}
 
-  }
-  
-  .auth-form button {
-    padding: 10px;
-    background-color: rgb(10, 40, 73);
-    color: rgb(255, 255, 255);
-    border: none;
-    border-radius: 20px;
-   
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-  .back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    background-color: rgb(13, 40, 56);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .back-button:hover {
-    background-color: darkgray;
-  }
-  .auth-form button:hover {
-    background-color: darkgray;
-  }
-  
-  .auth-background {
-    flex: 1;
-    background-image: url('../../assets/peoplee.png'); /* Update this path */
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .sign-up-button {
-    padding: 10px 20px;
-    background-color:rgb(13, 40, 56);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    
-  }
-  
-  .sign-up-button:hover {
-    background-color: darkgray;
-  }
+.auth-form form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+}
 
-  .logo {
-    width: 150px; /* Adjust the width of the logo as needed */
-    height: autos; /* Maintain aspect ratio */
-    margin-bottom: 10px; /* Add margin at the bottom of the logo */
-    margin-top: 1px;
-  }
-  
-  .error-message {
-    color: red; /* Set color to red for error messages */
-    font-size: 14px;
-    margin-top: 5px;
-  }
+.auth-form p {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #aaa;
+  /* Matching the color of the placeholder text */
+  font-family: 'Open Sans', sans-serif;
+}
 
-  .login-button {
-      background-color: #72A0C1;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      /* Smooth transition effect */
-    }
-  
-  .login-button:hover {
-      background-color: #5A8AA1;
-      /* Darker shade on hover */
-    }
+.auth-form h1 {
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 20 px;
+  font-size: 24px;
+  color: rgb(13, 40, 56);
+
+
+}
+
+.auth-form input {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  /* Optional: Add box shadow for depth */
+}
+
+.auth-form input[type="password"] {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  border-radius: 15px;
+  width: 100%;
+  /* Ensure the input takes up full width */
+
+}
+
+.auth-form button {
+  padding: 10px;
+  background-color: rgb(10, 40, 73);
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 20px;
+
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background-color: rgb(13, 40, 56);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.back-button:hover {
+  background-color: darkgray;
+}
+
+.auth-form button:hover {
+  background-color: darkgray;
+}
+
+.auth-background {
+  flex: 1;
+  background-image: url('../../assets/peoplee.png');
+  /* Update this path */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.sign-up-button {
+  padding: 10px 20px;
+  background-color: rgb(13, 40, 56);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+}
+
+.sign-up-button:hover {
+  background-color: darkgray;
+}
+
+.logo {
+  width: 150px;
+  /* Adjust the width of the logo as needed */
+  height: autos;
+  /* Maintain aspect ratio */
+  margin-bottom: 10px;
+  /* Add margin at the bottom of the logo */
+  margin-top: 1px;
+}
+
+.error-message {
+  color: red;
+  /* Set color to red for error messages */
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.login-button {
+  background-color: #72A0C1;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Smooth transition effect */
+}
+
+.login-button:hover {
+  background-color: #5A8AA1;
+  /* Darker shade on hover */
+}
