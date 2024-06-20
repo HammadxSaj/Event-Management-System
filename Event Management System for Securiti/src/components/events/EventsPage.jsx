@@ -1,35 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import EventsList from './EventsList';
-import logo from '../../assets/Logo.png';
-import eventi from '../../assets/event1.jpg'
-import event2 from '../../assets/event2.jpg'
-import event3 from '../../assets/event3.jpg'
+import { db } from '../../Firebase';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 const EventsPage = () => {
-  const events = [
-    {
-      id: '1',
-      title: 'Event 1',
-      date: '2024-07-01',
-      description: 'This is a short description of Event 1.',
-      image: eventi,
-    },
-    {
-      id: '2',
-      title: 'Event 2',
-      date: '2024-07-15',
-      description: 'This is a short description of Event 2.',
-      image: event2,
-    },
-    {
-      id: '3',
-      title: 'Event 3',
-      date: '2024-08-01',
-      description: 'This is a short description of Event 3.',
-      image: event3,
-    },
-    // Add more events as needed
-  ];
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const eventsCollection = collection(db, 'events');
+        const eventsSnapshot = await getDocs(eventsCollection);
+
+        const fetchedEvents = [];
+        for (const docRef of eventsSnapshot.docs) {
+          const eventDoc = await getDoc(docRef.ref);
+          if (eventDoc.exists()) {
+            const event = {
+              id: docRef.id,
+              title: eventDoc.data().title,
+              date: eventDoc.data().dateTime, // Assuming dateTime is stored as ISO string
+              description: eventDoc.data().description,
+              images: ''
+            };
+
+            // Fetch images for the event
+            const imagesCollection = collection(docRef.ref, 'images');
+            const imagesSnapshot = await getDocs(imagesCollection);
+            imagesSnapshot.forEach((imageDoc) => {
+              const imageUrl = imageDoc.data().imageUrls;
+              if (imageUrl) {
+                event.images = imageUrl[0];
+                // event.images.push(imageUrl);
+             
+                console.log('Testing event image in EventsPage');
+                console.log(`Image Link ${event.id}:`, event.images);
+              }
+            });
+
+            fetchedEvents.push(event);
+          }
+        }
+
+        setEvents(fetchedEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return <EventsList events={events} />;
 };

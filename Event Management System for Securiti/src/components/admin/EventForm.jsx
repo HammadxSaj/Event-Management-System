@@ -30,7 +30,7 @@ const EventForm = () => {
   };
 
   const handleDateTimeChange = (newValue) => {
-    setFormData({ ...formData, dateTime: newValue });
+    setFormData({ ...formaData, dateTime: newValue });
   };
 
   const handleImageChange = (e) => {

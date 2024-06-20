@@ -4,6 +4,7 @@ import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import './DisplayCards.css'; // Import the CSS file
+import eventi from '../../assets/event1.jpg';
 
 const DisplayCards = ({ event }) => {
   const navigate = useNavigate();
@@ -36,15 +37,16 @@ const DisplayCards = ({ event }) => {
     if (userDownvoted === 'true') {
       setHasDownvoted(true);
     }
-  }, [event.id]);
 
-  const handleClick = () => {
-    // navigate(`/event/${event.id}`);
-  };
+    // Log the first image URL to verify it's correct
+    if (event.images.length > 0) {
+      console.log("First image URL in DisplayCards:", event.images[0]);
+    }
+  }, [event.id, event.images]);
 
-  const handleDetails = () => {
-     navigate(`/event/${event.id}`);
-    
+  const handleDetails = (e) => {
+    e.stopPropagation();
+    navigate(`/event/${event.id}`);
   };
 
   const handleUpvote = () => {
@@ -82,25 +84,26 @@ const DisplayCards = ({ event }) => {
   };
 
   return (
-    <Card className="card" onClick={handleClick}>
+    <Card className="card">
       <CardActionArea>
         <CardMedia
           component="img"
           className="card-media"
-          image={event.image}
+          image={event.images.length > 0 ? event.images[0] : eventi} // Corrected image source logic
           alt={event.title}
           title={event.title}
         />
         <CardContent className="card-content">
           <Typography gutterBottom variant="h5" component="div">
             {event.title}
-            <Button  
+            <Button 
               size="small"
               color="primary"
               onClick={handleDetails}
-              
-           
-              >View Details</Button>
+              style={{ float: 'right' }}
+            >
+              View Details
+            </Button>
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {event.date}
@@ -119,9 +122,7 @@ const DisplayCards = ({ event }) => {
           disabled={hasUpvoted}
         >
           Upvote ({upvoteCount})
-        </Button
-        >
-
+        </Button>
         <Button
           size="small"
           color="secondary"
