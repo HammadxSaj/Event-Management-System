@@ -33,7 +33,7 @@ function App() {
       <Route path="/admin" element = {<Admin/>}/>
       <Route path = "/event" element = {<EventsPage/>}/>
       <Route path="/event/:eventId" element={<EventDescription />} /> 
-    
+  
       <Route path="/eventform" element={<EventForm />} />
     </Routes>
 

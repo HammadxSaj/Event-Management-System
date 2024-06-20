@@ -1,0 +1,13 @@
+
+  .header-section {
+    text-align: center; /* Center align the header */
+    margin-bottom: 40px; /* Add margin at the bottom of the header */
+  }
+  
+  .header-title {
+    font-size: 36px; /* Adjust font size for the header */
+    
+    font-weight: bold; /* Set font weight to bold */
+    color: #333; /* Set text color */
+  }
+  
