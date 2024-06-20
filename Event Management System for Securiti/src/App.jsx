@@ -7,8 +7,10 @@ import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
 import Home from './components/Home/Home'
 import Admin from './components/auth/Admin';
+import EventsPage from './components/events/EventsPage';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import EventDescription from './components/events/EventDescription';
 
 
 function App() {
@@ -25,6 +27,9 @@ function App() {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/admin" element = {<Admin/>}/>
+      <Route path = "/event" element = {<EventsPage/>}/>
+      <Route path="/event/:eventId" element={<EventDescription />} /> 
+    
     </Routes>
 
   </BrowserRouter>

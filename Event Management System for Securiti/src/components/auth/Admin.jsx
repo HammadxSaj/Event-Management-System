@@ -1,10 +1,22 @@
-import React from 'react'
+import React from 'react';
+import { Button, Container, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate('/event');
+  };
+
   return (
-    <div>
-        <h1>Admin Page here!</h1>
-      
-    </div>
-  )
+    <Container>
+      <Typography variant="h1" gutterBottom>
+        Admin Page here!
+      </Typography>
+      <Button variant="contained" color="primary" onClick={handleNavigate}>
+        View Events
+      </Button>
+    </Container>
+  );
 }
