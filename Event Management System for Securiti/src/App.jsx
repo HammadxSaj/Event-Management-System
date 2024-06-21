@@ -13,6 +13,7 @@ import EventForm from './components/admin/EventForm';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import EventDescription from './components/events/EventDescription';
+import EventDetails from './components/events/EventDetails';
 
 
 function App() {
@@ -28,13 +29,12 @@ function App() {
     <Routes>
       {/* set the initial route to Home */}
       {/* <Route path="/" element={<AddEventButton />} /> */}
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<EventsPage />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/admin" element = {<Admin/>}/>
       <Route path = "/event" element = {<EventsPage/>}/>
-      <Route path="/event/:eventId" element={<EventDescription />} /> 
-  
+      <Route path="/event/:eventId" element={<EventDetails />} /> 
       <Route path="/eventform" element={<EventForm />} />
     </Routes>
 

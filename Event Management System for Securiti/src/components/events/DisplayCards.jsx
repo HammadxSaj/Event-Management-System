@@ -1,20 +1,20 @@
+// src/components/DisplayCards.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import './DisplayCards.css'; // Import the CSS file
+import './DisplayCards.css';
 import eventi from '../../assets/event1.jpg';
 
 const DisplayCards = ({ event }) => {
   const navigate = useNavigate();
-  const [upvoteCount, setUpvoteCount] = useState(0); // State for upvote count
-  const [downvoteCount, setDownvoteCount] = useState(0); // State for downvote count
-  const [hasUpvoted, setHasUpvoted] = useState(false); // State to track if user has upvoted
-  const [hasDownvoted, setHasDownvoted] = useState(false); // State to track if user has downvoted
+  const [upvoteCount, setUpvoteCount] = useState(0);
+  const [downvoteCount, setDownvoteCount] = useState(0);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+  const [hasDownvoted, setHasDownvoted] = useState(false);
 
   useEffect(() => {
-    // Retrieve upvote and downvote counts from localStorage
     const storedUpvotes = localStorage.getItem(`upvotes-${event.id}`);
     const storedDownvotes = localStorage.getItem(`downvotes-${event.id}`);
 
@@ -26,7 +26,6 @@ const DisplayCards = ({ event }) => {
       setDownvoteCount(parseInt(storedDownvotes));
     }
 
-    // Check if user has upvoted or downvoted
     const userUpvoted = localStorage.getItem(`user-upvoted-${event.id}`);
     const userDownvoted = localStorage.getItem(`user-downvoted-${event.id}`);
 
@@ -38,7 +37,6 @@ const DisplayCards = ({ event }) => {
       setHasDownvoted(true);
     }
 
-    // Log the first image URL to verify it's correct
     if (event.images.length > 0) {
       console.log("First image URL in DisplayCards:", event.images[0]);
     }
@@ -56,7 +54,6 @@ const DisplayCards = ({ event }) => {
       localStorage.setItem(`upvotes-${event.id}`, upvoteCount + 1);
       localStorage.setItem(`user-upvoted-${event.id}`, 'true');
 
-      // If user has previously downvoted, decrement downvote count
       if (hasDownvoted) {
         setDownvoteCount(downvoteCount - 1);
         setHasDownvoted(false);
@@ -73,7 +70,6 @@ const DisplayCards = ({ event }) => {
       localStorage.setItem(`downvotes-${event.id}`, downvoteCount + 1);
       localStorage.setItem(`user-downvoted-${event.id}`, 'true');
 
-      // If user has previously upvoted, decrement upvote count
       if (hasUpvoted) {
         setUpvoteCount(upvoteCount - 1);
         setHasUpvoted(false);
@@ -85,28 +81,20 @@ const DisplayCards = ({ event }) => {
 
   return (
     <Card className="card">
-      <CardActionArea>
+      <CardActionArea onClick={handleDetails}>
         <CardMedia
           component="img"
           className="card-media"
-          image={event.images.length > 0 ? event.images[0] : eventi} // Corrected image source logic
+          image={event.images.length > 0 ? event.images[0] : eventi}
           alt={event.title}
           title={event.title}
         />
         <CardContent className="card-content">
           <Typography gutterBottom variant="h5" component="div">
             {event.title}
-            <Button 
-              size="small"
-              color="primary"
-              onClick={handleDetails}
-              style={{ float: 'right' }}
-            >
-              View Details
-            </Button>
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {event.date}
+            {new Date(event.date).toLocaleString()}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {event.description}

@@ -27,6 +27,7 @@ const EventsPage = () => {
             // Fetch images for the event
             const imagesCollection = collection(docRef.ref, 'images');
             const imagesSnapshot = await getDocs(imagesCollection);
+            console.log(event);
             imagesSnapshot.forEach((imageDoc) => {
               const imageUrl = imageDoc.data().imageUrls;
               if (imageUrl) {
