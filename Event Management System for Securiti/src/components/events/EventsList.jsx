@@ -55,7 +55,7 @@ const EventsList = () => {
       <NavBar />
       <div className="events-list-container">
         <div className="header-section">
-          <h1 className="header-title">Explore the best ideas!</h1>
+          <h1 className="header-title">Explore the best event ideas to choose from!</h1>
         </div>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
