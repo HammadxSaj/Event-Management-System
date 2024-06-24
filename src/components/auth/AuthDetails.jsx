@@ -1,39 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { auth } from '../../Firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import DisplayCards from '../events/DisplayCards';
+// src/components/auth/AuthDetails.js
+import React from 'react';
+import { useAuth } from './AuthContext';
 
 const AuthDetails = () => {
-  const [authUser, setAuthUser] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAuthUser(user);
-      } else {
-        setAuthUser(null);
-      }
-    }, (error) => {
-      console.error('Auth state change error:', error);
-      setAuthUser(null); // Ensure authUser is null on error
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const userSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        console.log('Sign out successful');
-      })
-      .catch((error) => {
-        console.error('Sign out error:', error);
-      });
-  };
-
-  console.log('AuthUser in AuthDetails:', authUser); // Check authUser value
+  const { authUser, userSignOut } = useAuth();
 
   return (
     <div>
@@ -41,7 +11,6 @@ const AuthDetails = () => {
         <>
           <p>{`Signed In as ${authUser.email}`}</p>
           <button onClick={userSignOut}>Sign Out</button>
-          <DisplayCards authUser={authUser} /> {/* Pass authUser as a prop to DisplayCards */}
         </>
       ) : (
         <p>Signed Out</p>

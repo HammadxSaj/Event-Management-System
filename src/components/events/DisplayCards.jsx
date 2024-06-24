@@ -1,16 +1,17 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import './DisplayCards.css';
-import eventi from '../../assets/event1.jpg';
-import { db } from '../../Firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import './DisplayCards.css'; // Adjust path as necessary
+import eventi from '../../assets/event1.jpg'; // Adjust path as necessary
+import { updateDoc, doc } from 'firebase/firestore'; // Adjust path as necessary
+import { db } from '../../Firebase'; // Adjust path as necessary
+import { useAuth } from '../auth/AuthContext'; // Adjust the path if necessary
 
-const DisplayCards = ({ event, uid }) => {
+const DisplayCards = ({ event }) => {
   const navigate = useNavigate();
+  const { authUser } = useAuth();
 
   const [upvoteCount, setUpvoteCount] = useState(0);
   const [downvoteCount, setDownvoteCount] = useState(0);
@@ -18,33 +19,13 @@ const DisplayCards = ({ event, uid }) => {
   const [hasDownvoted, setHasDownvoted] = useState(false);
 
   useEffect(() => {
-    // Fetch and update upvote/downvote counts, etc. based on event and uid
-    if (event) {
-      console.log("User Id Here:",uid)
-     
-      const storedUpvotes = localStorage.getItem(`upvotes-${event.id}`);
-      const storedDownvotes = localStorage.getItem(`downvotes-${event.id}`);
-
-      if (storedUpvotes) {
-        setUpvoteCount(parseInt(storedUpvotes));
-      }
-
-      if (storedDownvotes) {
-        setDownvoteCount(parseInt(storedDownvotes));
-      }
-
-      const userUpvoted = localStorage.getItem(`user-upvoted-${event.id}`);
-      const userDownvoted = localStorage.getItem(`user-downvoted-${event.id}`);
-
-      if (userUpvoted === 'true') {
-        setHasUpvoted(true);
-      }
-
-      if (userDownvoted === 'true') {
-        setHasDownvoted(true);
-      }
+    if (event && authUser) {
+      setUpvoteCount(event.upvote ? event.upvote.length : 0);
+      setDownvoteCount(event.downvote ? event.downvote.length : 0);
+      setHasUpvoted(event.upvote && event.upvote.includes(authUser.uid));
+      setHasDownvoted(event.downvote && event.downvote.includes(authUser.uid));
     }
-  }, [event]);
+  }, [event, authUser]);
 
   const handleDetails = (e) => {
     e.stopPropagation();
@@ -52,29 +33,21 @@ const DisplayCards = ({ event, uid }) => {
   };
 
   const handleUpvote = async () => {
-    if (!hasUpvoted && event && event.upvote !== undefined) {
-      const newUpvotes = [...(event.upvote || []), uid];
-      console.log("User IDDD: ",uid);
-      setUpvoteCount(newUpvotes.length);
-      setHasUpvoted(true);
-      localStorage.setItem(`upvotes-${event.id}`, JSON.stringify(newUpvotes));
-      localStorage.setItem(`user-upvoted-${event.id}`, 'true');
+    if (!hasUpvoted && event && event.upvote !== undefined && authUser) {
+      let newUpvotes = [...(event.upvote || []), authUser.uid];
+      let newDownvotes = event.downvote?.filter(uid => uid !== authUser.uid) || [];
 
-      let newDownvotes = [];
-      if (event.downvote !== undefined) {
-        newDownvotes = event.downvote.filter(userId => userId !== uid);
-        setDownvoteCount(newDownvotes.length);
-        setHasDownvoted(false);
-        localStorage.setItem(`downvotes-${event.id}`, JSON.stringify(newDownvotes));
-        localStorage.removeItem(`user-downvoted-${event.id}`);
-      }
+      setUpvoteCount(newUpvotes.length);
+      setDownvoteCount(newDownvotes.length);
+      setHasUpvoted(true);
+      setHasDownvoted(false);
 
       try {
         await updateDoc(doc(db, 'events', event.id), {
           upvote: newUpvotes,
           downvote: newDownvotes,
         });
-        console.log("Upvotes updated:", newUpvotes);
+        console.log("Upvoted");
       } catch (error) {
         console.error("Error updating upvotes:", error);
       }
@@ -82,41 +55,28 @@ const DisplayCards = ({ event, uid }) => {
   };
 
   const handleDownvote = async () => {
-    if (!hasDownvoted && event && event.downvote !== undefined) {
-      const newDownvotes = [...(event.downvote || []), uid];
-      setDownvoteCount(newDownvotes.length);
-      setHasDownvoted(true);
-      localStorage.setItem(`downvotes-${event.id}`, JSON.stringify(newDownvotes));
-      localStorage.setItem(`user-downvoted-${event.id}`, 'true');
+    if (!hasDownvoted && event && event.downvote !== undefined && authUser) {
+      let newDownvotes = [...(event.downvote || []), authUser.uid];
+      let newUpvotes = event.upvote?.filter(uid => uid !== authUser.uid) || [];
 
-      let newUpvotes = [];
-      if (event.upvote !== undefined) {
-        newUpvotes = event.upvote.filter(userId => userId !== uid);
-        setUpvoteCount(newUpvotes.length);
-        setHasUpvoted(false);
-        localStorage.setItem(`upvotes-${event.id}`, JSON.stringify(newUpvotes));
-        localStorage.removeItem(`user-upvoted-${event.id}`);
-      }
+      setUpvoteCount(newUpvotes.length);
+      setDownvoteCount(newDownvotes.length);
+      setHasUpvoted(false);
+      setHasDownvoted(true);
 
       try {
         await updateDoc(doc(db, 'events', event.id), {
           upvote: newUpvotes,
           downvote: newDownvotes,
         });
-        console.log("Downvotes updated:", newDownvotes);
+        console.log("Downvoted");
       } catch (error) {
         console.error("Error updating downvotes:", error);
       }
     }
   };
 
-  if (!event) {
-    return null; // Render nothing or placeholder if event is not defined
-  }
-
   return (
-    
-
     <Card className="card">
       <CardActionArea onClick={handleDetails}>
         <CardMedia

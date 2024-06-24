@@ -5,13 +5,14 @@ import NavBar from '../Home/NavBar';
 import { db, auth } from '../../Firebase'; // Import your Firebase configuration
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import './EventsList.css'; // Import the CSS file
-import '../admin/AddEventButton';
 import AddEventButton from '../admin/AddEventButton';
-import { right } from '@popperjs/core';
 
-const EventsList = ({ authUser }) => { // Assuming authUser is passed from a parent component or context
+const EventsList = () => {
   const [events, setEvents] = useState([]);
-  const [userRole, setUserRole] = useState(null); // State to store the user's role
+  const [userRole, setUserRole] = useState(null); 
+  const [timeRemaining, setTimeRemaining] = useState('');
+
+  const votingEndDate = new Date('2024-07-01T00:00:00'); // Dummy end date for voting
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -26,20 +27,19 @@ const EventsList = ({ authUser }) => { // Assuming authUser is passed from a par
             const event = {
               id: docRef.id,
               title: eventDoc.data().title,
-              date: eventDoc.data().dateTime, // Assuming dateTime is stored as ISO string
+              date: eventDoc.data().dateTime,
               description: eventDoc.data().description,
               images: [],
               upvote: eventDoc.data().upvote || [],
               downvote: eventDoc.data().downvote || []
             };
 
-            // Fetch images for the event
             const imagesCollection = collection(docRef.ref, 'images');
             const imagesSnapshot = await getDocs(imagesCollection);
             imagesSnapshot.forEach((imageDoc) => {
               const imageUrl = imageDoc.data().imageUrls;
               if (imageUrl) {
-                event.images.push(imageUrl[0]); // Assuming you want the first URL
+                event.images.push(imageUrl[0]);
               }
             });
 
@@ -69,25 +69,47 @@ const EventsList = ({ authUser }) => { // Assuming authUser is passed from a par
     };
 
     fetchEvents();
-    fetchUserRole(); // Fetch user role when component mounts
+    fetchUserRole();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const distance = votingEndDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setTimeRemaining(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+
+      if (distance < 0) {
+        clearInterval(interval);
+        setTimeRemaining('Voting ended');
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [votingEndDate]);
 
   return (
     <>
       <NavBar />
       {userRole === 'admin' && (
-        <div style={{ float: right }}>
+        <div style={{ float: 'right' }}>
           <AddEventButton />
         </div>
       )}
       <div className="events-list-container">
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
+          <p className="countdown">Voting ends in: {timeRemaining}</p>
         </div>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} authUser={authUser} />
+              <DisplayCards event={event} />
             </Grid>
           ))}
         </Grid>
