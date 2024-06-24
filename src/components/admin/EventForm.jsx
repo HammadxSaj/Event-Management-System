@@ -21,6 +21,8 @@ const EventForm = () => {
     details: '',
     images: [],
     embedCode: '',
+    upvote: [],
+    downvote: [],
   });
 
   const [mapPreview, setMapPreview] = useState('');
@@ -65,6 +67,8 @@ const EventForm = () => {
         description: formData.description,
         details: formData.details,
         embedCode: formData.embedCode,
+        upvote: [],
+        downvote :[]
       });
 
       // Step 2: Upload images to Firebase Storage and get their download URLs

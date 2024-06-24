@@ -30,7 +30,7 @@ function App() {
     <Routes>
       {/* set the initial route to Home */}
       {/* <Route path="/" element={<AddEventButton />} /> */}
-      <Route path="/" element={<EventsPage />} />
+      <Route path="/" element={<Home/>} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/admin" element = {<Admin />}/>

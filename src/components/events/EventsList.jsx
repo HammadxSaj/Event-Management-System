@@ -9,7 +9,7 @@ import '../admin/AddEventButton';
 import AddEventButton from '../admin/AddEventButton';
 import { right } from '@popperjs/core';
 
-const EventsList = () => {
+const EventsList = ({ authUser }) => { // Assuming authUser is passed from a parent component or context
   const [events, setEvents] = useState([]);
   const [userRole, setUserRole] = useState(null); // State to store the user's role
 
@@ -28,7 +28,9 @@ const EventsList = () => {
               title: eventDoc.data().title,
               date: eventDoc.data().dateTime, // Assuming dateTime is stored as ISO string
               description: eventDoc.data().description,
-              images: []
+              images: [],
+              upvote: eventDoc.data().upvote || [],
+              downvote: eventDoc.data().downvote || []
             };
 
             // Fetch images for the event
@@ -85,7 +87,7 @@ const EventsList = () => {
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} />
+              <DisplayCards event={event} authUser={authUser} />
             </Grid>
           ))}
         </Grid>
