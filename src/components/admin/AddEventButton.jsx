@@ -4,12 +4,13 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import { margin, padding } from '@mui/system';
 
 function AddEventButton() {
     const navigate = useNavigate();
 
     return (
-        <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => navigate('/eventform')}>
+        <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => navigate('/eventform')} style={{marginTop: 10, marginRight: 10}}>
             Add Event
         </Button>
     );

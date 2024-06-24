@@ -4,12 +4,14 @@ import { getAuth } from 'firebase/auth';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import './SignUp.css'; // Make sure SignUp.css exists and contains necessary styles
 import logo from '../../assets/Logo.png';
 import { useNavigate } from 'react-router-dom';
 import ErrorMessage from './ErrorMessage';
 
 const auth = getAuth(); // Initialize Firebase Auth instance
+const db = getFirestore(); // Initialize Firestore
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const SignUp = () => {
     return passwordRegex.test(password);
   };
 
-  const signup = (e) => {
+  const signup = async (e) => {
     e.preventDefault(); // Prevent form submission
     setErrorMessage(null); // Clear previous error message
 
@@ -53,16 +55,21 @@ const SignUp = () => {
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log("User registered:", userCredential.user);
-        // Optionally redirect or show a success message
-        navigate('/admin');
-      })
-      .catch((error) => {
-        console.error("Registration failed:", error.message);
-        setErrorMessage(error.message); // Display error message to the user
-      });
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log("User registered:", user);
+
+      // Set user role in Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(userDocRef, { email: user.email, role: 'user' }); // Change role to 'admin' if needed
+      
+      navigate('/user')
+      // Optionally redirect or show a success message
+    } catch (error) {
+      console.error("Registration failed:", error.message);
+      setErrorMessage(error.message); // Display error message to the user
+    }
   };
 
   return (

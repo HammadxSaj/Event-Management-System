@@ -14,6 +14,7 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import EventDescription from './components/events/EventDescription';
 import EventDetails from './components/events/EventDetails';
+import User from './components/auth/User';
 
 
 function App() {
@@ -32,7 +33,8 @@ function App() {
       <Route path="/" element={<EventsPage />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/admin" element = {<Admin/>}/>
+      <Route path="/admin" element = {<Admin />}/>
+      <Route path="/user" element = {<User />}/>
       <Route path = "/event" element = {<EventsPage/>}/>
       <Route path="/event/:eventId" element={<EventDetails />} /> 
       <Route path="/eventform" element={<EventForm />} />

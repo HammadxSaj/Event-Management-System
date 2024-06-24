@@ -1,6 +1,6 @@
 // src/firebase.js
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
@@ -20,5 +20,19 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+
+const setAdminRole = async (userId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    await setDoc(userDocRef, { role: 'admin' }, { merge: true }); // Merge to avoid overwriting other fields
+    console.log(`User ${userId} has been set as admin.`);
+  } catch (error) {
+    console.error('Error setting admin role:', error);
+  }
+};
+
+// Hardcode the UID of the user you want to set as admin
+const adminUserId = 'gLnQ3THOB7SL5ak786g8lYFJfV63';
+setAdminRole(adminUserId);
 
 export { auth, db, storage };

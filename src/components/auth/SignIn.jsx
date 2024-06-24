@@ -3,7 +3,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
-import { auth } from '../../Firebase';
+import { auth, db } from '../../Firebase'; // Ensure you import db for Firestore
+import { doc, getDoc } from 'firebase/firestore';
 import './SignUp.css'; // Make sure SignIn.css exists and contains necessary styles
 import logo from '../../assets/Logo.png';
 import AuthDetails from './AuthDetails';
@@ -33,10 +34,24 @@ const SignIn = () => {
     }
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         console.log("User logged in:", userCredential.user);
         setErrorMessage(null); // Clear any previous error messages
-        navigate('/admin');
+
+        // Fetch the user role from Firestore
+        const userDocRef = doc(db, 'users', userCredential.user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          console.log(userData.role)
+          if (userData.role === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/user');
+          }
+        } else {
+          setErrorMessage('User role information not found.');
+        }
       })
       .catch((error) => {
         console.log("Sign in error:", error);
