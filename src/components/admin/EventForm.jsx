@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import '../admin/EventForm.css';
 import { useNavigate } from 'react-router-dom';
 
+
 const EventForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -93,7 +94,7 @@ const EventForm = () => {
 
   return (
     <>
-      <button className='back-button' onClick={() => navigate('/')}>Back</button>
+      <button className='back-button' onClick={() => navigate('/event')}>Back</button>
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="p-4 shadow-lg form-card">
           <h2 className="text-center mb-4">Add Event</h2>
