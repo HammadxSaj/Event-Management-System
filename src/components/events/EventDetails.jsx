@@ -90,7 +90,7 @@ const EventDetails = () => {
 
   return (
     <Container maxWidth="md" className="container">
-      <button className='back-button' onClick={()=>navigate('/')}>Back</button>
+      <button className='back-button' onClick={()=>navigate('/event')}>Back</button>
       <Card>
         {event.images.length > 0 && (
           <CardMedia

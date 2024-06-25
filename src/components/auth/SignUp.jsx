@@ -4,7 +4,8 @@ import { getAuth } from 'firebase/auth';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import {getFirestore, doc, setDoc } from 'firebase/firestore';
+
 import './SignUp.css'; // Make sure SignUp.css exists and contains necessary styles
 import logo from '../../assets/Logo.png';
 import { useNavigate } from 'react-router-dom';

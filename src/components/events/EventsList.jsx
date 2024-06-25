@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Grid } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import DisplayCards from './DisplayCards';
 import NavBar from '../Home/NavBar';
-import { db, auth } from '../../Firebase'; // Import your Firebase configuration
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
-import './EventsList.css'; // Import the CSS file
+import { db, auth } from '../../Firebase';
+import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
+import './EventsList.css';
 import AddEventButton from '../admin/AddEventButton';
-import CountdownTimer from './CountdownTimer'; // Import the CountdownTimer component
-
+import CountdownTimer from './CountdownTimer';
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState('');
-  const [votingEnded, setVotingEnded] = useState(false); // Track if voting has ended
-
-  const votingEndDate = new Date('2024-06-25T11:13:00'); // Dummy end date for voting
+  const [votingEnded, setVotingEnded] = useState(false);
+  const [votingEndDate, setVotingEndDate] = useState(new Date('2024-06-25T11:13:00'));
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -23,33 +23,25 @@ const EventsList = () => {
         const eventsCollection = collection(db, 'events');
         const eventsSnapshot = await getDocs(eventsCollection);
 
-        const fetchedEvents = [];
-        for (const docRef of eventsSnapshot.docs) {
-          const eventDoc = await getDoc(docRef.ref);
-          if (eventDoc.exists()) {
-            const event = {
-              id: docRef.id,
-              title: eventDoc.data().title,
-              date: eventDoc.data().dateTime,
-              description: eventDoc.data().description,
-              images: [],
-              upvote: eventDoc.data().upvote || [],
-              downvote: eventDoc.data().downvote || [],
-            };
+        const eventPromises = eventsSnapshot.docs.map(async (docRef) => {
+          const event = {
+            id: docRef.id,
+            title: docRef.data().title,
+            date: docRef.data().dateTime,
+            description: docRef.data().description,
+            images: [],
+            upvote: docRef.data().upvote || [],
+            downvote: docRef.data().downvote || [],
+          };
 
-            const imagesCollection = collection(docRef.ref, 'images');
-            const imagesSnapshot = await getDocs(imagesCollection);
-            imagesSnapshot.forEach((imageDoc) => {
-              const imageUrl = imageDoc.data().imageUrls;
-              if (imageUrl) {
-                event.images.push(imageUrl[0]);
-              }
-            });
+          const imagesCollection = collection(docRef.ref, 'images');
+          const imagesSnapshot = await getDocs(imagesCollection);
+          event.images = imagesSnapshot.docs.map((imageDoc) => imageDoc.data().imageUrls[0]);
 
-            fetchedEvents.push(event);
-          }
-        }
+          return event;
+        });
 
+        const fetchedEvents = await Promise.all(eventPromises);
         setEvents(fetchedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -71,8 +63,20 @@ const EventsList = () => {
       }
     };
 
+    const fetchVotingEndDate = async () => {
+      try {
+        const votingEndDateDoc = await getDoc(doc(db, 'settings', 'votingEndDate'));
+        if (votingEndDateDoc.exists()) {
+          setVotingEndDate(votingEndDateDoc.data().date.toDate());
+        }
+      } catch (error) {
+        console.error('Error fetching voting end date:', error);
+      }
+    };
+
     fetchEvents();
     fetchUserRole();
+    fetchVotingEndDate();
   }, []);
 
   useEffect(() => {
@@ -90,19 +94,36 @@ const EventsList = () => {
       if (distance < 0) {
         clearInterval(interval);
         setTimeRemaining(`0d 0h 0m 0s`);
-        setVotingEnded(true); // Set votingEnded to true when voting period is over
-       
+        
       }
     }, 1000);
 
     return () => clearInterval(interval);
   }, [votingEndDate]);
 
+  const handleDateUpdate = async (date) => {
+    setVotingEndDate(date);
+    setVotingEnded(false);
+
+    try {
+      await setDoc(doc(db, 'settings', 'votingEndDate'), { date });
+    } catch (error) {
+      console.error('Error updating voting end date:', error);
+    }
+  };
+
   return (
     <>
       <NavBar />
       {userRole === 'admin' && (
         <div style={{ float: 'right' }}>
+          <DatePicker
+            selected={votingEndDate}
+            onChange={handleDateUpdate}
+            showTimeSelect
+            dateFormat="Pp"
+            customInput={<TextField label="Voting End Date" />}
+          />
           <AddEventButton />
         </div>
       )}
@@ -110,12 +131,12 @@ const EventsList = () => {
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
           <h2> Countdown Timer</h2>
-          <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} /> {/* Add CountdownTimer */}
+          <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} />
         </div>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} /> {/* Pass votingEnded as prop */}
+              <DisplayCards event={event} votingEnded={votingEnded} />
             </Grid>
           ))}
         </Grid>
