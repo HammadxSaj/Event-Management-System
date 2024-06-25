@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import './DisplayCards.css'; // Adjust path as necessary
-import eventi from '../../assets/event1.jpg'; // Adjust path as necessary
-import { updateDoc, doc } from 'firebase/firestore'; // Adjust path as necessary
-import { db } from '../../Firebase'; // Adjust path as necessary
-import { useAuth } from '../auth/AuthContext'; // Adjust the path if necessary
+import './DisplayCards.css'; 
+import eventi from '../../assets/event1.jpg'; 
+import { updateDoc, doc } from 'firebase/firestore'; 
+import { db } from '../../Firebase'; 
+import { useAuth } from '../auth/AuthContext'; 
 
-const DisplayCards = ({ event }) => {
+const DisplayCards = ({ event, votingEnded}) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -104,7 +104,7 @@ const DisplayCards = ({ event }) => {
           color="primary"
           onClick={handleUpvote}
           startIcon={<ArrowUpwardIcon />}
-          disabled={hasUpvoted}
+          disabled={hasUpvoted || votingEnded}
         >
           Upvote ({upvoteCount})
         </Button>
@@ -113,7 +113,7 @@ const DisplayCards = ({ event }) => {
           color="secondary"
           onClick={handleDownvote}
           startIcon={<ArrowDownwardIcon />}
-          disabled={hasDownvoted}
+          disabled={hasDownvoted || votingEnded} 
         >
           Downvote ({downvoteCount})
         </Button>

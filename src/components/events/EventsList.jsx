@@ -6,20 +6,23 @@ import { db, auth } from '../../Firebase'; // Import your Firebase configuration
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import './EventsList.css'; // Import the CSS file
 import AddEventButton from '../admin/AddEventButton';
+import CountdownTimer from './CountdownTimer'; // Import the CountdownTimer component
+
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
-  const [userRole, setUserRole] = useState(null); 
+  const [userRole, setUserRole] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState('');
+  const [votingEnded, setVotingEnded] = useState(false); // Track if voting has ended
 
-  const votingEndDate = new Date('2024-07-01T00:00:00'); // Dummy end date for voting
+  const votingEndDate = new Date('2024-06-25T11:13:00'); // Dummy end date for voting
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const eventsCollection = collection(db, 'events');
         const eventsSnapshot = await getDocs(eventsCollection);
-        
+
         const fetchedEvents = [];
         for (const docRef of eventsSnapshot.docs) {
           const eventDoc = await getDoc(docRef.ref);
@@ -31,7 +34,7 @@ const EventsList = () => {
               description: eventDoc.data().description,
               images: [],
               upvote: eventDoc.data().upvote || [],
-              downvote: eventDoc.data().downvote || []
+              downvote: eventDoc.data().downvote || [],
             };
 
             const imagesCollection = collection(docRef.ref, 'images');
@@ -86,7 +89,9 @@ const EventsList = () => {
 
       if (distance < 0) {
         clearInterval(interval);
-        setTimeRemaining('Voting ended');
+        setTimeRemaining(`0d 0h 0m 0s`);
+        setVotingEnded(true); // Set votingEnded to true when voting period is over
+       
       }
     }, 1000);
 
@@ -104,12 +109,13 @@ const EventsList = () => {
       <div className="events-list-container">
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          <p className="countdown">Voting ends in: {timeRemaining}</p>
+          <h2> Countdown Timer</h2>
+          <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} /> {/* Add CountdownTimer */}
         </div>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} />
+              <DisplayCards event={event} votingEnded={votingEnded} /> {/* Pass votingEnded as prop */}
             </Grid>
           ))}
         </Grid>
