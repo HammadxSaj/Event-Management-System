@@ -67,7 +67,11 @@ const EventsList = () => {
       try {
         const votingEndDateDoc = await getDoc(doc(db, 'settings', 'votingEndDate'));
         if (votingEndDateDoc.exists()) {
-          setVotingEndDate(votingEndDateDoc.data().date.toDate());
+          const fetchedDate = votingEndDateDoc.data().date.toDate();
+          setVotingEndDate(fetchedDate);
+
+          const now = new Date();
+          setVotingEnded(now >= fetchedDate);
         }
       } catch (error) {
         console.error('Error fetching voting end date:', error);
@@ -94,7 +98,7 @@ const EventsList = () => {
       if (distance < 0) {
         clearInterval(interval);
         setTimeRemaining(`0d 0h 0m 0s`);
-        
+        setVotingEnded(true);
       }
     }, 1000);
 
