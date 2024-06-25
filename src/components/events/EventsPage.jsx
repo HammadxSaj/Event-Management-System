@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import EventsList from './EventsList';
 import { db } from '../../Firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -12,36 +12,10 @@ const EventsPage = () => {
         const eventsCollection = collection(db, 'events');
         const eventsSnapshot = await getDocs(eventsCollection);
 
-        const fetchedEvents = [];
-        for (const docRef of eventsSnapshot.docs) {
-          const eventDoc = await getDoc(docRef.ref);
-          if (eventDoc.exists()) {
-            const event = {
-              id: docRef.id,
-              title: eventDoc.data().title,
-              date: eventDoc.data().dateTime, // Assuming dateTime is stored as ISO string
-              description: eventDoc.data().description,
-              images: ''
-            };
-
-            // Fetch images for the event
-            const imagesCollection = collection(docRef.ref, 'images');
-            const imagesSnapshot = await getDocs(imagesCollection);
-            console.log(event);
-            imagesSnapshot.forEach((imageDoc) => {
-              const imageUrl = imageDoc.data().imageUrls;
-              if (imageUrl) {
-                event.images = imageUrl[0];
-                // event.images.push(imageUrl);
-             
-                console.log('Testing event image in EventsPage');
-                console.log(`Image Link ${event.id}:`, event.images);
-              }
-            });
-
-            fetchedEvents.push(event);
-          }
-        }
+        const fetchedEvents = eventsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
         setEvents(fetchedEvents);
       } catch (error) {

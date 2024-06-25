@@ -4,6 +4,17 @@
     margin-bottom: 40px; /* Add margin at the bottom of the header */
   }
   
+
+.header-title {
+  margin-bottom: 50px; /* Adjust the value as needed */
+}
+
+h2 {
+  margin-top:30px; /* Adjust the value as needed */
+  color: #1a4d66; /* Set text color */
+  font-family: 'Times New Roman', Times, serif;
+}
+
   .header-title {
     font-size: 36px; /* Adjust font size for the header */
     
