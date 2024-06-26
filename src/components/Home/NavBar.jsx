@@ -10,7 +10,7 @@ function NavBar() {
   const navigate = useNavigate()
 
   return (
-    <Navbar expand='lg' className='custom-NavBar' style={{paddingTop: 30}}>
+    <Navbar expand='lg' className='custom-NavBar' style={{paddingTop: 0}}>
       <Container>
         <Navbar.Brand onClick={() => navigate('/')} style={{ cursor: 'pointer', fontSize: 25}}>
           <img

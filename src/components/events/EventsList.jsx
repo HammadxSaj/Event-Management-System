@@ -20,8 +20,12 @@ const EventsList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const eventsCollection = collection(db, 'events');
-        const eventsSnapshot = await getDocs(eventsCollection);
+        // const eventsCollection = collection(db, 'events');
+        const eventsSnapshot = await getDocs(collection(db, 'events'));
+        // console.log(eventsSnapshot)
+        // eventsSnapshot.map((doc)=>{
+        //   return doc.data()
+        // })
 
         const eventPromises = eventsSnapshot.docs.map(async (docRef) => {
           const event = {
@@ -34,9 +38,16 @@ const EventsList = () => {
             downvote: docRef.data().downvote || [],
           };
 
-          const imagesCollection = collection(docRef.ref, 'images');
-          const imagesSnapshot = await getDocs(imagesCollection);
-          event.images = imagesSnapshot.docs.map((imageDoc) => imageDoc.data().imageUrls[0]);
+            console.log(event.date)
+
+            const imagesCollection = collection(docRef.ref, 'images');
+            const imagesSnapshot = await getDocs(imagesCollection);
+            imagesSnapshot.forEach((imageDoc) => {
+              const imageUrl = imageDoc.data().imageUrls;
+              if (imageUrl) {
+                event.images.push(imageUrl[0]);
+              }
+            });
 
           return event;
         });

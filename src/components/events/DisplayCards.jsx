@@ -91,7 +91,8 @@ const DisplayCards = ({ event, votingEnded}) => {
             {event.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {new Date(event.date).toLocaleString()}
+            {new Date(event.dateTime).toLocaleString()}
+            
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {event.description}

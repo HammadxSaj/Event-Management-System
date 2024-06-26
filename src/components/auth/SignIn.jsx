@@ -43,7 +43,6 @@ const SignIn = () => {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          console.log(userData.role)
           if (userData.role === 'admin') {
             navigate('/admin');
           } else {
