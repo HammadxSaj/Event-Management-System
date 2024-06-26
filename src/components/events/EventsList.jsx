@@ -20,13 +20,7 @@ const EventsList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // const eventsCollection = collection(db, 'events');
         const eventsSnapshot = await getDocs(collection(db, 'events'));
-        // console.log(eventsSnapshot)
-        // eventsSnapshot.map((doc)=>{
-        //   return doc.data()
-        // })
-
         const eventPromises = eventsSnapshot.docs.map(async (docRef) => {
           const event = {
             id: docRef.id,
@@ -38,16 +32,14 @@ const EventsList = () => {
             downvote: docRef.data().downvote || [],
           };
 
-            console.log(event.date)
-
-            const imagesCollection = collection(docRef.ref, 'images');
-            const imagesSnapshot = await getDocs(imagesCollection);
-            imagesSnapshot.forEach((imageDoc) => {
-              const imageUrl = imageDoc.data().imageUrls;
-              if (imageUrl) {
-                event.images.push(imageUrl[0]);
-              }
-            });
+          const imagesCollection = collection(docRef.ref, 'images');
+          const imagesSnapshot = await getDocs(imagesCollection);
+          imagesSnapshot.forEach((imageDoc) => {
+            const imageUrl = imageDoc.data().imageUrls;
+            if (imageUrl) {
+              event.images.push(imageUrl[0]);
+            }
+          });
 
           return event;
         });
@@ -110,6 +102,7 @@ const EventsList = () => {
         clearInterval(interval);
         setTimeRemaining(`0d 0h 0m 0s`);
         setVotingEnded(true);
+        winnerEvent(); // Call winnerEvent when voting ends
       }
     }, 1000);
 
@@ -124,6 +117,28 @@ const EventsList = () => {
       await setDoc(doc(db, 'settings', 'votingEndDate'), { date });
     } catch (error) {
       console.error('Error updating voting end date:', error);
+    }
+  };
+
+  const winnerEvent = async () => {
+    try {
+      let winningEvent = null;
+      let maxVotes = -1;
+
+      events.forEach((event) => {
+        const upvotes = event.upvote.length;
+        if (upvotes > maxVotes) {
+          maxVotes = upvotes;
+          winningEvent = event;
+        }
+      });
+
+      if (winningEvent) {
+        await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId: winningEvent.id });
+        console.log('Winner event stored in Firebase:', winningEvent);
+      }
+    } catch (error) {
+      console.error('Error determining and storing winner event:', error);
     }
   };
 
@@ -161,4 +176,3 @@ const EventsList = () => {
 };
 
 export default EventsList;
-
