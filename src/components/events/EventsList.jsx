@@ -229,12 +229,7 @@ const EventsList = () => {
             customInput={<TextField label="Voting End Date" />}
           />
           <AddEventButton />
-          <button
-                type="button"
-                className="view-password"
-                onClick={handleBack}>
-                Back
-          </button>
+        
         </div>
       )}
       <div className="events-list-container">

@@ -62,18 +62,21 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
 
   const handleUpvote = async () => {
     if (!hasUpvoted && event && event.upvote !== undefined && authUser) {
-      let newUpvotes = [...(event.upvote || []), authUser.uid];
-      let newDownvotes = event.downvote?.filter(uid => uid !== authUser.uid) || [];
+      const newUpvotes = new Set(event.upvote || []);
+      const newDownvotes = new Set(event.downvote || []);
 
-      setUpvoteCount(newUpvotes.length);
-      setDownvoteCount(newDownvotes.length);
+      newUpvotes.add(authUser.uid);
+      newDownvotes.delete(authUser.uid);
+
+      setUpvoteCount(newUpvotes.size);
+      setDownvoteCount(newDownvotes.size);
       setHasUpvoted(true);
       setHasDownvoted(false);
 
       try {
         await updateDoc(doc(db, 'events', event.id), {
-          upvote: newUpvotes,
-          downvote: newDownvotes,
+          upvote: Array.from(newUpvotes),
+          downvote: Array.from(newDownvotes),
         });
         console.log("Upvoted");
       } catch (error) {
@@ -84,18 +87,21 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
 
   const handleDownvote = async () => {
     if (!hasDownvoted && event && event.downvote !== undefined && authUser) {
-      let newDownvotes = [...(event.downvote || []), authUser.uid];
-      let newUpvotes = event.upvote?.filter(uid => uid !== authUser.uid) || [];
+      const newDownvotes = new Set(event.downvote || []);
+      const newUpvotes = new Set(event.upvote || []);
 
-      setUpvoteCount(newUpvotes.length);
-      setDownvoteCount(newDownvotes.length);
+      newDownvotes.add(authUser.uid);
+      newUpvotes.delete(authUser.uid);
+
+      setUpvoteCount(newUpvotes.size);
+      setDownvoteCount(newDownvotes.size);
       setHasUpvoted(false);
       setHasDownvoted(true);
 
       try {
         await updateDoc(doc(db, 'events', event.id), {
-          upvote: newUpvotes,
-          downvote: newDownvotes,
+          upvote: Array.from(newUpvotes),
+          downvote: Array.from(newDownvotes),
         });
         console.log("Downvoted");
       } catch (error) {
