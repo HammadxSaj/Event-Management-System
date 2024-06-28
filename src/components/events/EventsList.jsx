@@ -15,10 +15,11 @@ const EventsList = () => {
   const [userRole, setUserRole] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState('');
   const [votingEnded, setVotingEnded] = useState(false);
-  const [votingEndDate, setVotingEndDate] = useState(new Date('2024-06-25T11:13:00'));
-  const [winnerEvent, setWinnerEvent] = useState(null); // State to store winner event
-  const [winnerDetermined, setWinnerDetermined] = useState(false); // State to track if winner is determined
+  const [votingEndDate, setVotingEndDate] = useState(null);
+  const [winnerEvent, setWinnerEvent] = useState(null);
+  const [winnerDetermined, setWinnerDetermined] = useState(false);
 
+  // Fetch events, user role, voting end date, and winner event on component mount
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -77,9 +78,53 @@ const EventsList = () => {
 
           const now = new Date();
           setVotingEnded(now >= fetchedDate);
+
+          if (now >= fetchedDate) {
+            await fetchWinnerEvent(); // Ensure winner event is fetched if voting has ended
+          }
         }
       } catch (error) {
         console.error('Error fetching voting end date:', error);
+      }
+    };
+
+    const fetchWinnerEvent = async () => {
+      try {
+        const winnerEventDoc = await getDoc(doc(db, 'settings', 'winnerEvent'));
+        if (winnerEventDoc.exists()) {
+          const winnerEventId = winnerEventDoc.data().eventId;
+          const winnerEventDocRef = doc(db, 'events', winnerEventId);
+          const winnerEventDocSnapshot = await getDoc(winnerEventDocRef);
+
+          if (winnerEventDocSnapshot.exists()) {
+            const winnerEvent = {
+              id: winnerEventDocSnapshot.id,
+              title: winnerEventDocSnapshot.data().title,
+              date: winnerEventDocSnapshot.data().dateTime,
+              description: winnerEventDocSnapshot.data().description,
+              images: [], // Initialize images array
+            };
+
+            const imagesCollection = collection(winnerEventDocRef, 'images');
+            const imagesSnapshot = await getDocs(imagesCollection);
+            imagesSnapshot.forEach((imageDoc) => {
+              const imageUrl = imageDoc.data().imageUrls;
+              if (imageUrl) {
+                winnerEvent.images.push(imageUrl[0]);
+              }
+            });
+
+            setWinnerEvent(winnerEvent);
+            setWinnerDetermined(true);
+            console.log('Winner event fetched from Firebase:', winnerEvent);
+          } else {
+            console.log('Winner event document does not exist.');
+          }
+        } else {
+          console.log('Winner event ID does not exist in settings.');
+        }
+      } catch (error) {
+        console.error('Error fetching winner event from Firebase:', error);
       }
     };
 
@@ -88,24 +133,27 @@ const EventsList = () => {
     fetchVotingEndDate();
   }, []);
 
+  // Countdown timer logic
   useEffect(() => {
     const interval = setInterval(() => {
-      const now = new Date();
-      const distance = votingEndDate - now;
+      if (votingEndDate) {
+        const now = new Date();
+        const distance = votingEndDate - now;
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      setTimeRemaining(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+        setTimeRemaining(`${days}d ${hours}h ${minutes}m ${seconds}s`);
 
-      if (distance < 0) {
-        clearInterval(interval);
-        setTimeRemaining(`0d 0h 0m 0s`);
-        setVotingEnded(true);
-        if (!winnerDetermined) {
-          determineWinner(); // Call determineWinner only if winner is not already determined
+        if (distance < 0) {
+          clearInterval(interval);
+          setTimeRemaining(`0d 0h 0m 0s`);
+          setVotingEnded(true);
+          if (!winnerDetermined) {
+            determineWinner();
+          }
         }
       }
     }, 1000);
@@ -124,7 +172,7 @@ const EventsList = () => {
     }
   };
 
-  const determineWinner = () => {
+  const determineWinner = async () => {
     try {
       let winningEvent = null;
       let maxVotes = -1;
@@ -138,9 +186,9 @@ const EventsList = () => {
       });
 
       if (winningEvent) {
-        setWinnerEvent(winningEvent); // Set winner event in state
-        storeWinnerEvent(winningEvent.id); // Optionally, store winner event ID in Firebase
-        setWinnerDetermined(true); // Set winner determined flag
+        setWinnerEvent(winningEvent);
+        await storeWinnerEvent(winningEvent.id);
+        setWinnerDetermined(true);
         console.log('Winner event:', winningEvent);
       }
     } catch (error) {
@@ -175,15 +223,30 @@ const EventsList = () => {
       <div className="events-list-container">
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          <h2> Countdown Timer</h2>
+          <h2>Countdown Timer</h2>
           <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} />
         </div>
-        {votingEnded && winnerEvent && ( // Render winner event section if voting has ended and winner has not been determined
+        {votingEnded && winnerEvent && (
+          <>
+          <h2>The Winner Event!</h2>
           <div className="winner-event-section">
-            <h2>The Winner Event!</h2>
-            <DisplayCards event={winnerEvent} votingEnded={votingEnded} />
+            
+            <h3>{`Title: ${winnerEvent.title}`}</h3>
+            <p>{`Description: ${winnerEvent.description}`}</p>
+            <p>{`Date: ${winnerEvent.date}`}</p>
+            <div className="winner-event-images">
+              {winnerEvent.images && winnerEvent.images.length > 0 ? (
+                winnerEvent.images.map((image, index) => (
+                  <img key={index} src={image} alt={`Event Image ${index + 1}`} className="winner-event-image" />
+                ))
+              ) : (
+                <p>No images available for this event.</p>
+              )}
+            </div>
           </div>
+          </>
         )}
+        <h2>Total Events</h2>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
