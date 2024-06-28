@@ -9,6 +9,7 @@ import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 import './EventsList.css';
 import AddEventButton from '../admin/AddEventButton';
 import CountdownTimer from './CountdownTimer';
+import { useNavigate } from 'react-router-dom';
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -18,6 +19,11 @@ const EventsList = () => {
   const [votingEndDate, setVotingEndDate] = useState(null);
   const [winnerEvent, setWinnerEvent] = useState(null);
   const [winnerDetermined, setWinnerDetermined] = useState(false);
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate('/');
+  };
 
   // Fetch events, user role, voting end date, and winner event on component mount
   useEffect(() => {
@@ -223,6 +229,12 @@ const EventsList = () => {
             customInput={<TextField label="Voting End Date" />}
           />
           <AddEventButton />
+          <button
+                type="button"
+                className="view-password"
+                onClick={handleBack}>
+                Back
+          </button>
         </div>
       )}
       <div className="events-list-container">
@@ -245,6 +257,7 @@ const EventsList = () => {
             </Grid>
           ))}
         </Grid>
+
       </div>
     </>
   );

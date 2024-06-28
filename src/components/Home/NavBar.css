@@ -1,3 +1,8 @@
+body{
+    color:white;
+}
+
+
 .custom-NavBar {
     background-color: #123456;
 }
@@ -6,6 +11,7 @@
     color: #fcfcfc;
     margin-right: 20px;
     cursor: pointer;
+    
 }
 
 /*upon hover change color of signup button*/
@@ -22,12 +28,13 @@
 
 /*upon hover change color of login button*/
 .custom-login-button:hover {
-    color: #afa9a9;
+    color: #ffffff;
 }
 
 @media (max-width: 992px) {
     .custom-NavBar .nav-link {
         margin: 10px 0;
+        color: white; 
         /* Add margin to nav links in dropdown */
     }
 }
