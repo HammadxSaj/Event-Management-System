@@ -103,6 +103,8 @@ const EventsList = () => {
               date: winnerEventDocSnapshot.data().dateTime,
               description: winnerEventDocSnapshot.data().description,
               images: [], // Initialize images array
+              upvote: winnerEventDocSnapshot.data().upvote,
+              downvote: winnerEventDocSnapshot.data().downvote,
             };
 
             const imagesCollection = collection(winnerEventDocRef, 'images');
@@ -229,7 +231,8 @@ const EventsList = () => {
         {votingEnded && winnerEvent && (
           <>
           <h2>The Winner Event!</h2>
-          <div className="winner-event-section">
+          <DisplayCards event={winnerEvent} votingEnded={votingEnded} />
+          {/* <div className="winner-event-section">
             
             <h3>{`Title: ${winnerEvent.title}`}</h3>
             <p>{`Description: ${winnerEvent.description}`}</p>
@@ -243,7 +246,7 @@ const EventsList = () => {
                 <p>No images available for this event.</p>
               )}
             </div>
-          </div>
+          </div> */}
           </>
         )}
         <h2>Total Events</h2>
