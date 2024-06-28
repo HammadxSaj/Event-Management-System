@@ -53,7 +53,7 @@ const EventDetails = () => {
       try {
         const eventRef = doc(db, "events", eventId);
         const eventDoc = await getDoc(eventRef);
-
+        
         if (eventDoc.exists()) {
           const eventData = eventDoc.data();
 

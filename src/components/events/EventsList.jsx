@@ -16,6 +16,8 @@ const EventsList = () => {
   const [timeRemaining, setTimeRemaining] = useState('');
   const [votingEnded, setVotingEnded] = useState(false);
   const [votingEndDate, setVotingEndDate] = useState(new Date('2024-06-25T11:13:00'));
+  const [winnerEvent, setWinnerEvent] = useState(null); // State to store winner event
+  const [winnerDetermined, setWinnerDetermined] = useState(false); // State to track if winner is determined
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -102,12 +104,14 @@ const EventsList = () => {
         clearInterval(interval);
         setTimeRemaining(`0d 0h 0m 0s`);
         setVotingEnded(true);
-        winnerEvent(); // Call winnerEvent when voting ends
+        if (!winnerDetermined) {
+          determineWinner(); // Call determineWinner only if winner is not already determined
+        }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [votingEndDate]);
+  }, [votingEndDate, winnerDetermined]);
 
   const handleDateUpdate = async (date) => {
     setVotingEndDate(date);
@@ -120,7 +124,7 @@ const EventsList = () => {
     }
   };
 
-  const winnerEvent = async () => {
+  const determineWinner = () => {
     try {
       let winningEvent = null;
       let maxVotes = -1;
@@ -134,11 +138,22 @@ const EventsList = () => {
       });
 
       if (winningEvent) {
-        await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId: winningEvent.id });
-        console.log('Winner event stored in Firebase:', winningEvent);
+        setWinnerEvent(winningEvent); // Set winner event in state
+        storeWinnerEvent(winningEvent.id); // Optionally, store winner event ID in Firebase
+        setWinnerDetermined(true); // Set winner determined flag
+        console.log('Winner event:', winningEvent);
       }
     } catch (error) {
-      console.error('Error determining and storing winner event:', error);
+      console.error('Error determining winner event:', error);
+    }
+  };
+
+  const storeWinnerEvent = async (eventId) => {
+    try {
+      await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId });
+      console.log('Winner event stored in Firebase:', eventId);
+    } catch (error) {
+      console.error('Error storing winner event in Firebase:', error);
     }
   };
 
@@ -163,6 +178,12 @@ const EventsList = () => {
           <h2> Countdown Timer</h2>
           <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} />
         </div>
+        {votingEnded && winnerEvent && ( // Render winner event section if voting has ended and winner has not been determined
+          <div className="winner-event-section">
+            <h2>The Winner Event!</h2>
+            <DisplayCards event={winnerEvent} votingEnded={votingEnded} />
+          </div>
+        )}
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
