@@ -487,7 +487,7 @@ const EventDetails = () => {
                     <Box display="flex" justifyContent="flex-end">
                       {editCommentId === comment.id ? (
                         <>
-                          <Button
+                          {/* <Button
                             onClick={handleSaveEditComment}
                             color="primary"
                           >
@@ -495,17 +495,17 @@ const EventDetails = () => {
                           </Button>
                           <Button onClick={handleCancelEditComment}>
                             Cancel
-                          </Button>
+                          </Button> */}
                         </>
                       ) : (
                         <>
-                          <IconButton
+                          {/* <IconButton
                             onClick={() =>
                               handleEditComment(comment.id, comment.text)
                             }
                           >
                             <EditIcon />
-                          </IconButton>
+                          </IconButton> */}
                           <IconButton
                             onClick={() => handleDeleteComment(comment.id)}
                           >
