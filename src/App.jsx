@@ -26,7 +26,7 @@ function App() {
       <BrowserRouter>
         <CssBaseline />
         <AuthProvider>
-          <AuthDetails /> {/* Add AuthDetails component here */}
+          <AuthDetails /> 
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn />} />

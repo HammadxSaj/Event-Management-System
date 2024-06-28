@@ -1,12 +1,11 @@
+/* Homepagewhite.css */
 .container2 {
     margin-top: 50px;
 }
 
 h1 {
     color: #ff007f;
-    font-weight: bold;
 }
-
 
 .illustration {
     text-align: center;
@@ -16,3 +15,6 @@ h1 {
     max-width: 80%;
     height: auto;
 }
+
+/* HomepageNav.css */
+/* Your existing styles here */

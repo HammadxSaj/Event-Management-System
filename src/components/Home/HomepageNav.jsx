@@ -1,22 +1,34 @@
 import React from 'react';
-import './HomepageNav.css'
-import Button from 'react-bootstrap/Button';
+import { Button, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import './HomepageNav.css';
+import Logo from '../../../src/assets/LogoBGremoved.png'
 
-function HomepageNav(){
-
-    const navigate = useNavigate()
+function HomepageNav() {
+    const navigate = useNavigate();
     return (
-        <div className="home-page">
-            <img src="src/assets/LogoBGremoved.png" alt="Logo" style={{width: 400, height:400, paddingTop:0}}/>
-            <h1>One Spot</h1>
-            <h2>Event Planner</h2>
-            <p>Curate Unforgettable Events</p>
-            <div className="buttons">
-                <Button className="get-started" style={{backgroundColor: '#646cff', color: 'white'}} onClick={() => navigate('/signup')}>Get Started</Button>
-                <Button className="login" style={{backgroundColor: '#646cff', color: 'black'}} onClick={() => navigate('/signin')}>Login</Button>
-            </div>
-        </div>
+        <Box className="home-page">
+            <img src={Logo} alt="Logo" style={{ width: 400, height: 400, paddingTop: 0 }} />
+            <Typography variant="h1">One Spot</Typography>
+            <Typography variant="h2">Event Planner</Typography>
+            <Typography variant="body1">Curate Unforgettable Events</Typography>
+            <Box className="buttons">
+                <Button
+                    className="get-started"
+                    sx={{ backgroundColor: '#646cff', color: 'white', padding: '1rem 1.5rem', borderRadius: '2rem', fontSize: '1rem' }}
+                    onClick={() => navigate('/signup')}
+                >
+                    Get Started
+                </Button>
+                <Button
+                    className="login"
+                    sx={{ backgroundColor: '#646cff', color: 'black', padding: '1rem 1.5rem', borderRadius: '2rem', fontSize: '1rem' }}
+                    onClick={() => navigate('/signin')}
+                >
+                    Login
+                </Button>
+            </Box>
+        </Box>
     );
 }
 

@@ -198,6 +198,9 @@ const EventsList = () => {
     }
   };
 
+  console.log("Voting: ", votingEnded);
+  console.log("Winner: ", winnerDetermined);
+
   const storeWinnerEvent = async (eventId) => {
     try {
       await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId });
@@ -228,32 +231,17 @@ const EventsList = () => {
           <h2>Countdown Timer</h2>
           <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} />
         </div>
-        {votingEnded && winnerEvent && (
-          <>
-          <h2>The Winner Event!</h2>
-          <DisplayCards event={winnerEvent} votingEnded={votingEnded} />
-          {/* <div className="winner-event-section">
-            
-            <h3>{`Title: ${winnerEvent.title}`}</h3>
-            <p>{`Description: ${winnerEvent.description}`}</p>
-            <p>{`Date: ${winnerEvent.date}`}</p>
-            <div className="winner-event-images">
-              {winnerEvent.images && winnerEvent.images.length > 0 ? (
-                winnerEvent.images.map((image, index) => (
-                  <img key={index} src={image} alt={`Event Image ${index + 1}`} className="winner-event-image" />
-                ))
-              ) : (
-                <p>No images available for this event.</p>
-              )}
-            </div>
-          </div> */}
-          </>
+        {votingEnded && winnerEvent && ( // Render winner event section if voting has ended and winner has not been determined
+          <div className="winner-event-section">
+            <h2>The Winner Event!</h2>
+            <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop = {true} />
+          </div>
         )}
         <h2>Total Events</h2>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} />
+              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop = {false} />
             </Grid>
           ))}
         </Grid>

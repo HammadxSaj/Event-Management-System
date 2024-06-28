@@ -31,19 +31,11 @@
     justify-content: center;
 }
 
-.buttons button {
-    padding: 1rem 1.5rem;
-    border-radius: 4rem;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-/*upon hoover, buttons expand smoothly*/
-.buttons button:hover {
+/*upon hover, buttons expand smoothly*/
+.buttons .MuiButton-root:hover {
     transform: scale(1.1);
     transition: transform 0.3s;
 }
-
 
 @media (max-width: 800px) {
     .home-page {

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import './DisplayCards.css'; 
-import eventi from '../../assets/event1.jpg'; 
-import { updateDoc, doc } from 'firebase/firestore'; 
-import { db } from '../../Firebase'; 
-import { useAuth } from '../auth/AuthContext'; 
+import './DisplayCards.css';
+import eventi from '../../assets/event1.jpg';
+import { updateDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../Firebase';
+import { useAuth } from '../auth/AuthContext';
 
-const DisplayCards = ({ event, votingEnded}) => {
+const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -17,6 +17,9 @@ const DisplayCards = ({ event, votingEnded}) => {
   const [downvoteCount, setDownvoteCount] = useState(0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
+  const [rsvp, setRsvp] = useState(null);
+  const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [isWinner, setIsWinner] = useState(false);
 
   useEffect(() => {
     if (event && authUser) {
@@ -24,8 +27,33 @@ const DisplayCards = ({ event, votingEnded}) => {
       setDownvoteCount(event.downvote ? event.downvote.length : 0);
       setHasUpvoted(event.upvote && event.upvote.includes(authUser.uid));
       setHasDownvoted(event.downvote && event.downvote.includes(authUser.uid));
+
+      fetchRsvp();
+      checkIfWinner();
     }
   }, [event, authUser]);
+
+  const fetchRsvp = async () => {
+    try {
+      const rsvpDoc = await getDoc(doc(db, 'events', event.id, 'rsvps', authUser.uid));
+      if (rsvpDoc.exists()) {
+        setRsvp(rsvpDoc.data().response);
+      }
+    } catch (error) {
+      console.error("Error fetching RSVP:", error);
+    }
+  };
+
+  const checkIfWinner = async () => {
+    try {
+      const winnerEventDoc = await getDoc(doc(db, 'settings', 'winnerEvent'));
+      if (winnerEventDoc.exists() && winnerEventDoc.data().eventId === event.id) {
+        setIsWinner(true);
+      }
+    } catch (error) {
+      console.error("Error checking winner event:", error);
+    }
+  };
 
   const handleDetails = (e) => {
     e.stopPropagation();
@@ -76,6 +104,25 @@ const DisplayCards = ({ event, votingEnded}) => {
     }
   };
 
+  const handleRsvpChange = async (e) => {
+    setRsvpLoading(true);
+    const response = e.target.value;
+    setRsvp(response);
+
+    try {
+      const rsvpDocRef = doc(db, 'events', event.id, 'rsvps', authUser.uid);
+      await setDoc(rsvpDocRef, {
+        response: response,
+        email: authUser.email
+      });
+      console.log("RSVP saved");
+    } catch (error) {
+      console.error("Error saving RSVP:", error);
+    }
+
+    setRsvpLoading(false);
+  };
+
   return (
     <Card className="card">
       <CardActionArea onClick={handleDetails}>
@@ -92,13 +139,29 @@ const DisplayCards = ({ event, votingEnded}) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {new Date(event.date).toLocaleString()}
-            
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {event.description}
           </Typography>
         </CardContent>
       </CardActionArea>
+      <CardContent className="card-content">
+        {isWinner && winningEventprop && (
+            <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
+              <Typography variant="h6">RSVP</Typography>
+              <RadioGroup
+                aria-label="rsvp"
+                name="rsvp"
+                value={rsvp}
+                onChange={handleRsvpChange}
+                row
+              >
+                <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
+                <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
+              </RadioGroup>
+            </FormControl>
+          )}
+      </CardContent>
       <CardActions className="card-actions">
         <Button
           size="small"
@@ -114,7 +177,7 @@ const DisplayCards = ({ event, votingEnded}) => {
           color="secondary"
           onClick={handleDownvote}
           startIcon={<ArrowDownwardIcon />}
-          disabled={hasDownvoted || votingEnded} 
+          disabled={hasDownvoted || votingEnded}
         >
           Downvote ({downvoteCount})
         </Button>
