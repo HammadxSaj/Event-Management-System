@@ -283,15 +283,9 @@ const EventsList = () => {
           </div>
 
           )}
-          {!votingStarted && (
+          {!votingStarted && votingStartDate && (
             <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
           )}
-
-
-
-
-          
-       
         </div>
 
       
