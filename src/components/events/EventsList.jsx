@@ -183,19 +183,22 @@ const EventsList = () => {
     try {
       let winningEvent = null;
       let maxVotes = -1;
-
+      let minDownvotes = Infinity;
+  
       events.forEach((event) => {
         const upvotes = event.upvote.length;
-        if (upvotes > maxVotes) {
+        const downvotes = event.downvote.length;
+  
+        if (upvotes > maxVotes || (upvotes === maxVotes && downvotes < minDownvotes)) {
           maxVotes = upvotes;
+          minDownvotes = downvotes;
           winningEvent = event;
         }
       });
-
+  
       if (winningEvent) {
         setWinnerEvent(winningEvent);
         await storeWinnerEvent(winningEvent.id);
-        
         setWinnerDetermined(true);
         console.log('Winner event:', winningEvent);
       }
@@ -203,6 +206,7 @@ const EventsList = () => {
       console.error('Error determining winner event:', error);
     }
   };
+  
 
   console.log("Voting: ", votingEnded);
   console.log("Winner: ", winnerDetermined);
