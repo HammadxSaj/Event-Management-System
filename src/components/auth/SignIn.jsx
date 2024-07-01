@@ -74,6 +74,9 @@ const SignIn = () => {
     navigate('/'); // Redirect to home or previous page
   };
 
+  const handleSignUp = () => {
+    navigate('/signup'); // Redirect to Sign Up page
+  }
   return (
     <>
       <div className='auth-container'>
@@ -111,7 +114,7 @@ const SignIn = () => {
             </div>
             <button type='submit'>Log In</button>
           </form>
-          <button className='sign-up-button'>Sign Up</button>
+          <button className='sign-up-button' onClick={handleSignUp}>Sign Up</button>
         </div>
       </div>
       <AuthDetails />

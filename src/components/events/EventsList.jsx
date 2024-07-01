@@ -60,20 +60,20 @@ const EventsList = () => {
       }
     };
 
-    const fetchUserRole = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const userDocRef = doc(db, 'users', user.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            setUserRole(userDoc.data().role);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-      }
-    };
+    // const fetchUserRole = async () => {
+    //   try {
+    //     const user = auth.currentUser;
+    //     if (user) {
+    //       const userDocRef = doc(db, 'users', user.uid);
+    //       const userDoc = await getDoc(userDocRef);
+    //       if (userDoc.exists()) {
+    //         setUserRole(userDoc.data().role);
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching user role:', error);
+    //   }
+    // };
 
     const fetchVotingEndDate = async () => {
       try {
@@ -137,7 +137,6 @@ const EventsList = () => {
     };
 
     fetchEvents();
-    fetchUserRole();
     fetchVotingEndDate();
   }, []);
 
@@ -216,6 +215,25 @@ const EventsList = () => {
       console.error('Error storing winner event in Firebase:', error);
     }
   };
+
+  const fetchUserRole = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            setUserRole(userDoc.data().role);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+
+  fetchUserRole();
+
+  console.log('The user is admin/user:', userRole);
 
   return (
     <>
