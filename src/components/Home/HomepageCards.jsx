@@ -39,7 +39,7 @@ function HomepageCards() {
   return (
     <Container style={{ paddingTop: 100, backgroundColor: '#123456', paddingBottom: 100, maxWidth: 1700, textAlign: 'center' }}>
       <Box sx={{ marginBottom: 4, color: "white" }}>
-        <Typography variant="h4" component="h2" gutterBottom>
+        <Typography variant="h4" component="h2" gutterBottom style={{color: "burlywood"}}>
           Seamless Event Planning and Organization
         </Typography>
       </Box>
