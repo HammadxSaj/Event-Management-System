@@ -20,6 +20,8 @@ const EventsList = () => {
   const [winnerEvent, setWinnerEvent] = useState(null);
   const [winnerDetermined, setWinnerDetermined] = useState(false);
   const navigate = useNavigate();
+  const [votingStartDate, setVotingStartDate] = useState(null); // Added state for voting start date
+  const [votingStarted, setVotingStarted] = useState(false);
 
   const handleBack = () => {
     navigate('/');
@@ -60,21 +62,6 @@ const EventsList = () => {
       }
     };
 
-    // const fetchUserRole = async () => {
-    //   try {
-    //     const user = auth.currentUser;
-    //     if (user) {
-    //       const userDocRef = doc(db, 'users', user.uid);
-    //       const userDoc = await getDoc(userDocRef);
-    //       if (userDoc.exists()) {
-    //         setUserRole(userDoc.data().role);
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching user role:', error);
-    //   }
-    // };
-
     const fetchVotingEndDate = async () => {
       try {
         const votingEndDateDoc = await getDoc(doc(db, 'settings', 'votingEndDate'));
@@ -91,6 +78,21 @@ const EventsList = () => {
         }
       } catch (error) {
         console.error('Error fetching voting end date:', error);
+      }
+    };
+
+    const fetchVotingStartDate = async () => {
+      try {
+        const votingStartDateDoc = await getDoc(doc(db, 'settings', 'votingStartDate'));
+        if (votingStartDateDoc.exists()) {
+          const fetchedDate = votingStartDateDoc.data().date.toDate();
+          setVotingStartDate(fetchedDate);
+
+          const now = new Date();
+          setVotingStarted(now >= fetchedDate);
+        }
+      } catch (error) {
+        console.error('Error fetching voting start date:', error);
       }
     };
 
@@ -138,6 +140,7 @@ const EventsList = () => {
 
     fetchEvents();
     fetchVotingEndDate();
+    fetchVotingStartDate();
   }, []);
 
   // Countdown timer logic
@@ -160,13 +163,14 @@ const EventsList = () => {
           console.log("Time is over");
           setVotingEnded(true);
           determineWinner();
-          
+        } else if (!votingStarted && now >= votingStartDate) {
+          setVotingStarted(true);
         }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [votingEndDate, winnerDetermined]);
+  }, [votingEndDate, votingStartDate, winnerDetermined]);
 
   const handleDateUpdate = async (date) => {
     setVotingEndDate(date);
@@ -179,23 +183,34 @@ const EventsList = () => {
     }
   };
 
+  const handleStartDateUpdate = async (date) => {
+    setVotingStartDate(date);
+    setVotingStarted(false);
+
+    try {
+      await setDoc(doc(db, 'settings', 'votingStartDate'), { date });
+    } catch (error) {
+      console.error('Error updating voting start date:', error);
+    }
+  };
+
   const determineWinner = async () => {
     try {
       let winningEvent = null;
       let maxVotes = -1;
       let minDownvotes = Infinity;
-  
+
       events.forEach((event) => {
         const upvotes = event.upvote.length;
         const downvotes = event.downvote.length;
-  
+
         if (upvotes > maxVotes || (upvotes === maxVotes && downvotes < minDownvotes)) {
           maxVotes = upvotes;
           minDownvotes = downvotes;
           winningEvent = event;
         }
       });
-  
+
       if (winningEvent) {
         setWinnerEvent(winningEvent);
         await storeWinnerEvent(winningEvent.id);
@@ -206,10 +221,6 @@ const EventsList = () => {
       console.error('Error determining winner event:', error);
     }
   };
-  
-
-  console.log("Voting: ", votingEnded);
-  console.log("Winner: ", winnerDetermined);
 
   const storeWinnerEvent = async (eventId) => {
     try {
@@ -221,19 +232,19 @@ const EventsList = () => {
   };
 
   const fetchUserRole = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const userDocRef = doc(db, 'users', user.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            setUserRole(userDoc.data().role);
-          }
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setUserRole(userDoc.data().role);
         }
-      } catch (error) {
-        console.error('Error fetching user role:', error);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+    }
+  };
 
   fetchUserRole();
 
@@ -251,31 +262,53 @@ const EventsList = () => {
             dateFormat="Pp"
             customInput={<TextField label="Voting End Date" />}
           />
+          <DatePicker
+            selected={votingStartDate}
+            onChange={handleStartDateUpdate}
+            showTimeSelect
+            dateFormat="Pp"
+            customInput={<TextField label="Voting Start Date" />}
+          />
           <AddEventButton />
-        
         </div>
       )}
       <div className="events-list-container">
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          <h2>Countdown Timer</h2>
-          <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} />
+          
+          {votingStarted &&( // Render winner event section if voting has ended and winner has not been determined
+          <div>
+            <h2>Countdown Timer</h2>
+            <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted = {votingStarted} />
+          </div>
+
+          )}
+          {!votingStarted && (
+            <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
+          )}
+
+
+
+
+          
+       
         </div>
+
+      
         {votingEnded && winnerEvent && ( // Render winner event section if voting has ended and winner has not been determined
           <div className="winner-event-section">
             <h2>The Winner Event!</h2>
-            <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop = {true} />
+            <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop={true} votingStarted = {votingStarted}/>
           </div>
         )}
         <h2>Total Events</h2>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop = {false} />
+              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false}  votingStarted = {votingStarted} />
             </Grid>
           ))}
         </Grid>
-
       </div>
     </>
   );

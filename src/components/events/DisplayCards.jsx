@@ -10,7 +10,7 @@ import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../Firebase';
 import { useAuth } from '../auth/AuthContext';
 
-const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
+const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -23,13 +23,14 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
   const [isWinner, setIsWinner] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [userRole, setUserRole] = useState(null);
-
+  
   useEffect(() => {
     if (event && authUser) {
       setUpvoteCount(event.upvote ? event.upvote.length : 0);
       setDownvoteCount(event.downvote ? event.downvote.length : 0);
       setHasUpvoted(event.upvote && event.upvote.includes(authUser.uid));
       setHasDownvoted(event.downvote && event.downvote.includes(authUser.uid));
+    
 
       fetchRsvp();
       checkIfWinner();
@@ -149,6 +150,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
       await deleteDoc(doc(db, 'events', event.id));
       setOpenDeleteDialog(false);
       window.location.reload(); // Reload the page to update the list of events
+
+
     } catch (error) {
       console.error('Error deleting event:', error);
     }
@@ -240,7 +243,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
           color="primary"
           onClick={handleUpvote}
           startIcon={<ArrowUpwardIcon />}
-          disabled={hasUpvoted || votingEnded}
+          disabled={hasUpvoted || votingEnded || !votingStarted}
+         
         >
           Upvote ({upvoteCount})
         </Button>
@@ -249,7 +253,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
           color="secondary"
           onClick={handleDownvote}
           startIcon={<ArrowDownwardIcon />}
-          disabled={hasDownvoted || votingEnded}
+          disabled={hasDownvoted || votingEnded || !votingStarted}
+          
         >
           Downvote ({downvoteCount})
         </Button>

@@ -2,7 +2,7 @@ import React from 'react';
 import Confetti from 'react-confetti';
 import './CountdownTimer.css'; // Import the CSS file
 
-const CountdownTimer = ({ timeRemaining, votingEnded }) => {
+const CountdownTimer = ({ timeRemaining, votingEnded, votingStarted }) => {
   const getTimeComponents = (time) => {
     const [days, hours, minutes, seconds] = time.split(/d|h|m|s/).map(Number);
     return { days, hours, minutes, seconds };
