@@ -1,24 +1,23 @@
-body{
-    color:white;
+body {
+    color: white;
 }
 
-
 .custom-NavBar {
-    background-color: #123456;
+    background-color: #123456 !important;
 }
 
 .custom-signup-button {
     color: #fcfcfc;
     margin-right: 20px;
     cursor: pointer;
-    
 }
 
-/*upon hover change color of signup button*/
+/* Upon hover change color of signup button */
 .custom-signup-button:hover {
     color: #afa9a9;
+    transform: scale(1.1);
+    transition: transform 0.3s;
 }
-
 
 .custom-login-button {
     color: #fcfcfc;
@@ -26,15 +25,28 @@ body{
     cursor: pointer;
 }
 
-/*upon hover change color of login button*/
+/* Upon hover change color of login button */
 .custom-login-button:hover {
-    color: #ffffff;
+    color: #afa9a9;
+    transform: scale(1.1);
+    transition: transform 0.3s;
 }
 
+.custom-logout-button:hover{
+    color: #afa9a9;
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
+
+/* .buttons .MuiButton-root:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s;
+} */
+
 @media (max-width: 992px) {
-    .custom-NavBar .nav-link {
+    .custom-NavBar .MuiButton-root {
         margin: 10px 0;
-        color: white; 
+        color: white;
         /* Add margin to nav links in dropdown */
     }
 }

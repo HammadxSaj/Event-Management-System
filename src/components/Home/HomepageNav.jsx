@@ -22,7 +22,7 @@ function HomepageNav() {
                 </Button>
                 <Button
                     className="login"
-                    sx={{ backgroundColor: '#646cff', color: 'black', padding: '1rem 1.5rem', borderRadius: '2rem', fontSize: '1rem' }}
+                    sx={{ backgroundColor: '#646cff', color: 'white', padding: '1rem 1.5rem', borderRadius: '2rem', fontSize: '1rem' }}
                     onClick={() => navigate('/signin')}
                 >
                     Login
