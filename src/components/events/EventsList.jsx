@@ -158,10 +158,10 @@ const EventsList = () => {
         if (distance < 0) {
           clearInterval(interval);
           setTimeRemaining(`0d 0h 0m 0s`);
+          console.log("Time is over");
           setVotingEnded(true);
-          if (!winnerDetermined) {
-            determineWinner();
-          }
+          determineWinner();
+          
         }
       }
     }, 1000);
@@ -196,6 +196,7 @@ const EventsList = () => {
       if (winningEvent) {
         setWinnerEvent(winningEvent);
         await storeWinnerEvent(winningEvent.id);
+        
         setWinnerDetermined(true);
         console.log('Winner event:', winningEvent);
       }

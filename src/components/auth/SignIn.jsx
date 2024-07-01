@@ -3,9 +3,9 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
-import { auth, db } from '../../Firebase'; // Ensure you import db for Firestore
+import { auth, db } from '../../Firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import './SignUp.css'; // Make sure SignIn.css exists and contains necessary styles
+import './SignIn.css'; // Make sure SignIn.css exists and contains necessary styles
 import logo from '../../assets/Logo.png';
 import AuthDetails from './AuthDetails';
 import ErrorMessage from './ErrorMessage'; // Import ErrorMessage component if available
@@ -76,9 +76,12 @@ const SignIn = () => {
 
   return (
     <>
-      <div className='sign-in-container'>
-        <button className='back-button' onClick={handleBack}>Back</button>
+      <div className='auth-container'>
+        <div className='auth-bg'>
+          {/* You can add any background image or content here */}
+        </div>
         <div className='auth-form'>
+          <button className='back-button' onClick={handleBack}>Back</button>
           <img src={logo} alt="Logo" className='logo' />
           <h1>Log In</h1>
           {errorMessage && <ErrorMessage message={errorMessage} />} {/* Display error message if present */}
@@ -108,8 +111,6 @@ const SignIn = () => {
             </div>
             <button type='submit'>Log In</button>
           </form>
-        </div>
-        <div className='auth-background'>
           <button className='sign-up-button'>Sign Up</button>
         </div>
       </div>
