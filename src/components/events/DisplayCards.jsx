@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './DisplayCards.css';
 import eventi from '../../assets/event1.jpg';
-import { updateDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../Firebase';
 import { useAuth } from '../auth/AuthContext';
 
@@ -20,6 +21,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
   const [rsvp, setRsvp] = useState(null);
   const [rsvpLoading, setRsvpLoading] = useState(false);
   const [isWinner, setIsWinner] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     if (event && authUser) {
@@ -30,6 +33,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
 
       fetchRsvp();
       checkIfWinner();
+      fetchUserRole();
     }
   }, [event, authUser]);
 
@@ -52,6 +56,17 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
       }
     } catch (error) {
       console.error("Error checking winner event:", error);
+    }
+  };
+
+  const fetchUserRole = async () => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', authUser.uid));
+      if (userDoc.exists()) {
+        setUserRole(userDoc.data().role);
+      }
+    } catch (error) {
+      console.error("Error fetching user role:", error);
     }
   };
 
@@ -129,6 +144,24 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
     setRsvpLoading(false);
   };
 
+  const handleDeleteEvent = async () => {
+    try {
+      await deleteDoc(doc(db, 'events', event.id));
+      setOpenDeleteDialog(false);
+      window.location.reload(); // Reload the page to update the list of events
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
+
+  const openDialog = () => {
+    setOpenDeleteDialog(true);
+  };
+
+  const closeDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
   return (
     <Card className="card">
       <CardActionArea onClick={handleDetails}>
@@ -151,22 +184,55 @@ const DisplayCards = ({ event, votingEnded, winningEventprop }) => {
           </Typography>
         </CardContent>
       </CardActionArea>
+      {userRole === 'admin' && (
+        <CardActions className="card-actions">
+          <Button
+            size="small"
+            color="error"
+            onClick={openDialog}
+            startIcon={<DeleteIcon />}
+          >
+            Delete Event
+          </Button>
+          <Dialog
+            open={openDeleteDialog}
+            onClose={closeDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to delete this event? This action cannot be undone.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={closeDialog} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleDeleteEvent} color="error" autoFocus>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </CardActions>
+      )}
       <CardContent className="card-content">
         {isWinner && winningEventprop && (
-            <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
-              <Typography variant="h6">RSVP</Typography>
-              <RadioGroup
-                aria-label="rsvp"
-                name="rsvp"
-                value={rsvp}
-                onChange={handleRsvpChange}
-                row
-              >
-                <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
-                <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
-              </RadioGroup>
-            </FormControl>
-          )}
+          <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
+            <Typography variant="h6">RSVP</Typography>
+            <RadioGroup
+              aria-label="rsvp"
+              name="rsvp"
+              value={rsvp}
+              onChange={handleRsvpChange}
+              row
+            >
+              <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
+              <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
+            </RadioGroup>
+          </FormControl>
+        )}
       </CardContent>
       <CardActions className="card-actions">
         <Button
