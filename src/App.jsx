@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import SignIn from './components/auth/SignIn';
@@ -17,6 +18,9 @@ import EventDetails from './components/events/EventDetails';
 import User from './components/auth/User';
 import { AuthProvider } from './components/auth/AuthContext';
 import AuthDetails from './components/auth/AuthDetails'; // Import AuthDetails component
+import IdeasPage from './components/events/types/IdeasPage';
+import IdeaForm from './components/admin/IdeaForm';
+
 
 function App() {
   const [count, setCount] = useState(0);
@@ -34,6 +38,8 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/user" element={<User />} />
             <Route path="/event" element={<EventsPage />} />
+            <Route path="/event/:eventId/ideas" element={<IdeasPage />} />
+           <Route path="/event/:eventId/ideaform" element={<IdeaForm />} />
             <Route path="/event/:eventId" element={<EventDetails />} />
             <Route path="/eventform" element={<EventForm />} />
           </Routes>

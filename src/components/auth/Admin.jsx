@@ -9,6 +9,10 @@ export default function Admin() {
     navigate('/event');
   };
 
+  const handleIdeas = () => {
+    navigate('/ideas');
+  }
+
   return (
     <Container>
       <Typography variant="h1" gutterBottom>
@@ -17,6 +21,11 @@ export default function Admin() {
       <Button variant="contained" color="primary" onClick={handleNavigate}>
         View Events
       </Button>
+      <h1>Event Ideas:</h1>
+      <Button variant="contained" color="primary" onClick={handleIdeas}>
+        View Ideas
+      </Button>
+    
     </Container>
   );
 }

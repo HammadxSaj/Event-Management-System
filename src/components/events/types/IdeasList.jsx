@@ -1,39 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { Grid, Typography, TextField } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import DisplayCards from './DisplayCards';
-import NavBar from '../Home/NavBar';
-import { db, auth } from '../../Firebase';
+import DisplayIdeas from './DisplayIdeas';
+import NavBar from '../../Home/NavBar';
+import { db, auth } from '../../../Firebase';
 import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
-import './EventsList.css';
-import AddEventButton from '../admin/AddEventButton';
-import CountdownTimer from './CountdownTimer';
+import AddIdeasButton from '../../admin/AddIdeasButton';
 import { useNavigate } from 'react-router-dom';
 
-const EventsList = () => {
-  const [events, setEvents] = useState([]);
+const IdeasList = () => {
+  const [ideas, setIdeas] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState('');
   const [votingEnded, setVotingEnded] = useState(false);
   const [votingEndDate, setVotingEndDate] = useState(null);
-  const [winnerEvent, setWinnerEvent] = useState(null);
+  const [winnerIdea, setWinnerIdea] = useState(null);
   const [winnerDetermined, setWinnerDetermined] = useState(false);
-  const navigate = useNavigate();
   const [votingStartDate, setVotingStartDate] = useState(null); // Added state for voting start date
   const [votingStarted, setVotingStarted] = useState(false);
+  const navigate = useNavigate();
 
   const handleBack = () => {
     navigate('/');
   };
 
-  // Fetch events, user role, voting end date, and winner event on component mount
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchIdeas = async () => {
       try {
-        const eventsSnapshot = await getDocs(collection(db, 'events'));
-        const eventPromises = eventsSnapshot.docs.map(async (docRef) => {
-          const event = {
+        const ideasSnapshot = await getDocs(collection(db, 'ideas'));
+        const ideaPromises = ideasSnapshot.docs.map(async (docRef) => {
+          const idea = {
             id: docRef.id,
             title: docRef.data().title,
             date: docRef.data().dateTime,
@@ -48,17 +45,17 @@ const EventsList = () => {
           imagesSnapshot.forEach((imageDoc) => {
             const imageUrl = imageDoc.data().imageUrls;
             if (imageUrl) {
-              event.images.push(imageUrl[0]);
+              idea.images.push(imageUrl[0]);
             }
           });
 
-          return event;
+          return idea;
         });
 
-        const fetchedEvents = await Promise.all(eventPromises);
-        setEvents(fetchedEvents);
+        const fetchedIdeas = await Promise.all(ideaPromises);
+        setIdeas(fetchedIdeas);
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error('Error fetching ideas:', error);
       }
     };
 
@@ -73,7 +70,7 @@ const EventsList = () => {
           setVotingEnded(now >= fetchedDate);
 
           if (now >= fetchedDate) {
-            await fetchWinnerEvent(); // Ensure winner event is fetched if voting has ended
+            await fetchWinnerIdea(); // Ensure winner idea is fetched if voting has ended
           }
         }
       } catch (error) {
@@ -96,54 +93,53 @@ const EventsList = () => {
       }
     };
 
-    const fetchWinnerEvent = async () => {
+    const fetchWinnerIdea = async () => {
       try {
-        const winnerEventDoc = await getDoc(doc(db, 'settings', 'winnerEvent'));
-        if (winnerEventDoc.exists()) {
-          const winnerEventId = winnerEventDoc.data().eventId;
-          const winnerEventDocRef = doc(db, 'events', winnerEventId);
-          const winnerEventDocSnapshot = await getDoc(winnerEventDocRef);
+        const winnerIdeaDoc = await getDoc(doc(db, 'settings', 'winnerIdea'));
+        if (winnerIdeaDoc.exists()) {
+          const winnerIdeaId = winnerIdeaDoc.data().ideaId;
+          const winnerIdeaDocRef = doc(db, 'ideas', winnerIdeaId);
+          const winnerIdeaDocSnapshot = await getDoc(winnerIdeaDocRef);
 
-          if (winnerEventDocSnapshot.exists()) {
-            const winnerEvent = {
-              id: winnerEventDocSnapshot.id,
-              title: winnerEventDocSnapshot.data().title,
-              date: winnerEventDocSnapshot.data().dateTime,
-              description: winnerEventDocSnapshot.data().description,
+          if (winnerIdeaDocSnapshot.exists()) {
+            const winnerIdea = {
+              id: winnerIdeaDocSnapshot.id,
+              title: winnerIdeaDocSnapshot.data().title,
+              date: winnerIdeaDocSnapshot.data().dateTime,
+              description: winnerIdeaDocSnapshot.data().description,
               images: [], // Initialize images array
-              upvote: winnerEventDocSnapshot.data().upvote,
-              downvote: winnerEventDocSnapshot.data().downvote,
+              upvote: winnerIdeaDocSnapshot.data().upvote,
+              downvote: winnerIdeaDocSnapshot.data().downvote,
             };
 
-            const imagesCollection = collection(winnerEventDocRef, 'images');
+            const imagesCollection = collection(winnerIdeaDocRef, 'images');
             const imagesSnapshot = await getDocs(imagesCollection);
             imagesSnapshot.forEach((imageDoc) => {
               const imageUrl = imageDoc.data().imageUrls;
               if (imageUrl) {
-                winnerEvent.images.push(imageUrl[0]);
+                winnerIdea.images.push(imageUrl[0]);
               }
             });
 
-            setWinnerEvent(winnerEvent);
+            setWinnerIdea(winnerIdea);
             setWinnerDetermined(true);
-            console.log('Winner event fetched from Firebase:', winnerEvent);
+            console.log('Winner idea fetched from Firebase:', winnerIdea);
           } else {
-            console.log('Winner event document does not exist.');
+            console.log('Winner idea document does not exist.');
           }
         } else {
-          console.log('Winner event ID does not exist in settings.');
+          console.log('Winner idea ID does not exist in settings.');
         }
       } catch (error) {
-        console.error('Error fetching winner event from Firebase:', error);
+        console.error('Error fetching winner idea from Firebase:', error);
       }
     };
 
-    fetchEvents();
+    fetchIdeas();
     fetchVotingEndDate();
     fetchVotingStartDate();
   }, []);
 
-  // Countdown timer logic
   useEffect(() => {
     const interval = setInterval(() => {
       if (votingEndDate) {
@@ -196,38 +192,38 @@ const EventsList = () => {
 
   const determineWinner = async () => {
     try {
-      let winningEvent = null;
+      let winningIdea = null;
       let maxVotes = -1;
       let minDownvotes = Infinity;
 
-      events.forEach((event) => {
-        const upvotes = event.upvote.length;
-        const downvotes = event.downvote.length;
+      ideas.forEach((idea) => {
+        const upvotes = idea.upvote.length;
+        const downvotes = idea.downvote.length;
 
         if (upvotes > maxVotes || (upvotes === maxVotes && downvotes < minDownvotes)) {
           maxVotes = upvotes;
           minDownvotes = downvotes;
-          winningEvent = event;
+          winningIdea = idea;
         }
       });
 
-      if (winningEvent) {
-        setWinnerEvent(winningEvent);
-        await storeWinnerEvent(winningEvent.id);
+      if (winningIdea) {
+        setWinnerIdea(winningIdea);
+        await storeWinnerIdea(winningIdea.id);
         setWinnerDetermined(true);
-        console.log('Winner event:', winningEvent);
+        console.log('Winner idea:', winningIdea);
       }
     } catch (error) {
-      console.error('Error determining winner event:', error);
+      console.error('Error determining winner idea:', error);
     }
   };
 
-  const storeWinnerEvent = async (eventId) => {
+  const storeWinnerIdea = async (ideaId) => {
     try {
-      await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId });
-      console.log('Winner event stored in Firebase:', eventId);
+      await setDoc(doc(db, 'settings', 'winnerIdea'), { ideaId });
+      console.log('Winner idea stored in Firebase:', ideaId);
     } catch (error) {
-      console.error('Error storing winner event in Firebase:', error);
+      console.error('Error storing winner idea in Firebase:', error);
     }
   };
 
@@ -248,11 +244,9 @@ const EventsList = () => {
 
   fetchUserRole();
 
-  console.log('The user is admin/user:', userRole);
-
   return (
     <>
-      <NavBar />
+      <NavBar onBack={handleBack} />
       {userRole === 'admin' && (
         <div style={{ float: 'right' }}>
           <DatePicker
@@ -269,37 +263,35 @@ const EventsList = () => {
             dateFormat="Pp"
             customInput={<TextField label="Voting Start Date" />}
           />
-          <AddEventButton />
+          <AddIdeasButton />
         </div>
       )}
-      <div className="events-list-container">
+      <div className="ideas-list-container">
         <div className="header-section">
-          <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          
-          {votingStarted &&( // Render winner event section if voting has ended and winner has not been determined
-          <div>
-            <h2>Countdown Timer</h2>
-            <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted = {votingStarted} />
-          </div>
-
+          <Typography variant="h1" className="header-title">
+            Explore the best ideas to choose from!
+          </Typography>
+          {votingStarted && (
+            <div>
+              <Typography variant="h2">Countdown Timer</Typography>
+              <Typography>{timeRemaining}</Typography>
+            </div>
           )}
           {!votingStarted && votingStartDate && (
-            <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
+            <Typography variant="h2">{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</Typography>
           )}
         </div>
-
-      
-        {votingEnded && winnerEvent && ( // Render winner event section if voting has ended and winner has not been determined
-          <div className="winner-event-section">
-            <h2>The Winner Event!</h2>
-            <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop={true} votingStarted = {votingStarted}/>
+        {votingEnded && winnerIdea && (
+          <div className="winner-idea-section">
+            <Typography variant="h2">The Winner Idea!</Typography>
+            <DisplayIdeas idea={winnerIdea} votingEnded={votingEnded} winningIdeaprop={true} votingStarted={votingStarted} />
           </div>
         )}
-        <h2>The Events</h2>
+        <Typography variant="h2">The Ideas</Typography>
         <Grid container spacing={4} justifyContent="center">
-          {events.map((event) => (
-            <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false}  votingStarted = {votingStarted} />
+          {ideas.map((idea) => (
+            <Grid item key={idea.id}>
+              <DisplayIdeas idea={idea} votingEnded={votingEnded} winningIdeaprop={false} votingStarted={votingStarted} />
             </Grid>
           ))}
         </Grid>
@@ -308,4 +300,4 @@ const EventsList = () => {
   );
 };
 
-export default EventsList;
+export default IdeasList;

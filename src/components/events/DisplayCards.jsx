@@ -73,7 +73,9 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/event/${event.id}`);
+    navigate(`/event/${event.id}/ideas`);
+    // commenting to visit ideas page instead
+    //navigate(`/event/${event.id}`);
   };
 
   const handleUpvote = async () => {
