@@ -19,7 +19,7 @@ const EventsPage = () => {
 
         setEvents(fetchedEvents);
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error('Error fesssstching events:', error);
       }
     };
 

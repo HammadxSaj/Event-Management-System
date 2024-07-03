@@ -26,16 +26,22 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import { margin, padding } from '@mui/system';
+import { margin } from '@mui/system';
 
-function AddEventButton() {
+const AddIdeasButton = ({ eventId }) => {
     const navigate = useNavigate();
 
     return (
-        <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => navigate(`/event/${eventId}/ideaform`)} style={{marginTop: 10, marginRight: 10}}>
+        <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => navigate(`/event/${eventId}/ideaform`)}
+            style={{ marginTop: 10, marginRight: 10 }}
+        >
             Add Ideas
         </Button>
     );
-}
+};
 
 export default AddIdeasButton;

@@ -1,170 +1,287 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { db } from "../../../Firebase";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Button,
-  IconButton,
-} from "@mui/material";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import DeleteIcon from '@mui/icons-material/Delete';
+import '../DisplayCards.css';
+import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
+import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../../Firebase';
+import { useAuth } from '../../auth/AuthContext';
 
-const DisplayIdeas = () => {
-  const { eventId } = useParams();
+const DisplayCards = ({ idea, votingEnded, winningIdea, votingStarted, eventId }) => {
   const navigate = useNavigate();
-  const [ideas, setIdeas] = useState([]);
-  const [winner, setWinner] = useState(null);
+  const { authUser } = useAuth();
+
+  const [upvoteCount, setUpvoteCount] = useState(0);
+  const [downvoteCount, setDownvoteCount] = useState(0);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+  const [hasDownvoted, setHasDownvoted] = useState(false);
+  const [rsvp, setRsvp] = useState(null);
+  const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [isWinner, setIsWinner] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [loadingRole, setLoadingRole] = useState(true);
 
   useEffect(() => {
-    const fetchIdeas = async () => {
-      try {
-        const ideasCollection = collection(db, "events", eventId, "ideas");
-        const ideasSnapshot = await getDocs(ideasCollection);
-        const fetchedIdeas = ideasSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          upvote: doc.data().upvote || [], // Ensure these are initialized as arrays
-          downvote: doc.data().downvote || [], // Ensure these are initialized as arrays
-        }));
-        setIdeas(fetchedIdeas);
-      } catch (error) {
-        console.error("Error fetching ideas:", error);
-      }
-    };
-
-    if (eventId) {
-      fetchIdeas();
-    } else {
-      console.error("eventId is undefined");
+    if (idea && authUser) {
+      setUpvoteCount(idea.upvote ? idea.upvote.length : 0);
+      setDownvoteCount(idea.downvote ? idea.downvote.length : 0);
+      setHasUpvoted(idea.upvote && idea.upvote.includes(authUser.uid));
+      setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
+    
+      fetchRsvp();
+      checkIfWinner();
+      fetchUserRole();
+      console.log('Winner Idea:',winningIdea);
     }
-  }, [eventId]);
+  }, [idea, authUser]);
 
-  useEffect(() => {
-    if (ideas.length > 0) {
-      const highestVotedIdea = ideas.reduce((max, idea) =>
-        (idea.upvote.length - idea.downvote.length) >
-        (max.upvote.length - max.downvote.length)
-          ? idea
-          : max
-      );
-      setWinner(highestVotedIdea);
-    }
-  }, [ideas]);
-
-  const handleVote = async (ideaId, type) => {
-    const idea = ideas.find((idea) => idea.id === ideaId);
-
-    if (!idea) {
-      console.error(`Idea with id ${ideaId} not found.`);
-      return;
-    }
-
-    const ideaRef = doc(db, "events", eventId, "ideas", ideaId);
-
-    if (type === "upvote") {
-      if (!idea.upvote.includes("userId")) { // Replace 'userId' with actual user ID
-        idea.upvote.push("userId");
-        idea.downvote = idea.downvote.filter((id) => id !== "userId");
-      }
-    } else {
-      if (!idea.downvote.includes("userId")) {
-        idea.downvote.push("userId");
-        idea.upvote = idea.upvote.filter((id) => id !== "userId");
-      }
-    }
-
+  const fetchRsvp = async () => {
     try {
-      await updateDoc(ideaRef, {
-        upvote: idea.upvote,
-        downvote: idea.downvote,
-      });
-      setIdeas([...ideas]); // Update state to trigger re-render
+      const rsvpDoc = await getDoc(doc(db, 'ideas', idea.id, 'rsvps', authUser.uid));
+      if (rsvpDoc.exists()) {
+        setRsvp(rsvpDoc.data().response);
+      }
     } catch (error) {
-      console.error("Error updating vote: ", error);
+      console.error("Error fetching RSVP:", error);
     }
   };
 
+  const checkIfWinner = async () => {
+    try {
+      if (!eventId || !idea.id) {
+        console.error("Missing eventId or idea.id");
+        return;
+      }
+      
+      console.log("Checking winner for eventId:", eventId, "and ideaId:", idea.id);
+  
+      const winnerIdeaDoc = await getDoc(doc(db, 'events', eventId, 'details', 'winnerIdea'));
+      if (winnerIdeaDoc.exists()) {
+        console.log("Winner idea document data:", winnerIdeaDoc.data());
+        if (winnerIdeaDoc.data().ideaId === idea.id) {
+          setIsWinner(true);
+        }
+      } else {
+        console.error("Winner idea document does not exist");
+      }
+    } catch (error) {
+      console.error("Error checking winner idea:", error);
+    }
+  };
+  
+
+  const fetchUserRole = async () => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', authUser.uid));
+      if (userDoc.exists()) {
+        setUserRole(userDoc.data().role);
+      }
+    } catch (error) {
+      console.error("Error fetching user role:", error);
+    } finally {
+      setLoadingRole(false);
+    }
+  };
+
+  const handleDetails = (e) => {
+    e.stopPropagation();
+    // Add idea details here
+    navigate(`/idea/${idea.id}`);
+  };
+
+  const handleUpvote = async () => {
+    if (!hasUpvoted && idea && idea.upvote !== undefined && authUser) {
+      const newUpvotes = new Set(idea.upvote || []);
+      const newDownvotes = new Set(idea.downvote || []);
+
+      newUpvotes.add(authUser.uid);
+      newDownvotes.delete(authUser.uid);
+
+      setUpvoteCount(newUpvotes.size);
+      setDownvoteCount(newDownvotes.size);
+      setHasUpvoted(true);
+      setHasDownvoted(false);
+
+      try {
+        await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
+          upvote: Array.from(newUpvotes),
+          downvote: Array.from(newDownvotes),
+        });
+        console.log("Upvoted");
+      } catch (error) {
+        console.error("Error updating upvotes:", error);
+      }
+    }
+  };
+
+  const handleDownvote = async () => {
+    if (!hasDownvoted && idea && idea.downvote !== undefined && authUser) {
+      const newDownvotes = new Set(idea.downvote || []);
+      const newUpvotes = new Set(idea.upvote || []);
+
+      newDownvotes.add(authUser.uid);
+      newUpvotes.delete(authUser.uid);
+
+      setUpvoteCount(newUpvotes.size);
+      setDownvoteCount(newDownvotes.size);
+      setHasUpvoted(false);
+      setHasDownvoted(true);
+
+      try {
+        await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
+          upvote: Array.from(newUpvotes),
+          downvote: Array.from(newDownvotes),
+        });
+        console.log("Downvoted");
+      } catch (error) {
+        console.error("Error updating downvotes:", error);
+      }
+    }
+  };
+
+  const handleRsvpChange = async (e) => {
+    setRsvpLoading(true);
+    const response = e.target.value;
+    setRsvp(response);
+
+    try {
+        //not being saved lol gotta check thisss
+      const rsvpDocRef = doc(db, 'ideas', idea.id, 'rsvps', authUser.uid);
+      await setDoc(rsvpDocRef, {
+        response: response,
+        email: authUser.email
+      });
+      console.log("RSVP saved in",idea.id);
+    } catch (error) {
+      console.error("Error saving RSVP:", error);
+    }
+
+    setRsvpLoading(false);
+  };
+
+  const handleDeleteIdea = async () => {
+    try {
+      await deleteDoc(doc(db, 'events', eventId, 'ideas', idea.id));
+      setOpenDeleteDialog(false);
+      window.location.reload(); // Reload the page to update the list of ideas
+    } catch (error) {
+      console.error('Error deleting idea:', error);
+    }
+  };
+
+  const openDialog = () => {
+    setOpenDeleteDialog(true);
+  };
+
+  const closeDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  if (loadingRole) {
+    return <div>Loading...</div>; // You can replace this with a spinner or skeleton component
+  }
+
   return (
-    <Container maxWidth="md" className="container">
-      <Button onClick={() => navigate(`/event/${eventId}`)}>Back</Button>
-      <Typography variant="h4" component="div" gutterBottom>
-        Ideas
-      </Typography>
-      {winner && (
-        <Paper className="winner-paper" sx={{ padding: 2, margin: 2, backgroundColor: "#f0f8ff" }}>
-          <Typography variant="h5" color="primary">Winning Idea</Typography>
-          <Typography variant="h6">{winner.title}</Typography>
-          <Typography>{winner.description}</Typography>
-          <Typography variant="subtitle2">By: {winner.creator}</Typography>
-          <Typography variant="subtitle2">
-            Date: {new Date(winner.dateTime).toLocaleString()}
+    <Card className="card">
+      <CardActionArea onClick={handleDetails}>
+        <CardMedia
+          component="img"
+          className="card-media"
+          image={idea.images.length > 0 ? idea.images[0] : ideaImage}
+          alt={idea.title}
+          title={idea.title}
+        />
+        <CardContent className="card-content">
+          <Typography gutterBottom variant="h5" component="div">
+            {idea.title}
           </Typography>
-          {winner.imageUrls && (
-            <Box mt={2}>
-              {winner.imageUrls.map((url, index) => (
-                <img
-                  key={index}
-                  src={url}
-                  alt={`idea image ${index}`}
-                  style={{ maxWidth: "100%", marginBottom: "10px" }}
-                />
-              ))}
-            </Box>
-          )}
-          <div
-            className="map-preview mt-3"
-            dangerouslySetInnerHTML={{ __html: winner.embedCode }}
-          ></div>
-        </Paper>
+          <Typography variant="body2" color="text.secondary">
+            {new Date(idea.dateTime).toLocaleString()}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {idea.description}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      
+      {userRole === 'admin' && (
+        <CardActions className="card-actions">
+          <Button
+            size="small"
+            color="error"
+            onClick={openDialog}
+            startIcon={<DeleteIcon />}
+          >
+            Delete Idea
+          </Button>
+          <Dialog
+            open={openDeleteDialog}
+            onClose={closeDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to delete this idea? This action cannot be undone.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={closeDialog} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleDeleteIdea} color="error" autoFocus>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </CardActions>
       )}
-      {ideas.map((idea) => (
-        <Paper key={idea.id} className="idea-paper" sx={{ padding: 2, margin: 2 }}>
-          <Typography variant="h6">{idea.title}</Typography>
-          <Typography>{idea.description}</Typography>
-          <Typography variant="subtitle2">By: {idea.creator}</Typography>
-          <Typography variant="subtitle2">
-            Date: {new Date(idea.dateTime).toLocaleString()}
-          </Typography>
-          {idea.imageUrls && (
-            <Box mt={2}>
-              {idea.imageUrls.map((url, index) => (
-                <img
-                  key={index}
-                  src={url}
-                  alt={`idea image ${index}`}
-                  style={{ maxWidth: "100%", marginBottom: "10px" }}
-                />
-              ))}
-            </Box>
-          )}
-          <div
-            className="map-preview mt-3"
-            dangerouslySetInnerHTML={{ __html: idea.embedCode }}
-          ></div>
-          <Box mt={2} display="flex" alignItems="center">
-            <IconButton
-              color="primary"
-              onClick={() => handleVote(idea.id, "upvote")}
+      <CardContent className="card-content">
+        {isWinner && (
+            
+          <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
+            <Typography variant="h6">RSVP</Typography>
+            <RadioGroup
+              aria-label="rsvp"
+              name="rsvp"
+              value={rsvp}
+              onChange={handleRsvpChange}
+              row
             >
-              <ThumbUpIcon />
-            </IconButton>
-            <Typography>{idea.upvote.length}</Typography>
-            <IconButton
-              color="secondary"
-              onClick={() => handleVote(idea.id, "downvote")}
-            >
-              <ThumbDownIcon />
-            </IconButton>
-            <Typography>{idea.downvote.length}</Typography>
-          </Box>
-        </Paper>
-      ))}
-    </Container>
+              <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
+              <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
+            </RadioGroup>
+          </FormControl>
+        )}
+      </CardContent>
+      <CardActions className="card-actions">
+        <Button
+          size="small"
+          color="primary"
+          onClick={handleUpvote}
+          startIcon={<ArrowUpwardIcon />}
+          
+          disabled={hasUpvoted || votingEnded || !votingStarted}
+        >
+          Upvote ({upvoteCount})
+        </Button>
+        <Button
+          size="small"
+          color="secondary"
+          onClick={handleDownvote}
+          startIcon={<ArrowDownwardIcon />}
+          disabled={hasDownvoted || votingEnded || !votingStarted}
+        >
+          Downvote ({downvoteCount})
+        </Button>
+      </CardActions>
+    </Card>
   );
 };
 
-export default DisplayIdeas;
+export default DisplayCards;
