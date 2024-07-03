@@ -6,8 +6,9 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DisplayCards.css';
 import eventi from '../../assets/event1.jpg';
-import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
-import { db } from '../../Firebase';
+import { updateDoc, doc, getDoc, deleteDoc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { deleteObject, ref } from 'firebase/storage';
+import { db, storage } from '../../Firebase';
 import { useAuth } from '../auth/AuthContext';
 
 const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) => {
@@ -148,16 +149,33 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
   };
 
   const handleDeleteEvent = async () => {
-    try {
-      await deleteDoc(doc(db, 'events', event.id));
-      setOpenDeleteDialog(false);
-      window.location.reload(); // Reload the page to update the list of events
+  try {
+    // Step 1: Retrieve the list of image URLs for the event
+    const imagesSnapshot = await getDocs(collection(db, 'events', event.id, 'images'));
 
+    // Step 2: Delete each image from Firebase Storage
+    const deleteImagePromises = imagesSnapshot.docs.map(async (imageDoc) => {
+      const imageUrls = imageDoc.data().imageUrls;
+      const deleteStoragePromises = imageUrls.map((url) => {
+        const storageRef = ref(storage, url);
+        return deleteObject(storageRef);
+      });
+      await Promise.all(deleteStoragePromises);
 
-    } catch (error) {
-      console.error('Error deleting event:', error);
-    }
-  };
+      // Step 3: Delete the Firestore document related to the image
+      await deleteDoc(imageDoc.ref);
+    });
+    await Promise.all(deleteImagePromises);
+
+    // Step 4: Delete the event document itself
+    await deleteDoc(doc(db, 'events', event.id));
+
+    setOpenDeleteDialog(false);
+    window.location.reload(); // Reload the page to update the list of events
+  } catch (error) {
+    console.error('Error deleting event:', error);
+  }
+};
 
   const openDialog = () => {
     setOpenDeleteDialog(true);

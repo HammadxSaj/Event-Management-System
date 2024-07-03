@@ -57,7 +57,7 @@ const EventForm = () => {
     setMapPreview(formData.embedCode);
   };
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // Step 1: Add event details to Firestore (excluding images)
@@ -69,7 +69,7 @@ const EventForm = () => {
         details: formData.details,
         embedCode: formData.embedCode,
         upvote: [],
-        downvote :[]
+        downvote: [],
       });
 
       // Step 2: Upload images to Firebase Storage and get their download URLs
@@ -86,6 +86,9 @@ const EventForm = () => {
       });
 
       alert('Event added successfully');
+
+      // Navigate to /event page after successful addition
+      navigate('/event');
     } catch (error) {
       console.error('Error adding event: ', error);
       alert('Error adding event');
@@ -160,7 +163,6 @@ const EventForm = () => {
               <Form.Label>Title Image</Form.Label>
               <Form.Control
                 type="file"
-                multiple
                 onChange={handleImageChange}
                 required
               />
