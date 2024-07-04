@@ -1,0 +1,26 @@
+.container {
+    margin-top: 2rem;
+}
+
+.card {
+    margin-bottom: 2rem;
+}
+
+.comment-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.comment-container .MuiTextField-root {
+    margin-bottom: 1rem;
+}
+
+.comment-container .MuiButton-root {
+    margin-right: 1rem;
+}
+
+.comment-container .MuiIconButton-root {
+    margin-right: 0.5rem;
+}

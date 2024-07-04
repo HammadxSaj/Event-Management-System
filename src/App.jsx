@@ -20,6 +20,7 @@ import { AuthProvider } from './components/auth/AuthContext';
 import AuthDetails from './components/auth/AuthDetails'; // Import AuthDetails component
 import IdeasPage from './components/events/types/IdeasPage';
 import IdeaForm from './components/admin/IdeaForm';
+import IdeaDetails from './components/events/types/IdeaDetails';
 
 
 function App() {
@@ -39,8 +40,8 @@ function App() {
             <Route path="/user" element={<User />} />
             <Route path="/event" element={<EventsPage />} />
             <Route path="/event/:eventId/ideas" element={<IdeasPage />} />
-           <Route path="/event/:eventId/ideaform" element={<IdeaForm />} />
-            <Route path="/event/:eventId" element={<EventDetails />} />
+            <Route path="/event/:eventId/ideaform" element={<IdeaForm />} />
+            <Route path="/idea/:ideaId" element={<IdeaDetails />} />
             <Route path="/eventform" element={<EventForm />} />
           </Routes>
         </AuthProvider>

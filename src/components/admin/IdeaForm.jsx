@@ -199,17 +199,6 @@ const IdeaForm = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <TextField
-                fullWidth
-                label="Creator"
-                name="creator"
-                value={formData.creator}
-                onChange={handleChange}
-                variant="outlined"
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
               <Form.Label>Title Image</Form.Label>
               <Form.Control
                 type="file"
