@@ -10,7 +10,7 @@ import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../Firebase';
 import { useAuth } from '../../auth/AuthContext';
 
-const DisplayCards = ({ idea, votingEnded, winningIdea, votingStarted, eventId }) => {
+const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -242,7 +242,7 @@ const DisplayCards = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
         </CardActions>
       )}
       <CardContent className="card-content">
-        {isWinner && (
+        {isWinner  && winningIdea && (
             
           <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
             <Typography variant="h6">RSVP</Typography>
@@ -284,4 +284,4 @@ const DisplayCards = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
   );
 };
 
-export default DisplayCards;
+export default DisplayIdeas;

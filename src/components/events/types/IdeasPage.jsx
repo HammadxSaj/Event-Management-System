@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AddIdeasButton from "../../admin/AddIdeasButton";
 import NavBar from "../../Home/NavBar";
-import DisplayCards from "./DisplayIdeas";
+import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
 
 const IdeasPage = () => {
@@ -23,8 +23,6 @@ const IdeasPage = () => {
   const [winnerDetermined, setWinnerDetermined] = useState(false);
   const [votingStartDate, setVotingStartDate] = useState(null);
   const [votingStarted, setVotingStarted] = useState(false);
-
- 
 
   const determineWinner = async () => {
     try {
@@ -63,34 +61,34 @@ const IdeasPage = () => {
 
   useEffect(() => {
     const fetchIdeas = async () => {
-        try {
-          const ideasCollection = collection(db, "events", eventId, "ideas");
-          const ideasSnapshot = await getDocs(ideasCollection);
-          const fetchedIdeas = [];
-  
-          for (const docRef of ideasSnapshot.docs) {
-            const ideaData = docRef.data();
-            const ideaId = docRef.id;
-  
-            // Fetch images for each idea
-            const imagesCollection = collection(docRef.ref, 'images');
-            const imagesSnapshot = await getDocs(imagesCollection);
-            const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
-  
-            const ideaWithImages = {
-              id: ideaId,
-              ...ideaData,
-              images: imageUrls
-            };
-  
-            fetchedIdeas.push(ideaWithImages);
-          }
-  
-          setIdeas(fetchedIdeas);
-        } catch (error) {
-          console.error("Error fetching ideas:", error);
+      try {
+        const ideasCollection = collection(db, "events", eventId, "ideas");
+        const ideasSnapshot = await getDocs(ideasCollection);
+        const fetchedIdeas = [];
+
+        for (const docRef of ideasSnapshot.docs) {
+          const ideaData = docRef.data();
+          const ideaId = docRef.id;
+
+          // Fetch images for each idea
+          const imagesCollection = collection(docRef.ref, 'images');
+          const imagesSnapshot = await getDocs(imagesCollection);
+          const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
+
+          const ideaWithImages = {
+            id: ideaId,
+            ...ideaData,
+            images: imageUrls
+          };
+
+          fetchedIdeas.push(ideaWithImages);
         }
-      };
+
+        setIdeas(fetchedIdeas);
+      } catch (error) {
+        console.error("Error fetching ideas:", error);
+      }
+    };
 
     const fetchUserRole = async (user) => {
       try {
@@ -119,36 +117,40 @@ const IdeasPage = () => {
       }
     };
 
+    // Fetch winner only if voting has ended
     const fetchWinnerIdea = async () => {
-      try {
-        const winnerIdeaDoc = await getDoc(doc(db, "events", eventId, "details", "winnerIdea"));
-        if (winnerIdeaDoc.exists()) {
-          const winnerIdeaId = winnerIdeaDoc.data().ideaId;
-          const winnerIdeaDocRef = doc(db, 'events', eventId, 'ideas', winnerIdeaId);
-          const winnerIdeaDocSnapshot = await getDoc(winnerIdeaDocRef);
+      if (votingEnded) {
+        try {
+       
+          const winnerIdeaDoc = await getDoc(doc(db, "events", eventId, "details", "winnerIdea"));
+          if (winnerIdeaDoc.exists()) {
+            const winnerIdeaId = winnerIdeaDoc.data().ideaId;
+            const winnerIdeaDocRef = doc(db, 'events', eventId, 'ideas', winnerIdeaId);
+            const winnerIdeaDocSnapshot = await getDoc(winnerIdeaDocRef);
 
-          if (winnerIdeaDocSnapshot.exists()) {
-            const winnerIdea = {
-              id: winnerIdeaDocSnapshot.id,
-              ...winnerIdeaDocSnapshot.data(),
-              images: [],
-            };
+            if (winnerIdeaDocSnapshot.exists()) {
+              const winnerIdea = {
+                id: winnerIdeaDocSnapshot.id,
+                ...winnerIdeaDocSnapshot.data(),
+                images: [],
+              };
 
-            const imagesCollection = collection(winnerIdeaDocRef, 'images');
-            const imagesSnapshot = await getDocs(imagesCollection);
-            imagesSnapshot.forEach((imageDoc) => {
-              const imageUrl = imageDoc.data().imageUrls;
-              if (imageUrl) {
-                winnerIdea.images.push(imageUrl[0]);
-              }
-            });
+              const imagesCollection = collection(winnerIdeaDocRef, 'images');
+              const imagesSnapshot = await getDocs(imagesCollection);
+              imagesSnapshot.forEach((imageDoc) => {
+                const imageUrl = imageDoc.data().imageUrls;
+                if (imageUrl) {
+                  winnerIdea.images.push(imageUrl[0]);
+                }
+              });
 
-            setWinnerIdea(winnerIdea);
-            setWinnerDetermined(true);
+              setWinnerIdea(winnerIdea);
+              setWinnerDetermined(true);
+            }
           }
+        } catch (error) {
+          console.error('Error fetching winner idea:', error);
         }
-      } catch (error) {
-        console.error('Error fetching winner idea:', error);
       }
     };
 
@@ -169,7 +171,7 @@ const IdeasPage = () => {
     });
 
     return () => authListener();
-  }, [eventId]);
+  }, [eventId, votingEnded]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -187,7 +189,6 @@ const IdeasPage = () => {
           clearInterval(interval);
           setTimeRemaining(`0d 0h 0m 0s`);
           setVotingEnded(true);
-          
           determineWinner();
         } else if (!votingStarted && now >= votingStartDate) {
           setVotingStarted(true);
@@ -199,8 +200,10 @@ const IdeasPage = () => {
   }, [votingEndDate, votingStartDate, votingStarted, ideas]);
 
   const handleDateUpdate = async (date) => {
+    
     setVotingEndDate(date);
-    setVotingEnded(false);
+    setVotingEnded(false); // Reset votingEnded state
+
 
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
@@ -214,7 +217,7 @@ const IdeasPage = () => {
 
   const handleStartDateUpdate = async (date) => {
     setVotingStartDate(date);
-    setVotingStarted(false);
+    setVotingStarted(false); // Reset votingStarted state
 
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
@@ -254,14 +257,13 @@ const IdeasPage = () => {
       <div className="ideas-list-container">
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          {votingStarted && (
+          
             <div>
               <h2>Countdown Timer</h2>
-              <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted = {votingStarted} />
-            
+              <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
             </div>
-          )}
-          {!votingStarted && votingStartDate && (
+        
+          {!votingStarted && votingStartDate && !votingEnded &&(
             <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
           )}
         </div>
@@ -269,14 +271,14 @@ const IdeasPage = () => {
         {votingEnded && winnerIdea && (
           <div className="winner-event-section">
             <h2>The Winner Idea!</h2>
-            <DisplayCards idea={winnerIdea} setVotingEnded = {votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
+            <DisplayIdeas idea={winnerIdea} setVotingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
           </div>
         )}
 
         <Grid container spacing={2}>
           {ideas.map((idea) => (
             <Grid item key={idea.id} xs={12} sm={6} md={4} lg={3}>
-              <DisplayCards idea={idea} setVotingEnded = {votingEnded} winningEventprop={false}  votingStarted={votingStarted} eventId={eventId} />
+              <DisplayIdeas idea={idea} setVotingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} eventId={eventId} />
             </Grid>
           ))}
         </Grid>
