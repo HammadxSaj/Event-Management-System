@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -33,11 +33,17 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
       setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
     
       fetchRsvp();
-      checkIfWinner();
       fetchUserRole();
-      console.log('Winner Idea:',winningIdea);
+      console.log('Voting ended',votingEnded);
+
+      if (votingEnded) {
+        checkIfWinner();
+        console.log('Winner Idea:', winningIdea);
+      }
+
+     
     }
-  }, [idea, authUser]);
+  }, [idea, authUser, votingEnded]);
 
   const fetchRsvp = async () => {
     try {
@@ -50,29 +56,21 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
     }
   };
 
-  const checkIfWinner = async () => {
+  const checkIfWinner = useCallback(async () => {
     try {
       if (!eventId || !idea.id) {
         console.error("Missing eventId or idea.id");
         return;
       }
       
-      console.log("Checking winner for eventId:", eventId, "and ideaId:", idea.id);
-  
       const winnerIdeaDoc = await getDoc(doc(db, 'events', eventId, 'details', 'winnerIdea'));
-      if (winnerIdeaDoc.exists()) {
-        console.log("Winner idea document data:", winnerIdeaDoc.data());
-        if (winnerIdeaDoc.data().ideaId === idea.id) {
-          setIsWinner(true);
-        }
-      } else {
-        console.error("Winner idea document does not exist");
+      if (winnerIdeaDoc.exists() && winnerIdeaDoc.data().ideaId === idea.id) {
+        setIsWinner(true);
       }
     } catch (error) {
       console.error("Error checking winner idea:", error);
     }
-  };
-  
+  }, [eventId, idea.id]);
 
   const fetchUserRole = async () => {
     try {
@@ -89,7 +87,6 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    // Add idea details here
     navigate(`/idea/${idea.id}`);
   };
 
@@ -149,13 +146,12 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
     setRsvp(response);
 
     try {
-        //not being saved lol gotta check thisss
       const rsvpDocRef = doc(db, 'ideas', idea.id, 'rsvps', authUser.uid);
       await setDoc(rsvpDocRef, {
         response: response,
         email: authUser.email
       });
-      console.log("RSVP saved in",idea.id);
+      console.log("RSVP saved in", idea.id);
     } catch (error) {
       console.error("Error saving RSVP:", error);
     }
@@ -242,8 +238,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
         </CardActions>
       )}
       <CardContent className="card-content">
-        {isWinner  && winningIdea && (
-            
+        {isWinner && (
           <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
             <Typography variant="h6">RSVP</Typography>
             <RadioGroup
@@ -265,7 +260,6 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
           color="primary"
           onClick={handleUpvote}
           startIcon={<ArrowUpwardIcon />}
-          
           disabled={hasUpvoted || votingEnded || !votingStarted}
         >
           Upvote ({upvoteCount})

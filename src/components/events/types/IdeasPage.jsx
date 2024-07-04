@@ -10,6 +10,7 @@ import AddIdeasButton from "../../admin/AddIdeasButton";
 import NavBar from "../../Home/NavBar";
 import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
+import { Timestamp } from "firebase/firestore";
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -104,16 +105,45 @@ const IdeasPage = () => {
       }
     };
 
-    const fetchVotingDates = async () => {
+    const fetchVotingEndDate = async () => {
       try {
-        const votingDetailsDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
-        if (votingDetailsDoc.exists()) {
-          const data = votingDetailsDoc.data();
-          setVotingEndDate(data.votingEndDate.toDate());
-          setVotingStartDate(data.votingStartDate.toDate());
+        const votingEndDateDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
+        if (votingEndDateDoc.exists()) {
+          const fetchedDate = votingEndDateDoc.data().votingEndDate.toDate();
+          const now = new Date();
+    
+          console.log('Fetched voting end date:', fetchedDate);
+          setVotingEndDate(fetchedDate);
+    
+          const hasVotingEnded = now >= fetchedDate;
+          console.log('Voting ended:', hasVotingEnded);
+          setVotingEnded(hasVotingEnded);
+    
+          if (hasVotingEnded) {
+            await fetchWinnerIdea(); // Ensure winner event is fetched if voting has ended
+          }
+        } else {
+          console.log('Document does not exist for voting end date.');
         }
       } catch (error) {
-        console.error('Error fetching voting dates:', error);
+        console.error('Error fetching voting end date:', error);
+        // Handle error state or retry logic if needed
+      }
+    };
+    
+
+    const fetchVotingStartDate = async () => {
+      try {
+        const votingStartDateDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
+        if (votingStartDateDoc.exists()) {
+          const fetchedDate = votingStartDateDoc.data().votingStartDate.toDate();
+          setVotingStartDate(fetchedDate);
+
+          const now = new Date();
+          setVotingStarted(now >= fetchedDate);
+        }
+      } catch (error) {
+        console.error('Error fetching voting start date:', error);
       }
     };
 
@@ -121,7 +151,6 @@ const IdeasPage = () => {
     const fetchWinnerIdea = async () => {
       if (votingEnded) {
         try {
-       
           const winnerIdeaDoc = await getDoc(doc(db, "events", eventId, "details", "winnerIdea"));
           if (winnerIdeaDoc.exists()) {
             const winnerIdeaId = winnerIdeaDoc.data().ideaId;
@@ -157,7 +186,8 @@ const IdeasPage = () => {
     const fetchData = async (user) => {
       fetchIdeas();
       fetchUserRole(user);
-      fetchVotingDates();
+      fetchVotingEndDate();
+      fetchVotingStartDate();
       determineWinner();
       fetchWinnerIdea();
     };
@@ -200,15 +230,13 @@ const IdeasPage = () => {
   }, [votingEndDate, votingStartDate, votingStarted, ideas]);
 
   const handleDateUpdate = async (date) => {
-    
     setVotingEndDate(date);
     setVotingEnded(false); // Reset votingEnded state
 
-
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
-        votingEndDate: date,
-        votingStartDate
+        votingEndDate: Timestamp.fromDate(date),
+        votingStartDate: Timestamp.fromDate(votingStartDate)
       });
     } catch (error) {
       console.error('Error updating voting end date:', error);
@@ -221,8 +249,8 @@ const IdeasPage = () => {
 
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
-        votingEndDate,
-        votingStartDate: date
+        votingEndDate: Timestamp.fromDate(votingEndDate),
+        votingStartDate: Timestamp.fromDate(date)
       });
       if (new Date() >= date) {
         setVotingStarted(true);
@@ -257,13 +285,17 @@ const IdeasPage = () => {
       <div className="ideas-list-container">
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          
+          {votingStarted && ( 
             <div>
-              <h2>Countdown Timer</h2>
-              <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
+            <h2>Countdown Timer</h2>
+            <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
             </div>
+
+          )}
+           
         
-          {!votingStarted && votingStartDate && !votingEnded &&(
+        
+          {!votingStarted && votingStartDate && !votingEnded && (
             <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
           )}
         </div>
@@ -271,14 +303,14 @@ const IdeasPage = () => {
         {votingEnded && winnerIdea && (
           <div className="winner-event-section">
             <h2>The Winner Idea!</h2>
-            <DisplayIdeas idea={winnerIdea} setVotingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
+            <DisplayIdeas idea={winnerIdea} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
           </div>
         )}
 
         <Grid container spacing={2}>
           {ideas.map((idea) => (
             <Grid item key={idea.id} xs={12} sm={6} md={4} lg={3}>
-              <DisplayIdeas idea={idea} setVotingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} eventId={eventId} />
+              <DisplayIdeas idea={idea} votingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} eventId={eventId} />
             </Grid>
           ))}
         </Grid>
