@@ -32,6 +32,8 @@ import "./IdeaDetails.css"; // Create or adjust CSS file as needed
 const IdeaDetails = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
+  const { ideaId } = useParams();
+  console.log(ideaId);
   const [idea, setIdea] = useState(null); // State for storing idea details
   const [editMode, setEditMode] = useState({
     title: false,
@@ -51,7 +53,7 @@ const IdeaDetails = () => {
   useEffect(() => {
     const fetchIdea = async () => {
       try {
-        const ideaRef = doc(db, "events", eventId, "ideas", idea);
+        const ideaRef = doc(db, "events", eventId, "ideas", ideaId);
         const ideaDoc = await getDoc(ideaRef);
         console.log(ideaRef);
 
@@ -226,7 +228,7 @@ const IdeaDetails = () => {
 
   return (
     <Container maxWidth="md" className="container">
-      <button className="back-button" onClick={() => navigate(`/event/${eventId}`)}>
+      <button className="back-button" onClick={() => navigate(`/event/${eventId}/ideas`)}>
         Back
       </button>
       <Card>

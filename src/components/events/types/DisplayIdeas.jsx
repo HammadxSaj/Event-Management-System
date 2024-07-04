@@ -1,48 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  CardActionArea,
-  CardActions,
-  Button,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import DeleteIcon from "@mui/icons-material/Delete";
-import "../DisplayCards.css";
-import ideaImage from "../../../assets/event1.jpg"; // Replace with appropriate idea image
-import {
-  updateDoc,
-  doc,
-  getDoc,
-  deleteDoc,
-  setDoc,
-  getDocs,
-  collection,
-} from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
-import { db, storage } from "../../../Firebase";
-import { useAuth } from "../../auth/AuthContext";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import DeleteIcon from '@mui/icons-material/Delete';
+import '../DisplayCards.css';
+import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
+import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../../Firebase';
+import { useAuth } from '../../auth/AuthContext';
 
-const DisplayCards = ({
-  idea,
-  votingEnded,
-  winningIdea,
-  votingStarted,
-  eventId,
-}) => {
+const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -63,18 +31,23 @@ const DisplayCards = ({
       setDownvoteCount(idea.downvote ? idea.downvote.length : 0);
       setHasUpvoted(idea.upvote && idea.upvote.includes(authUser.uid));
       setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
-
+    
       fetchRsvp();
       fetchUserRole();
-      console.log("Winner Idea:", winningIdea);
+      console.log('Voting ended',votingEnded);
+
+      if (votingEnded) {
+        checkIfWinner();
+        console.log('Winner Idea:', winningIdea);
+      }
+
+     
     }
   }, [idea, authUser, votingEnded]);
 
   const fetchRsvp = async () => {
     try {
-      const rsvpDoc = await getDoc(
-        doc(db, "events", eventId, "ideas", idea.id, "rsvps", authUser.uid)
-      );
+      const rsvpDoc = await getDoc(doc(db, 'ideas', idea.id, 'rsvps', authUser.uid));
       if (rsvpDoc.exists()) {
         setRsvp(rsvpDoc.data().response);
       }
@@ -89,24 +62,10 @@ const DisplayCards = ({
         console.error("Missing eventId or idea.id");
         return;
       }
-
-      console.log(
-        "Checking winner for eventId:",
-        eventId,
-        "and ideaId:",
-        idea.id
-      );
-
-      const winnerIdeaDoc = await getDoc(
-        doc(db, "events", eventId, "details", "winnerIdea")
-      );
-      if (winnerIdeaDoc.exists()) {
-        console.log("Winner idea document data:", winnerIdeaDoc.data());
-        if (winnerIdeaDoc.data().ideaId === idea.id) {
-          setIsWinner(true);
-        }
-      } else {
-        console.error("Winner idea document does not exist");
+      
+      const winnerIdeaDoc = await getDoc(doc(db, 'events', eventId, 'details', 'winnerIdea'));
+      if (winnerIdeaDoc.exists() && winnerIdeaDoc.data().ideaId === idea.id) {
+        setIsWinner(true);
       }
     } catch (error) {
       console.error("Error checking winner idea:", error);
@@ -115,7 +74,7 @@ const DisplayCards = ({
 
   const fetchUserRole = async () => {
     try {
-      const userDoc = await getDoc(doc(db, "users", authUser.uid));
+      const userDoc = await getDoc(doc(db, 'users', authUser.uid));
       if (userDoc.exists()) {
         setUserRole(userDoc.data().role);
       }
@@ -128,7 +87,7 @@ const DisplayCards = ({
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/idea/${idea.id}`);
+    navigate(`/event/${eventId}/ideas/${idea.id}`)
   };
 
   const handleUpvote = async () => {
@@ -145,7 +104,7 @@ const DisplayCards = ({
       setHasDownvoted(false);
 
       try {
-        await updateDoc(doc(db, "events", eventId, "ideas", idea.id), {
+        await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
           upvote: Array.from(newUpvotes),
           downvote: Array.from(newDownvotes),
         });
@@ -170,7 +129,7 @@ const DisplayCards = ({
       setHasDownvoted(true);
 
       try {
-        await updateDoc(doc(db, "events", eventId, "ideas", idea.id), {
+        await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
           upvote: Array.from(newUpvotes),
           downvote: Array.from(newDownvotes),
         });
@@ -187,18 +146,10 @@ const DisplayCards = ({
     setRsvp(response);
 
     try {
-      const rsvpDocRef = doc(
-        db,
-        "events",
-        eventId,
-        "ideas",
-        idea.id,
-        "rsvps",
-        authUser.uid
-      );
+      const rsvpDocRef = doc(db, 'ideas', idea.id, 'rsvps', authUser.uid);
       await setDoc(rsvpDocRef, {
         response: response,
-        email: authUser.email,
+        email: authUser.email
       });
       console.log("RSVP saved in", idea.id);
     } catch (error) {
@@ -210,32 +161,11 @@ const DisplayCards = ({
 
   const handleDeleteIdea = async () => {
     try {
-      // Step 1: Retrieve the list of image URLs for the idea
-      const imagesSnapshot = await getDocs(
-        collection(db, "events", eventId, "ideas", idea.id, "images")
-      );
-
-      // Step 2: Delete each image from Firebase Storage
-      const deleteImagePromises = imagesSnapshot.docs.map(async (imageDoc) => {
-        const imageUrls = imageDoc.data().imageUrls;
-        const deleteStoragePromises = imageUrls.map((url) => {
-          const storageRef = ref(storage, url);
-          return deleteObject(storageRef);
-        });
-        await Promise.all(deleteStoragePromises);
-
-        // Step 3: Delete the Firestore document related to the image
-        await deleteDoc(imageDoc.ref);
-      });
-      await Promise.all(deleteImagePromises);
-
-      // Step 4: Delete the idea document itself
-      await deleteDoc(doc(db, "events", eventId, "ideas", idea.id));
-
+      await deleteDoc(doc(db, 'events', eventId, 'ideas', idea.id));
       setOpenDeleteDialog(false);
       window.location.reload(); // Reload the page to update the list of ideas
     } catch (error) {
-      console.error("Error deleting idea:", error);
+      console.error('Error deleting idea:', error);
     }
   };
 
@@ -273,8 +203,8 @@ const DisplayCards = ({
           </Typography>
         </CardContent>
       </CardActionArea>
-
-      {userRole === "admin" && (
+      
+      {userRole === 'admin' && (
         <CardActions className="card-actions">
           <Button
             size="small"
@@ -290,11 +220,10 @@ const DisplayCards = ({
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Delete Idea?"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete this idea? This action cannot be
-                undone.
+                Are you sure you want to delete this idea? This action cannot be undone.
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -309,8 +238,8 @@ const DisplayCards = ({
         </CardActions>
       )}
       <CardContent className="card-content">
-        {isWinner && winningIdea && (
-          <FormControl component="fieldset" style={{ marginTop: "1rem" }}>
+        {isWinner && (
+          <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
             <Typography variant="h6">RSVP</Typography>
             <RadioGroup
               aria-label="rsvp"
@@ -319,57 +248,31 @@ const DisplayCards = ({
               onChange={handleRsvpChange}
               row
             >
-              <FormControlLabel
-                value="yes"
-                control={<Radio />}
-                label="Yes"
-                disabled={rsvpLoading}
-              />
-              <FormControlLabel
-                value="no"
-                control={<Radio />}
-                label="No"
-                disabled={rsvpLoading}
-              />
+              <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
+              <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
             </RadioGroup>
           </FormControl>
         )}
       </CardContent>
-
       <CardActions className="card-actions">
         <Button
           size="small"
           color="primary"
-          disabled={hasUpvoted}
           onClick={handleUpvote}
           startIcon={<ArrowUpwardIcon />}
+          disabled={hasUpvoted || votingEnded || !votingStarted}
         >
           Upvote ({upvoteCount})
         </Button>
         <Button
           size="small"
-          color="primary"
-          disabled={hasDownvoted}
+          color="secondary"
           onClick={handleDownvote}
           startIcon={<ArrowDownwardIcon />}
+          disabled={hasDownvoted || votingEnded || !votingStarted}
         >
           Downvote ({downvoteCount})
         </Button>
-        {votingEnded && isWinner && (
-          <Typography variant="h6" component="div" color="error">
-            Winning Idea!
-          </Typography>
-        )}
-        {votingEnded && winningIdea !== idea.id && (
-          <Typography variant="h6" component="div" color="error">
-            Winner Already Chosen!
-          </Typography>
-        )}
-        {votingStarted && !votingEnded && (
-          <Typography variant="h6" component="div" color="error">
-            Voting in Progress!
-          </Typography>
-        )}
       </CardActions>
     </Card>
   );

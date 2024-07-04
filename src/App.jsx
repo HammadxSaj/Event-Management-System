@@ -24,7 +24,6 @@ import IdeaDetails from './components/events/types/IdeaDetails';
 
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -41,7 +40,7 @@ function App() {
             <Route path="/event" element={<EventsPage />} />
             <Route path="/event/:eventId/ideas" element={<IdeasPage />} />
             <Route path="/event/:eventId/ideaform" element={<IdeaForm />} />
-            <Route path="/idea/:ideaId" element={<IdeaDetails />} />
+            <Route path="/event/:eventId/ideas/:ideaId" element={<IdeaDetails />} />
             <Route path="/eventform" element={<EventForm />} />
           </Routes>
         </AuthProvider>
