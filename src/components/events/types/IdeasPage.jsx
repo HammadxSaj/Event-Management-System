@@ -10,6 +10,8 @@ import AddIdeasButton from "../../admin/AddIdeasButton";
 import NavBar from "../../Home/NavBar";
 import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
+import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
 import { Timestamp } from "firebase/firestore";
 
 const IdeasPage = () => {
@@ -304,6 +306,15 @@ const IdeasPage = () => {
           <div className="winner-event-section">
             <h2>The Winner Idea!</h2>
             <DisplayIdeas idea={winnerIdea} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
+            <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`)}
+                style={{ marginTop: 10, marginRight: 10 }}
+            >
+                RSVP
+        </Button>
           </div>
         )}
 

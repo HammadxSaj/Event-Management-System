@@ -26,7 +26,6 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import { margin } from '@mui/system';
 
 const AddIdeasButton = ({ eventId }) => {
     const navigate = useNavigate();

@@ -237,7 +237,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
           </Dialog>
         </CardActions>
       )}
-      <CardContent className="card-content">
+      {/* <CardContent className="card-content">
         {isWinner && (
           <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
             <Typography variant="h6">RSVP</Typography>
@@ -253,7 +253,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
             </RadioGroup>
           </FormControl>
         )}
-      </CardContent>
+      </CardContent> */}
       <CardActions className="card-actions">
         <Button
           size="small"

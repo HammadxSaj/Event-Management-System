@@ -21,6 +21,7 @@ import AuthDetails from './components/auth/AuthDetails'; // Import AuthDetails c
 import IdeasPage from './components/events/types/IdeasPage';
 import IdeaForm from './components/admin/IdeaForm';
 import IdeaDetails from './components/events/types/IdeaDetails';
+import RSVP from './components/events/types/RSVP';
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <Route path="/event/:eventId/ideaform" element={<IdeaForm />} />
             <Route path="/event/:eventId/ideas/:ideaId" element={<IdeaDetails />} />
             <Route path="/eventform" element={<EventForm />} />
+            <Route path="/event/:eventId/ideas/:ideaId/rsvp" element={<RSVP />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

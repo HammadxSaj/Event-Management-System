@@ -27,7 +27,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import "./IdeaDetails.css"; // Create or adjust CSS file as needed
+import "../EventDetails.css"
 
 const IdeaDetails = () => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const IdeaDetails = () => {
           const ideaData = ideaDoc.data();
 
           // Fetch idea images (if applicable)
-          const imagesCollection = collection(db, "events", eventId, "ideas", eventId, "images");
+          const imagesCollection = collection(db, "events", eventId, "ideas", ideaId, "images");
           const imagesSnapshot = await getDocs(imagesCollection);
           const images = [];
           imagesSnapshot.forEach((imageDoc) => {
@@ -98,7 +98,7 @@ const IdeaDetails = () => {
 
     const fetchComments = async () => {
       try {
-        const commentsCollection = collection(db, "events", eventId, "ideas", eventId, "comments");
+        const commentsCollection = collection(db, "events", eventId, "ideas", ideaId, "comments");
         const commentsSnapshot = await getDocs(commentsCollection);
         const fetchedComments = commentsSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -133,7 +133,7 @@ const IdeaDetails = () => {
 
   const handleSave = async (field) => {
     try {
-      const ideaRef = doc(db, "events", eventId, "ideas", eventId);
+      const ideaRef = doc(db, "events", eventId, "ideas", ideaId);
       if (field === "location") {
         await updateDoc(ideaRef, {
           location: updatedIdea.location,
@@ -158,7 +158,7 @@ const IdeaDetails = () => {
     try {
       const user = auth.currentUser;
       if (user && newComment.trim()) {
-        const commentsCollection = collection(db, "events", eventId, "ideas", eventId, "comments");
+        const commentsCollection = collection(db, "events", eventId, "ideas", ideaId, "comments");
         const commentData = {
           text: newComment,
           author: user.uid,
@@ -187,7 +187,7 @@ const IdeaDetails = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await deleteDoc(doc(db, "events", eventId, "ideas", eventId, "comments", commentId));
+      await deleteDoc(doc(db, "events", eventId, "ideas", ideaId, "comments", commentId));
       setComments(comments.filter((comment) => comment.id !== commentId));
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -201,7 +201,7 @@ const IdeaDetails = () => {
 
   const handleSaveEditComment = async () => {
     try {
-      const commentRef = doc(db, "events", eventId, "ideas", eventId, "comments", editCommentId);
+      const commentRef = doc(db, "events", eventId, "ideas", ideaId, "comments", editCommentId);
       await updateDoc(commentRef, { text: editCommentText });
       setComments(
         comments.map((comment) =>
@@ -276,19 +276,36 @@ const IdeaDetails = () => {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography variant="h6" component="div" gutterBottom>
-              {editMode.description ? (
-                <TextField
-                  name="description"
-                  value={updatedIdea.description}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  style={{ marginBottom: "1rem" }}
+            <Typography variant="h6" color="textSecondary" gutterBottom>
+              {editMode.dateTime ? (
+                <DateTimePicker
+                  value={dayjs(updatedIdea.dateTime)}
+                  onChange={handleDateTimeChange}
+                  renderInput={(params) => <TextField {...params} />}
                 />
               ) : (
-                idea.description
+                dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
               )}
+            </Typography>
+            {userRole === "admin" && (
+              <>
+                <Button onClick={() => handleEditToggle("dateTime")}>
+                  {editMode.dateTime ? "Cancel" : "Edit"}
+                </Button>
+                {editMode.dateTime && (
+                  <Button onClick={() => handleSave("dateTime")}>Save</Button>
+                )}
+              </>
+            )}
+          </Box>
+          <Divider style={{ margin: "1rem 0" }} />
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h5" component="div" gutterBottom>
+              Idea Description
             </Typography>
             {userRole === "admin" && (
               <>
@@ -303,23 +320,32 @@ const IdeaDetails = () => {
               </>
             )}
           </Box>
-          <Divider />
-          <Box mt={2}>
-            <Typography variant="h6">Details</Typography>
-            {editMode.details ? (
-              <TextField
-                name="details"
-                value={updatedIdea.details}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                style={{ marginBottom: "1rem" }}
-              />
-            ) : (
-              <Typography variant="body1">{idea.details}</Typography>
-            )}
+          {editMode.description ? (
+            <TextField
+              name="description"
+              value={updatedIdea.description}
+              onChange={handleChange}
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={3}
+              style={{ marginBottom: "1rem" }}
+            />
+          ) : (
+            <Typography variant="body1" paragraph>
+              {idea.description}
+            </Typography>
+          )}
+          <Divider style={{ margin: "1rem 0" }} />
+
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h5" component="div" gutterBottom>
+              Idea Details
+            </Typography>
             {userRole === "admin" && (
               <>
                 <Button onClick={() => handleEditToggle("details")}>
@@ -331,181 +357,179 @@ const IdeaDetails = () => {
               </>
             )}
           </Box>
-          <Divider />
-          <Box mt={2}>
-            <Typography variant="h6">Location</Typography>
-            {editMode.location ? (
-              <>
-                <TextField
-                  name="location"
-                  value={updatedIdea.location}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  style={{ marginBottom: "1rem" }}
-                />
-                <TextField
-                  name="embedCode"
-                  value={updatedIdea.embedCode}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  style={{ marginBottom: "1rem" }}
-                />
-              </>
-            ) : (
-              <>
-                <Typography variant="body1">{idea.location}</Typography>
-                {idea.embedCode && (
-                  <Paper
-                    elevation={3}
-                    style={{
-                      padding: "1rem",
-                      marginTop: "1rem",
-                      overflow: "hidden",
-                      position: "relative",
-                    }}
-                  >
-                    <div
-                      dangerouslySetInnerHTML={{ __html: idea.embedCode }}
-                    />
-                  </Paper>
-                )}
-              </>
-            )}
+          {editMode.details ? (
+            <TextField
+              name="details"
+              value={updatedIdea.details}
+              onChange={handleChange}
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={5}
+              style={{ marginBottom: "1rem" }}
+            />
+          ) : (
+            <Typography variant="body1" paragraph>
+              {idea.details}
+            </Typography>
+          )}
+          <Divider style={{ margin: "1rem 0" }} />
+
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h5" component="div" gutterBottom>
+              Location
+            </Typography>
             {userRole === "admin" && (
               <>
                 <Button onClick={() => handleEditToggle("location")}>
                   {editMode.location ? "Cancel" : "Edit"}
                 </Button>
                 {editMode.location && (
-                  <Button onClick={() => handleSave("location")}>
-                    Save
-                  </Button>
+                  <Button onClick={() => handleSave("location")}>Save</Button>
                 )}
               </>
             )}
           </Box>
-          <Divider />
-          <Box mt={2}>
-            <Typography variant="h6">Date and Time</Typography>
-            {editMode.dateTime ? (
-              <DateTimePicker
-                value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
-                onChange={handleDateTimeChange}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth style={{ marginBottom: "1rem" }} />
-                )}
-              />
-            ) : (
-              <Typography variant="body1">{idea.dateTime}</Typography>
-            )}
-            {userRole === "admin" && (
-              <>
-                <Button onClick={() => handleEditToggle("dateTime")}>
-                  {editMode.dateTime ? "Cancel" : "Edit"}
-                </Button>
-                {editMode.dateTime && (
-                  <Button onClick={() => handleSave("dateTime")}>Save</Button>
-                )}
-              </>
-            )}
-          </Box>
-          <Divider />
-          <Box mt={2}>
-            <Typography variant="h6">Terms and Conditions</Typography>
-            {editMode.termsAndConditions ? (
-              <TextField
-                name="termsAndConditions"
-                value={updatedIdea.termsAndConditions}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                style={{ marginBottom: "1rem" }}
-              />
-            ) : (
-              <Typography variant="body1">
-                {idea.termsAndConditions}
+          {editMode.location ? (
+            <>
+              <div>
+                <TextField
+                  name="embedCode"
+                  value={updatedIdea.embedCode}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  placeholder="Embed Code"
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
+              <div>
+                <TextField
+                  name="location"
+                  value={updatedIdea.location}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
+            </>
+          ) : (
+            <Paper elevation={3} className="location-container">
+              {idea.embedCode && (
+                <div
+                  dangerouslySetInnerHTML={{ __html: idea.embedCode }}
+                  className="location-iframe"
+                />
+              )}
+              <Typography variant="body1" style={{ marginTop: "0.5rem" }}>
+                {idea.location}
               </Typography>
-            )}
-            {userRole === "admin" && (
-              <>
-                <Button onClick={() => handleEditToggle("termsAndConditions")}>
-                  {editMode.termsAndConditions ? "Cancel" : "Edit"}
-                </Button>
-                {editMode.termsAndConditions && (
-                  <Button onClick={() => handleSave("termsAndConditions")}>
-                    Save
-                  </Button>
-                )}
-              </>
-            )}
+            </Paper>
+          )}
+          <Divider style={{ margin: "1rem 0" }} />
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h5" component="div" gutterBottom>
+              Comments
+            </Typography>
           </Box>
-          <Divider />
-          <Box mt={2}>
-            <Typography variant="h6">Comments</Typography>
-            <Box mt={2} mb={2}>
-              {comments.map((comment) => (
-                <Paper
-                  key={comment.id}
-                  elevation={3}
-                  style={{ padding: "1rem", marginBottom: "1rem" }}
-                >
-                  {editCommentId === comment.id ? (
-                    <>
-                      <TextField
-                        value={editCommentText}
-                        onChange={(e) => setEditCommentText(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        style={{ marginBottom: "1rem" }}
-                      />
-                      <Button onClick={handleSaveEditComment}>Save</Button>
-                      <Button onClick={handleCancelEditComment}>Cancel</Button>
-                    </>
-                  ) : (
-                    <>
-                      <Typography variant="body1">
-                        {comment.text}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {new Date(
-                          comment.timestamp.seconds * 1000 +
-                          comment.timestamp.nanoseconds / 1000000
-                        ).toLocaleString()}
-                      </Typography>
-                      {userRole === "admin" && (
-                        <Box>
-                          <IconButton onClick={() => handleEditComment(comment.id, comment.text)}>
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            style={{ marginTop: "1rem" }}
+          >
+            {comments.map((comment) => (
+              <Paper
+                key={comment.id}
+                style={{ padding: "1rem", marginBottom: "1rem" }}
+              >
+                <Typography variant="body2" color="textSecondary" gutterBottom>
+                  {comment.author} -{" "}
+                  {new Date(comment.timestamp.seconds * 1000).toLocaleString()}
+                </Typography>
+                {editCommentId === comment.id ? (
+                  <TextField
+                    value={editCommentText}
+                    onChange={(e) => setEditCommentText(e.target.value)}
+                    multiline
+                    fullWidth
+                    rows={2}
+                  />
+                ) : (
+                  <Typography variant="body1" gutterBottom>
+                    {comment.text}
+                  </Typography>
+                )}
+                {auth.currentUser &&
+                  (auth.currentUser.uid === comment.author ||
+                    userRole === "admin") && (
+                    <Box display="flex" justifyContent="flex-end">
+                      {editCommentId === comment.id ? (
+                        <>
+                          <Button
+                            onClick={handleSaveEditComment}
+                            color="primary"
+                          >
+                            Save
+                          </Button>
+                          <Button onClick={handleCancelEditComment}>
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <IconButton
+                            onClick={() =>
+                              handleEditComment(comment.id, comment.text)
+                            }
+                          >
                             <EditIcon />
                           </IconButton>
-                          <IconButton onClick={() => handleDeleteComment(comment.id)}>
+                          <IconButton
+                            onClick={() => handleDeleteComment(comment.id)}
+                          >
                             <DeleteIcon />
                           </IconButton>
-                        </Box>
+                        </>
                       )}
-                    </>
+                    </Box>
                   )}
-                </Paper>
-              ))}
-              <TextField
-                label="Add a comment"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={2}
-                style={{ marginBottom: "1rem" }}
-              />
-              <Button onClick={handleAddComment} variant="contained">
-                Post Comment
-              </Button>
-            </Box>
+              </Paper>
+            ))}
+            {auth.currentUser && (
+              <Box display="flex" flexDirection="column">
+                <TextField
+                  label="Add a comment"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  multiline
+                  rows={4}
+                  variant="outlined"
+                  fullWidth
+                  style={{ marginBottom: "1rem" }}
+                />
+                <Button
+                  onClick={handleAddComment}
+                  variant="contained"
+                  color="primary"
+                >
+                  Post Comment
+                </Button>
+              </Box>
+            )}
           </Box>
         </CardContent>
       </Card>
