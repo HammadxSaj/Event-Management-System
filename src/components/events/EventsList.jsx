@@ -10,6 +10,7 @@ import './EventsList.css';
 import AddEventButton from '../admin/AddEventButton';
 import CountdownTimer from './CountdownTimer';
 import { useNavigate } from 'react-router-dom';
+import PastIdeas from './types/PastIdeas';
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -19,15 +20,19 @@ const EventsList = () => {
   const [votingEndDate, setVotingEndDate] = useState(null);
   const [winnerEvent, setWinnerEvent] = useState(null);
   const [winnerDetermined, setWinnerDetermined] = useState(false);
+  const [winners, setWinners] = useState([]);
   const navigate = useNavigate();
-  const [votingStartDate, setVotingStartDate] = useState(null); // Added state for voting start date
+  const [votingStartDate, setVotingStartDate] = useState(null);
   const [votingStarted, setVotingStarted] = useState(false);
+  const [eventsWithWinners, setEventsWithWinners] = useState([]);
+  const [winnerIdeas, setWinnerIdeas] = useState([]);
+  
+
 
   const handleBack = () => {
     navigate('/');
   };
 
-  // Fetch events, user role, voting end date, and winner event on component mount
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -52,11 +57,23 @@ const EventsList = () => {
             }
           });
 
+          const winnerIdeaDoc = await getDoc(doc(docRef.ref, 'details', 'winnerIdea'));
+          if (winnerIdeaDoc.exists()) {
+            console.log('Winner here: ',winnerIdeaDoc.data().ideaId);
+            event.winnerIdea = winnerIdeaDoc.data().ideaId;
+          }
+          
+
           return event;
         });
 
         const fetchedEvents = await Promise.all(eventPromises);
         setEvents(fetchedEvents);
+        const winnersList = fetchedEvents.filter(event => event.winnerIdea).map(event => ({
+          ideaId: event.winnerIdea,
+          eventId: event.id,
+        }));
+        setWinners(winnersList);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
@@ -73,7 +90,7 @@ const EventsList = () => {
           setVotingEnded(now >= fetchedDate);
 
           if (now >= fetchedDate) {
-            await fetchWinnerEvent(); // Ensure winner event is fetched if voting has ended
+            await fetchWinnerEvent();
           }
         }
       } catch (error) {
@@ -110,7 +127,7 @@ const EventsList = () => {
               title: winnerEventDocSnapshot.data().title,
               date: winnerEventDocSnapshot.data().dateTime,
               description: winnerEventDocSnapshot.data().description,
-              images: [], // Initialize images array
+              images: [],
               upvote: winnerEventDocSnapshot.data().upvote,
               downvote: winnerEventDocSnapshot.data().downvote,
             };
@@ -143,7 +160,87 @@ const EventsList = () => {
     fetchVotingStartDate();
   }, []);
 
-  // Countdown timer logic
+
+
+  const fetchWinnerEventIdea = async () => {
+    try {
+      const eventsSnapshot = await getDocs(collection(db, 'events'));
+  
+      // Array to store events with winner ideas
+      const eventsWithWinners = [];
+  
+      // Iterate through each event document
+      for (const docRef of eventsSnapshot.docs) {
+        // Initialize event object
+        const event = {
+          id: docRef.id,
+          title: docRef.data().title,
+          date: docRef.data().dateTime,
+          description: docRef.data().description,
+          images: [],
+          upvote: docRef.data().upvote || [],
+          downvote: docRef.data().downvote || [],
+        };
+  
+        // Fetch images for the event
+        const imagesCollection = collection(docRef.ref, 'images');
+        const imagesSnapshot = await getDocs(imagesCollection);
+        imagesSnapshot.forEach((imageDoc) => {
+          const imageUrl = imageDoc.data().imageUrls;
+          if (imageUrl) {
+            event.images.push(imageUrl[0]); // Assuming you want to push only the first image URL
+          }
+        });
+  
+        // Fetch winner idea for the event
+        const winnerIdeaDoc = await getDoc(doc(docRef.ref, 'details', 'winnerIdea'));
+        if (winnerIdeaDoc.exists()) {
+          event.winnerIdea = winnerIdeaDoc.data().ideaId;
+          eventsWithWinners.push(event); // Push event with winner idea to array
+        } else {
+          console.log(`No winner idea found for event ${docRef.id}`);
+        }
+      }
+  
+      console.log('Events with winners:', eventsWithWinners);
+      return eventsWithWinners;
+    } catch (error) {
+      console.error('Error fetching events with winners:', error);
+      return []; // Return empty array or handle error as per your requirement
+    }
+  };
+  
+  
+  const fetchIdeaById = async (eventId, ideaId) => {
+    try {
+      const ideaDoc = doc(db, 'events', eventId, 'ideas', ideaId);
+      const ideaSnapshot = await getDoc(ideaDoc);
+
+      if (ideaSnapshot.exists()) {
+        const ideaData = ideaSnapshot.data();
+
+        // Fetch images for the idea
+        const imagesCollection = collection(ideaDoc, 'images');
+        const imagesSnapshot = await getDocs(imagesCollection);
+        const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
+
+        const ideaWithImages = {
+          id: ideaSnapshot.id,
+          ...ideaData,
+          images: imageUrls
+        };
+
+        return ideaWithImages;
+      } else {
+        console.error('Idea not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching idea:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (votingEndDate) {
@@ -197,46 +294,35 @@ const EventsList = () => {
   const determineWinner = async () => {
     try {
       let winningEvent = null;
-      let maxVotes = -1;
-      let minDownvotes = Infinity;
+      let maxVotes = -Infinity;
 
-      events.forEach((event) => {
-        const upvotes = event.upvote.length;
-        const downvotes = event.downvote.length;
+      for (const event of events) {
+        const netVotes = (event.upvote || []).length - (event.downvote || []).length;
 
-        if (upvotes > maxVotes || (upvotes === maxVotes && downvotes < minDownvotes)) {
-          maxVotes = upvotes;
-          minDownvotes = downvotes;
+        if (netVotes > maxVotes) {
+          maxVotes = netVotes;
           winningEvent = event;
         }
-      });
+      }
 
       if (winningEvent) {
+        await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId: winningEvent.id });
         setWinnerEvent(winningEvent);
-        await storeWinnerEvent(winningEvent.id);
         setWinnerDetermined(true);
-        console.log('Winner event:', winningEvent);
       }
     } catch (error) {
-      console.error('Error determining winner event:', error);
-    }
-  };
-
-  const storeWinnerEvent = async (eventId) => {
-    try {
-      await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId });
-      console.log('Winner event stored in Firebase:', eventId);
-    } catch (error) {
-      console.error('Error storing winner event in Firebase:', error);
+      console.error('Error determining winner:', error);
     }
   };
 
   const fetchUserRole = async () => {
     try {
       const user = auth.currentUser;
+
       if (user) {
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
+
         if (userDoc.exists()) {
           setUserRole(userDoc.data().role);
         }
@@ -246,9 +332,39 @@ const EventsList = () => {
     }
   };
 
-  fetchUserRole();
 
-  console.log('The user is admin/user:', userRole);
+
+  useEffect(() => {
+    
+    fetchUserRole();
+  }, []);
+
+  // useEffect(() => {
+
+    
+  //   if (winners.length > 0) {
+  //    // fetchAllWinnerIdeas().then((fetchedWinnerIdeas) => {
+  //      // setWinners(fetchedWinnerIdeas);
+  //     });
+  //   }
+  // }, [winners]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const eventsWithWinnersData = await fetchWinnerEventIdea();
+      setEventsWithWinners(eventsWithWinnersData);
+
+      const ideasPromises = eventsWithWinnersData.map(event => 
+        fetchIdeaById(event.id, event.winnerIdea)
+      );
+
+      const winnerIdeasData = await Promise.all(ideasPromises);
+      setWinnerIdeas(winnerIdeasData);
+    };
+
+    fetchData();
+  }, []);
+  
 
   return (
     <>
@@ -276,33 +392,69 @@ const EventsList = () => {
         <div className="header-section">
           <h1 className="header-title">Explore the best event ideas to choose from!</h1>
           
-          {votingStarted &&( // Render winner event section if voting has ended and winner has not been determined
-          <div>
-            <h2>Countdown Timer</h2>
-            <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted = {votingStarted} />
-          </div>
-
+          {votingStarted && (
+            <div>
+              <h2>Countdown Timer</h2>
+              <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
+            </div>
           )}
           {!votingStarted && votingStartDate && (
             <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
           )}
         </div>
-
-      
-        {votingEnded && winnerEvent && ( // Render winner event section if voting has ended and winner has not been determined
+        
+        {votingEnded && winnerEvent && (
           <div className="winner-event-section">
             <h2>The Winner Event!</h2>
-            <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop={true} votingStarted = {votingStarted}/>
+            <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted}/>
           </div>
         )}
         <h2>The Events</h2>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false}  votingStarted = {votingStarted} />
+              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} />
             </Grid>
           ))}
         </Grid>
+        {winners.length > 0 && (
+          <div className="past-winners-section">
+            <h2>Past Winners</h2>
+            
+            
+            <div>
+            {eventsWithWinners.map(event => (
+              <div key={event.id}>
+              
+                <div>
+                  
+                  {winnerIdeas.map((idea, index) => (
+                    <div key={index}>
+                      {idea && idea.id === event.winnerIdea && (
+                        <div>
+                          <PastIdeas idea = {idea}/>
+                          {/* <p>{idea.title}</p>
+                          <p>{idea.description}</p>
+                          {idea.images.map((image, imgIndex) => (
+                            <img key={imgIndex} src={image} alt={`Idea ${imgIndex}`} />
+                          ))} */}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+            {/* <Grid container spacing={4} justifyContent="center"> */}
+              {/* {winners.map((winner) => ( */}
+                {/* <Grid item key={winner.id}> */}
+                  {/* <PastIdeas idea={winner}/> */}
+                {/* </Grid> */}
+              {/* ))} */}
+            {/* </Grid> */}
+          </div>
+        )}
       </div>
     </>
   );
