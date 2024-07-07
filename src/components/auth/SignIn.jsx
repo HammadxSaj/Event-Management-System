@@ -1,32 +1,34 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import { auth, db } from '../../Firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import './SignIn.css'; // Make sure SignIn.css exists and contains necessary styles
+import { Button } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import './SignIn.css'; 
 import logo from '../../assets/Logo.png';
 import AuthDetails from './AuthDetails';
-import ErrorMessage from './ErrorMessage'; // Import ErrorMessage component if available
+import ErrorMessage from './ErrorMessage';
 import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [type, setType] = useState('password'); // State to toggle input type between 'password' and 'text'
-  const [icon, setIcon] = useState(eyeOff); // State to manage the eye icon
-  const [errorMessage, setErrorMessage] = useState(null); // State for error message
+  const [type, setType] = useState('password');
+  const [icon, setIcon] = useState(eyeOff);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleToggle = () => {
-    setType(type === 'password' ? 'text' : 'password'); // Toggle input type between 'password' and 'text'
-    setIcon(type === 'password' ? eye : eyeOff); // Toggle eye icon between 'eye' and 'eyeOff'
+    setType(type === 'password' ? 'text' : 'password');
+    setIcon(type === 'password' ? eye : eyeOff);
   };
 
   const signin = (e) => {
     e.preventDefault();
-    setErrorMessage(null); // Clear previous error message
+    setErrorMessage(null);
 
     if (!email || !password) {
       setErrorMessage('Please fill in both email and password fields.');
@@ -36,9 +38,8 @@ const SignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         console.log("User logged in:", userCredential.user);
-        setErrorMessage(null); // Clear any previous error messages
+        setErrorMessage(null);
 
-        // Fetch the user role from Firestore
         const userDocRef = doc(db, 'users', userCredential.user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
@@ -63,31 +64,55 @@ const SignIn = () => {
             setErrorMessage("Incorrect email or password.");
             break;
           default:
-            setErrorMessage("Login failed. Please try again."); // Set generic error message for other errors
+            setErrorMessage("Login failed. Please try again.");
             break;
         }
       });
   };
 
+  const handleGoogleSignIn = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const user = result.user;
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.role === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/user');
+          }
+        } else {
+          await setDoc(userDocRef, { email: user.email, role: 'user' });
+          navigate('/user');
+        }
+      })
+      .catch((error) => {
+        console.log("Google sign in error:", error);
+        setErrorMessage("Google sign in failed. Please try again.");
+      });
+  };
+
   const handleBack = () => {
     console.log("Back button clicked");
-    navigate('/'); // Redirect to home or previous page
+    navigate('/');
   };
 
   const handleSignUp = () => {
-    navigate('/signup'); // Redirect to Sign Up page
-  }
+    navigate('/signup');
+  };
+
   return (
     <>
       <div className='auth-container'>
-        <div className='auth-bg'>
-          {/* You can add any background image or content here */}
-        </div>
+        <div className='auth-bg'></div>
         <div className='auth-form'>
           <button className='back-button' onClick={handleBack}>Back</button>
           <img src={logo} alt="Logo" className='logo' />
           <h1>Log In</h1>
-          {errorMessage && <ErrorMessage message={errorMessage} />} {/* Display error message if present */}
+          {errorMessage && <ErrorMessage message={errorMessage} />}
           <form onSubmit={signin}>
             <p>Email</p>
             <input
@@ -114,6 +139,15 @@ const SignIn = () => {
             </div>
             <button type='submit'>Log In</button>
           </form>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<GoogleIcon />}
+            onClick={handleGoogleSignIn}
+            sx={{ marginTop: 2 }}
+          >
+            Sign in with Google
+          </Button>
           <button className='sign-up-button' onClick={handleSignUp}>Sign Up</button>
         </div>
       </div>

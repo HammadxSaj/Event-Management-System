@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage } from 'firebase/storage';
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider  } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,6 +20,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();  
 
 const setAdminRole = async (userId) => {
   try {
@@ -35,4 +36,4 @@ const setAdminRole = async (userId) => {
 const adminUserId = 'gLnQ3THOB7SL5ak786g8lYFJfV63';
 setAdminRole(adminUserId);
 
-export { auth, db, storage };
+export { auth, db, storage, provider };
