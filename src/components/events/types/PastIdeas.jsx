@@ -10,7 +10,7 @@ import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../Firebase';
 import { useAuth } from '../../auth/AuthContext';
 
-const PastIdeas = ({ idea}) => {
+const PastIdeas = ({ idea, eventId}) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -30,7 +30,7 @@ const PastIdeas = ({ idea}) => {
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    //navigate(`/event/${eventId}/ideas/${idea.id}`)
+    navigate(`/event/${eventId}/ideas/${idea.id}`)
   };
 
 

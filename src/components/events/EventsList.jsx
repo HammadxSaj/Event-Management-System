@@ -432,7 +432,7 @@ const EventsList = () => {
                     <div key={index}>
                       {idea && idea.id === event.winnerIdea && (
                         <div>
-                          <PastIdeas idea = {idea}/>
+                          <PastIdeas idea = {idea} eventId = {event.id}/>
                           {/* <p>{idea.title}</p>
                           <p>{idea.description}</p>
                           {idea.images.map((image, imgIndex) => (
