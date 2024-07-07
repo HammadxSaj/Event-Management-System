@@ -213,7 +213,7 @@ const IdeasPage = () => {
                 })
                 .map(event => (
                 <Grid item key={event.id} xs={12} sm={6} md={4}>
-                    <PastIdeas idea={idea}/>
+                    <PastIdeas idea={ideas}/>
                 </Grid>
                 ))}
             </Grid>

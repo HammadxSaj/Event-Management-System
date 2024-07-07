@@ -26,8 +26,21 @@ const IdeaForm = () => {
     creator: "",
   });
 
+  const [descriptionCount, setDescriptionCount] = useState(0);
+  const [detailsCount, setDetailsCount] = useState(0);
   const [mapPreview, setMapPreview] = useState("");
   const [ideas, setIdeas] = useState([]);
+  const [embedCodeError, setEmbedCodeError] = useState(false);
+  const [imageError, setImageError] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    title: false,
+    location: false,
+    dateTime: false,
+    description: false,
+    details: false,
+    images: false,
+    embedCode: false,
+  });
 
   useEffect(() => {
     if (eventId) {
@@ -53,15 +66,51 @@ const IdeaForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "description") {
+      setDescriptionCount(value.length);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        description: value.length > 250,
+      }));
+    }
+    if (name === "details") {
+      setDetailsCount(value.length);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        details: value.length > 1000,
+      }));
+    }
     setFormData({ ...formData, [name]: value });
   };
 
   const handleDateTimeChange = (newValue) => {
+    const currentDate = dayjs();
+    const isValidDateTime = newValue.isAfter(currentDate);
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      dateTime: !isValidDateTime,
+    }));
     setFormData({ ...formData, dateTime: newValue });
   };
 
   const handleImageChange = (e) => {
-    setFormData({ ...formData, images: Array.from(e.target.files) });
+    const files = Array.from(e.target.files);
+    const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const invalidFiles = files.filter(file => !validImageTypes.includes(file.type));
+    if (invalidFiles.length > 0) {
+      setImageError("Please upload valid image files (jpeg, jpg, png)");
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        images: true,
+      }));
+    } else {
+      setImageError("");
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        images: false,
+      }));
+      setFormData({ ...formData, images: files });
+    }
   };
 
   const removeImage = (index) => {
@@ -77,13 +126,40 @@ const IdeaForm = () => {
 
   const handleEmbedCodeSubmit = (e) => {
     e.preventDefault();
-    setMapPreview(formData.embedCode);
+    try {
+      const doc = new DOMParser().parseFromString(formData.embedCode, "text/html");
+      if (doc.body.children.length > 0) {
+        setMapPreview(formData.embedCode);
+        setEmbedCodeError(false);
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          embedCode: false,
+        }));
+      } else {
+        setEmbedCodeError(true);
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          embedCode: true,
+        }));
+      }
+    } catch (error) {
+      setEmbedCodeError(true);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        embedCode: true,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (eventId) {
+        if (Object.values(formErrors).some(error => error)) {
+          alert("Please resolve all errors before submitting.");
+          return;
+        }
+
         // Step 1: Add idea details to Firestore (excluding images)
         const docRef = await addDoc(collection(db, "events", eventId, "ideas"), {
           title: formData.title,
@@ -132,6 +208,8 @@ const IdeaForm = () => {
       console.error("Error adding idea: ", error);
       alert("Error adding idea");
     }
+
+    navigate(`/event/${eventId}/ideas`)
   };
 
   return (
@@ -171,6 +249,7 @@ const IdeaForm = () => {
                 onChange={handleDateTimeChange}
                 required
               />
+              {formErrors.dateTime && <div className="text-danger">Date and time must be in the future.</div>}
             </Form.Group>
             <Form.Group className="mb-3">
               <TextField
@@ -183,7 +262,10 @@ const IdeaForm = () => {
                 rows={3}
                 variant="outlined"
                 required
+                helperText={`${descriptionCount}/250 characters`}
+                inputProps={{ maxLength: 250 }}
               />
+              {formErrors.description && <div className="text-danger">Description exceeds 250 characters.</div>}
             </Form.Group>
             <Form.Group className="mb-3">
               <TextField
@@ -196,7 +278,10 @@ const IdeaForm = () => {
                 rows={5}
                 variant="outlined"
                 required
+                helperText={`${detailsCount}/1000 characters`}
+                inputProps={{ maxLength: 1000 }}
               />
+              {formErrors.details && <div className="text-danger">Details exceed 1000 characters.</div>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Title Image</Form.Label>
@@ -206,6 +291,8 @@ const IdeaForm = () => {
                 onChange={handleImageChange}
                 required
               />
+              {imageError && <div className="text-danger">{imageError}</div>}
+              {formErrors.images && <div className="text-danger"></div>}
               <div className="image-preview mt-3">
                 {formData.images.map((image, index) => (
                   <div key={index} className="image-container">
@@ -242,6 +329,8 @@ const IdeaForm = () => {
               >
                 Preview Map
               </Button>
+              {embedCodeError && <div className="text-danger">Invalid Embed Code</div>}
+              {formErrors.embedCode && <div className="text-danger"></div>}
               <div
                 className="map-preview mt-3"
                 dangerouslySetInnerHTML={{ __html: mapPreview }}
