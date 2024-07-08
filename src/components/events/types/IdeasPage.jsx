@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, TextField } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "../../../Firebase";
 import { collection, getDocs, getDoc, doc, setDoc, Timestamp } from "firebase/firestore";
@@ -10,8 +10,6 @@ import AddIdeasButton from "../../admin/AddIdeasButton";
 import NavBar from "../../Home/NavBar";
 import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -28,12 +26,38 @@ const IdeasPage = () => {
 
   const determineWinner = async () => {
     try {
+      // Re-fetch the ideas before determining the winner
+      const ideasCollection = collection(db, "events", eventId, "ideas");
+      const ideasSnapshot = await getDocs(ideasCollection);
+      const fetchedIdeas = [];
+
+      for (const docRef of ideasSnapshot.docs) {
+        const ideaData = docRef.data();
+        const ideaId = docRef.id;
+
+        const imagesCollection = collection(docRef.ref, 'images');
+        const imagesSnapshot = await getDocs(imagesCollection);
+        const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
+
+        const ideaWithImages = {
+          id: ideaId,
+          ...ideaData,
+          images: imageUrls
+        };
+
+        fetchedIdeas.push(ideaWithImages);
+      }
+
+      setIdeas(fetchedIdeas);
+
       let winningIdea = null;
       let maxVotes = -1;
       let minDownvotes = Infinity;
 
-      ideas.forEach((idea) => {
+      fetchedIdeas.forEach((idea) => {
         const upvotes = idea.upvote.length;
+        console.log("Title:", idea.title);
+        console.log("Upvotes:", upvotes);
         const downvotes = idea.downvote.length;
 
         if (upvotes > maxVotes || (upvotes === maxVotes && downvotes < minDownvotes)) {
@@ -104,6 +128,7 @@ const IdeasPage = () => {
         console.error('Error fetching user role:', error);
       }
     };
+
     const fetchVotingDates = async () => {
       try {
         const votingDetailsDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
@@ -112,13 +137,13 @@ const IdeasPage = () => {
           const fetchedEndDate = data.votingEndDate.toDate();
           const fetchedStartDate = data.votingStartDate.toDate();
           const now = new Date();
-    
+
           setVotingEndDate(fetchedEndDate);
           setVotingStartDate(fetchedStartDate);
-    
+
           setVotingEnded(now >= fetchedEndDate);
           setVotingStarted(now >= fetchedStartDate);
-    
+
           if (now >= fetchedEndDate) {
             await fetchWinnerIdea();
           } else {
@@ -133,10 +158,7 @@ const IdeasPage = () => {
         console.error('Error fetching voting dates:', error);
       }
     };
-    
 
-  
- 
     const fetchWinnerIdea = async () => {
       if (votingEnded) {
         try {
@@ -193,7 +215,6 @@ const IdeasPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (votingEndDate && votingStartDate) {
-    
         const now = new Date();
         const distance = votingEndDate - now;
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -215,12 +236,15 @@ const IdeasPage = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [votingEndDate, votingStartDate, votingStarted, ideas]);
+  }, [votingEndDate, votingStartDate, votingStarted]);
 
   const handleDateUpdate = async (date) => {
-    console.log('Voting end date changed')
+    console.log('Voting end date changed');
     setVotingEndDate(date);
     setVotingEnded(false); // Reset votingEnded state
+    console.log("Winner Updated");
+    determineWinner();
+    console.log(winnerIdea);
 
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
@@ -277,7 +301,7 @@ const IdeasPage = () => {
           {winnerDetermined && (
             <div>
               <h2>Winning Idea:</h2>
-              {winnerIdea && votingEnded &&(
+              {winnerIdea && votingEnded && (
                 <DisplayIdeas
                   idea={winnerIdea}
                   votingEnded={true}
