@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Grid, TextField } from '@mui/material';
 import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "../../../Firebase";
-import { collection, getDocs, getDoc, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, setDoc, Timestamp } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,7 +12,6 @@ import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-import { Timestamp } from "firebase/firestore";
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -73,7 +72,6 @@ const IdeasPage = () => {
           const ideaData = docRef.data();
           const ideaId = docRef.id;
 
-          // Fetch images for each idea
           const imagesCollection = collection(docRef.ref, 'images');
           const imagesSnapshot = await getDocs(imagesCollection);
           const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
@@ -106,50 +104,39 @@ const IdeasPage = () => {
         console.error('Error fetching user role:', error);
       }
     };
-
-    const fetchVotingEndDate = async () => {
+    const fetchVotingDates = async () => {
       try {
-        const votingEndDateDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
-        if (votingEndDateDoc.exists()) {
-          const fetchedDate = votingEndDateDoc.data().votingEndDate.toDate();
+        const votingDetailsDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
+        if (votingDetailsDoc.exists()) {
+          const data = votingDetailsDoc.data();
+          const fetchedEndDate = data.votingEndDate.toDate();
+          const fetchedStartDate = data.votingStartDate.toDate();
           const now = new Date();
     
-          console.log('Fetched voting end date:', fetchedDate);
-          setVotingEndDate(fetchedDate);
+          setVotingEndDate(fetchedEndDate);
+          setVotingStartDate(fetchedStartDate);
     
-          const hasVotingEnded = now >= fetchedDate;
-          console.log('Voting ended:', hasVotingEnded);
-          setVotingEnded(hasVotingEnded);
+          setVotingEnded(now >= fetchedEndDate);
+          setVotingStarted(now >= fetchedStartDate);
     
-          if (hasVotingEnded) {
-            await fetchWinnerIdea(); // Ensure winner event is fetched if voting has ended
+          if (now >= fetchedEndDate) {
+            await fetchWinnerIdea();
+          } else {
+            // Clear winner idea state if voting is still ongoing
+            setWinnerIdea(null);
+            setWinnerDetermined(false);
           }
         } else {
-          console.log('Document does not exist for voting end date.');
+          console.log('Document does not exist for voting dates.');
         }
       } catch (error) {
-        console.error('Error fetching voting end date:', error);
-        // Handle error state or retry logic if needed
+        console.error('Error fetching voting dates:', error);
       }
     };
     
 
-    const fetchVotingStartDate = async () => {
-      try {
-        const votingStartDateDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
-        if (votingStartDateDoc.exists()) {
-          const fetchedDate = votingStartDateDoc.data().votingStartDate.toDate();
-          setVotingStartDate(fetchedDate);
-
-          const now = new Date();
-          setVotingStarted(now >= fetchedDate);
-        }
-      } catch (error) {
-        console.error('Error fetching voting start date:', error);
-      }
-    };
-
-    // Fetch winner only if voting has ended
+  
+ 
     const fetchWinnerIdea = async () => {
       if (votingEnded) {
         try {
@@ -188,10 +175,8 @@ const IdeasPage = () => {
     const fetchData = async (user) => {
       fetchIdeas();
       fetchUserRole(user);
-      fetchVotingEndDate();
-      fetchVotingStartDate();
+      fetchVotingDates();
       determineWinner();
-      fetchWinnerIdea();
     };
 
     const authListener = onAuthStateChanged(auth, (user) => {
@@ -203,11 +188,12 @@ const IdeasPage = () => {
     });
 
     return () => authListener();
-  }, [eventId, votingEnded]);
+  }, [eventId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (votingEndDate) {
+      if (votingEndDate && votingStartDate) {
+    
         const now = new Date();
         const distance = votingEndDate - now;
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -232,6 +218,7 @@ const IdeasPage = () => {
   }, [votingEndDate, votingStartDate, votingStarted, ideas]);
 
   const handleDateUpdate = async (date) => {
+    console.log('Voting end date changed')
     setVotingEndDate(date);
     setVotingEnded(false); // Reset votingEnded state
 
@@ -272,60 +259,52 @@ const IdeasPage = () => {
             onChange={handleDateUpdate}
             showTimeSelect
             dateFormat="Pp"
-            customInput={<TextField label="Voting End Date" />}
+            placeholderText="Select Voting End Date"
           />
           <DatePicker
             selected={votingStartDate}
             onChange={handleStartDateUpdate}
             showTimeSelect
             dateFormat="Pp"
-            customInput={<TextField label="Voting Start Date" />}
+            placeholderText="Select Voting Start Date"
           />
           <AddIdeasButton eventId={eventId} />
         </div>
       )}
-      <div className="ideas-list-container">
-        <div className="header-section">
-          <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          {votingStarted && ( 
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <h1>Ideas</h1>
+          {winnerDetermined && (
             <div>
-            <h2>Countdown Timer</h2>
-            <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
+              <h2>Winning Idea:</h2>
+              {winnerIdea && votingEnded &&(
+                <DisplayIdeas
+                  idea={winnerIdea}
+                  votingEnded={true}
+                  winningIdea={true}
+                  eventId={eventId}
+                />
+              )}
             </div>
-
           )}
-           
-        
-        
-          {!votingStarted && votingStartDate && !votingEnded && (
-            <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
-          )}
-        </div>
-
-        {votingEnded && winnerIdea && (
-          <div className="winner-event-section">
-            <h2>The Winner Idea!</h2>
-            <DisplayIdeas idea={winnerIdea} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
-            <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`)}
-                style={{ marginTop: 10, marginRight: 10 }}
-            >
-                RSVP
-        </Button>
-          </div>
-        )}
-
-        <Grid container spacing={2}>
-          {ideas.map((idea) => (
-            <Grid item key={idea.id} xs={12} sm={6} md={4} lg={3}>
-              <DisplayIdeas idea={idea} votingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} eventId={eventId} />
-            </Grid>
-          ))}
         </Grid>
-      </div>
+        {timeRemaining && (
+          <Grid item xs={12}>
+            <CountdownTimer timeRemaining={timeRemaining} />
+          </Grid>
+        )}
+        {ideas.map((idea) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={idea.id}>
+            <DisplayIdeas
+              idea={idea}
+              votingEnded={votingEnded}
+              winningIdea={winnerIdea}
+              votingStarted={votingStarted}
+              eventId={eventId}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </>
   );
 };

@@ -38,7 +38,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
 
       if (votingEnded) {
         checkIfWinner();
-        console.log('Winner Idea:', winningIdea);
+        console.log('Winner Idea:', );
       }
 
      
