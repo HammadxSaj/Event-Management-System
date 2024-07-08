@@ -221,7 +221,7 @@ const IdeaDetails = () => {
         );
         const commentData = {
           text: newComment,
-          author: user.uid,
+          author: user.email,
           timestamp: new Date(),
         };
         const commentDoc = await addDoc(commentsCollection, commentData);

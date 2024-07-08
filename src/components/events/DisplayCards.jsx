@@ -171,7 +171,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
     await deleteDoc(doc(db, 'events', event.id));
 
     setOpenDeleteDialog(false);
-    window.location.reload(); // Reload the page to update the list of events
+    window.location.reload();
   } catch (error) {
     console.error('Error deleting event:', error);
   }

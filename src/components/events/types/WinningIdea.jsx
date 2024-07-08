@@ -156,7 +156,7 @@ const WinningIdea = () => {
                 const feedbackCollection = collection(db, "events", eventId, "ideas", ideaId, "feedback");
                 const feedbackData = {
                     text: newFeedback,
-                    author: user.uid,
+                    author: user.email,
                     timestamp: new Date(),
                 };
                 const feedbackDoc = await addDoc(feedbackCollection, feedbackData);

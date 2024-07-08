@@ -92,10 +92,21 @@ const SignUp = () => {
       });
   };
 
+  const handleBack = () => {
+    console.log("Back button clicked");
+    navigate('/');
+  };
+
+  const handleSignIn = () => {
+    navigate('/signin');
+  };
+
   return (
+    <>
     <div className='auth-container'>
       <div className='auth-bg'></div>
       <div className='auth-form'>
+        <button className='back-button' onClick={handleBack}>Back</button>
         <img src={logo} alt="Logo" className='logo' />
         <h1>Sign Up</h1>
         {errorMessage && <ErrorMessage message={errorMessage} />}
@@ -134,8 +145,10 @@ const SignUp = () => {
         >
           Sign up with Google
         </Button>
+        <button className='sign-up-button' onClick={handleSignIn}>Sign In</button>
       </div>
     </div>
+    </>
   );
 };
 
