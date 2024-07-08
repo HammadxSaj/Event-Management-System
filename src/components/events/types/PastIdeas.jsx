@@ -30,7 +30,7 @@ const PastIdeas = ({ idea, eventId}) => {
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/event/${eventId}/ideas/${idea.id}`)
+    navigate(`/event/${eventId}/ideas/winningIdea/${idea.id}`)
   };
 
 

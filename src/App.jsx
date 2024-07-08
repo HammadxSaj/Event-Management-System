@@ -22,6 +22,7 @@ import IdeasPage from './components/events/types/IdeasPage';
 import IdeaForm from './components/admin/IdeaForm';
 import IdeaDetails from './components/events/types/IdeaDetails';
 import RSVP from './components/events/types/RSVP';
+import WinningIdea from './components/events/types/WinningIdea';
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
             <Route path="/event/:eventId/ideas/:ideaId" element={<IdeaDetails />} />
             <Route path="/eventform" element={<EventForm />} />
             <Route path="/event/:eventId/ideas/:ideaId/rsvp" element={<RSVP />} />
+            <Route path="/event/:eventId/ideas/winningIdea/:ideaId" element={<WinningIdea />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
