@@ -154,67 +154,44 @@ const IdeaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (eventId) {
-        if (Object.values(formErrors).some(error => error)) {
-          alert("Please resolve all errors before submitting.");
-          return;
-        }
+      // Step 1: Add event details to Firestore (excluding images)
+      const docRef = await addDoc(collection(db, 'events'), {
+        title: formData.title,
+        location: formData.location,
+        dateTime: formData.dateTime.toISOString(),
+        description: formData.description,
+        details: formData.details,
+        embedCode: formData.embedCode,
+        upvote: [],
+        downvote: [],
+      });
 
-        // Step 1: Add idea details to Firestore (excluding images)
-        const docRef = await addDoc(collection(db, "events", eventId, "ideas"), {
-          title: formData.title,
-          location: formData.location,
-          dateTime: formData.dateTime.toISOString(),
-          description: formData.description,
-          details: formData.details,
-          embedCode: formData.embedCode,
-          upvote: formData.upvote,
-          downvote: formData.downvote,
-          creator: formData.creator,
-        });
+      // Step 2: Upload images to Firebase Storage and get their download URLs
+      const imageUploadPromises = formData.images.map((image) => {
+        const storageRef = ref(storage, `events/${docRef.id}/${image.name}`);
+        return uploadBytes(storageRef, image).then((snapshot) => getDownloadURL(snapshot.ref));
+      });
 
-        // Step 2: Upload images to Firebase Storage and get their download URLs
-        const imageUploadPromises = formData.images.map((image) => {
-          const storageRef = ref(storage, `events/${eventId}/ideas/${docRef.id}/${image.name}`);
-          return uploadBytes(storageRef, image).then((snapshot) => getDownloadURL(snapshot.ref));
-        });
+      const imageUrls = await Promise.all(imageUploadPromises);
 
-        const imageUrls = await Promise.all(imageUploadPromises);
+      // Step 3: Update the Firestore document with the image URLs
+      await addDoc(collection(db, 'events', docRef.id, 'images'), {
+        imageUrls: imageUrls,
+      });
 
-        // Step 3: Update the Firestore document with the image URLs
-        await addDoc(collection(db, "events", eventId, "ideas", docRef.id, "images"), {
-          imageUrls: imageUrls,
-        });
+      alert('Event added successfully');
 
-        setIdeas([...ideas, formData]);
-        setFormData({
-          title: "",
-          location: "",
-          dateTime: dayjs(),
-          description: "",
-          details: "",
-          images: [],
-          embedCode: "",
-          upvote: [],
-          downvote: [],
-          creator: "",
-        });
-
-        alert("Idea added successfully");
-      } else {
-        console.error("eventId is undefined");
-      }
+      // Navigate to /event page after successful addition
+      navigate('/event');
     } catch (error) {
-      console.error("Error adding idea: ", error);
-      alert("Error adding idea");
+      console.error('Error adding event: ', error);
+      alert('Error adding event');
     }
-
-    navigate(`/event/${eventId}/ideas`)
   };
 
   return (
     <>
-      <button className='back-button' onClick={() => navigate(`/event/${eventId}/ideas`)}>Back</button>
+      <button className='back-button' onClick={() => navigate(`/event`)}>Back</button>
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="p-4 shadow-lg form-card">
           <h2 className="text-center mb-4">Add Event</h2>
@@ -337,7 +314,7 @@ const IdeaForm = () => {
               ></div>
             </Form.Group>
             <Button variant="primary" type="submit" className="w-100">
-              Add Idea
+              Add Event
             </Button>
           </Form>
         </Card>

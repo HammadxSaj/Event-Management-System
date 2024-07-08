@@ -27,7 +27,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import "../EventDetails.css"
+import "../EventDetails.css";
 
 const IdeaDetails = () => {
   const navigate = useNavigate();
@@ -50,6 +50,19 @@ const IdeaDetails = () => {
   const [editCommentId, setEditCommentId] = useState(null); // State for editing comment ID
   const [editCommentText, setEditCommentText] = useState(""); // State for editing comment text
 
+  // Additional state for real-time validation
+  const [descriptionCount, setDescriptionCount] = useState(0);
+  const [detailsCount, setDetailsCount] = useState(0);
+  const [embedCodeError, setEmbedCodeError] = useState(false);
+  const [formErrors, setFormErrors] = useState({
+    title: false,
+    location: false,
+    dateTime: false,
+    description: false,
+    details: false,
+    embedCode: false,
+  });
+
   useEffect(() => {
     const fetchIdea = async () => {
       try {
@@ -61,7 +74,14 @@ const IdeaDetails = () => {
           const ideaData = ideaDoc.data();
 
           // Fetch idea images (if applicable)
-          const imagesCollection = collection(db, "events", eventId, "ideas", ideaId, "images");
+          const imagesCollection = collection(
+            db,
+            "events",
+            eventId,
+            "ideas",
+            ideaId,
+            "images"
+          );
           const imagesSnapshot = await getDocs(imagesCollection);
           const images = [];
           imagesSnapshot.forEach((imageDoc) => {
@@ -98,7 +118,14 @@ const IdeaDetails = () => {
 
     const fetchComments = async () => {
       try {
-        const commentsCollection = collection(db, "events", eventId, "ideas", ideaId, "comments");
+        const commentsCollection = collection(
+          db,
+          "events",
+          eventId,
+          "ideas",
+          ideaId,
+          "comments"
+        );
         const commentsSnapshot = await getDocs(commentsCollection);
         const fetchedComments = commentsSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -113,7 +140,7 @@ const IdeaDetails = () => {
     fetchIdea();
     fetchUserRole();
     fetchComments();
-  }, [eventId]);
+  }, [eventId, ideaId]);
 
   const handleEditToggle = (field) => {
     setEditMode({ ...editMode, [field]: !editMode[field] });
@@ -121,10 +148,31 @@ const IdeaDetails = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "description") {
+      setDescriptionCount(value.length);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        description: value.length > 250,
+      }));
+    }
+    if (name === "details") {
+      setDetailsCount(value.length);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        details: value.length > 1000,
+      }));
+    }
     setUpdatedIdea({ ...updatedIdea, [name]: value });
   };
 
   const handleDateTimeChange = (newDateTime) => {
+    const currentDate = dayjs();
+    const isValidDateTime = newDateTime.isAfter(currentDate);
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      dateTime: !isValidDateTime,
+    }));
     setUpdatedIdea({
       ...updatedIdea,
       dateTime: newDateTime.format("MMMM D, YYYY h:mm A"),
@@ -132,6 +180,11 @@ const IdeaDetails = () => {
   };
 
   const handleSave = async (field) => {
+    if (Object.values(formErrors).some((error) => error)) {
+      alert("Please resolve all errors before saving.");
+      return;
+    }
+
     try {
       const ideaRef = doc(db, "events", eventId, "ideas", ideaId);
       if (field === "location") {
@@ -158,7 +211,14 @@ const IdeaDetails = () => {
     try {
       const user = auth.currentUser;
       if (user && newComment.trim()) {
-        const commentsCollection = collection(db, "events", eventId, "ideas", ideaId, "comments");
+        const commentsCollection = collection(
+          db,
+          "events",
+          eventId,
+          "ideas",
+          ideaId,
+          "comments"
+        );
         const commentData = {
           text: newComment,
           author: user.uid,
@@ -187,7 +247,9 @@ const IdeaDetails = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await deleteDoc(doc(db, "events", eventId, "ideas", ideaId, "comments", commentId));
+      await deleteDoc(
+        doc(db, "events", eventId, "ideas", ideaId, "comments", commentId)
+      );
       setComments(comments.filter((comment) => comment.id !== commentId));
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -201,7 +263,15 @@ const IdeaDetails = () => {
 
   const handleSaveEditComment = async () => {
     try {
-      const commentRef = doc(db, "events", eventId, "ideas", ideaId, "comments", editCommentId);
+      const commentRef = doc(
+        db,
+        "events",
+        eventId,
+        "ideas",
+        ideaId,
+        "comments",
+        editCommentId
+      );
       await updateDoc(commentRef, { text: editCommentText });
       setComments(
         comments.map((comment) =>
@@ -228,7 +298,10 @@ const IdeaDetails = () => {
 
   return (
     <Container maxWidth="md" className="container">
-      <button className="back-button" onClick={() => navigate(`/event/${eventId}/ideas`)}>
+      <button
+        className="back-button"
+        onClick={() => navigate(`/event/${eventId}/ideas`)}
+      >
         Back
       </button>
       <Card>
@@ -279,9 +352,19 @@ const IdeaDetails = () => {
             <Typography variant="h6" color="textSecondary" gutterBottom>
               {editMode.dateTime ? (
                 <DateTimePicker
-                  value={dayjs(updatedIdea.dateTime)}
+                  label="Date & Time"
+                  value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
                   onChange={handleDateTimeChange}
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={formErrors.dateTime}
+                      helperText={
+                        formErrors.dateTime &&
+                        "Date and time must be in the future."
+                      }
+                    />
+                  )}
                 />
               ) : (
                 dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
@@ -293,7 +376,12 @@ const IdeaDetails = () => {
                   {editMode.dateTime ? "Cancel" : "Edit"}
                 </Button>
                 {editMode.dateTime && (
-                  <Button onClick={() => handleSave("dateTime")}>Save</Button>
+                  <Button
+                    onClick={() => handleSave("dateTime")}
+                    disabled={formErrors.dateTime}
+                  >
+                    Save
+                  </Button>
                 )}
               </>
             )}
@@ -321,16 +409,25 @@ const IdeaDetails = () => {
             )}
           </Box>
           {editMode.description ? (
-            <TextField
-              name="description"
-              value={updatedIdea.description}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={3}
-              style={{ marginBottom: "1rem" }}
-            />
+            <Box display="flex" flexDirection="column">
+              <TextField
+                name="description"
+                value={updatedIdea.description}
+                onChange={handleChange}
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={4}
+                style={{ marginBottom: "1rem" }}
+                error={formErrors.description}
+                helperText={`Character Count: ${descriptionCount}/250`}
+              />
+              {formErrors.description && (
+                <Typography color="error">
+                  Description exceeds 250 characters.
+                </Typography>
+              )}
+            </Box>
           ) : (
             <Typography variant="body1" paragraph>
               {idea.description}
@@ -358,16 +455,25 @@ const IdeaDetails = () => {
             )}
           </Box>
           {editMode.details ? (
-            <TextField
-              name="details"
-              value={updatedIdea.details}
-              onChange={handleChange}
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={5}
-              style={{ marginBottom: "1rem" }}
-            />
+            <Box display="flex" flexDirection="column">
+              <TextField
+                name="details"
+                value={updatedIdea.details}
+                onChange={handleChange}
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={6}
+                style={{ marginBottom: "1rem" }}
+                error={formErrors.details}
+                helperText={`Character Count: ${detailsCount}/1000`}
+              />
+              {formErrors.details && (
+                <Typography color="error">
+                  Details exceed 1000 characters.
+                </Typography>
+              )}
+            </Box>
           ) : (
             <Typography variant="body1" paragraph>
               {idea.details}
@@ -389,39 +495,49 @@ const IdeaDetails = () => {
                   {editMode.location ? "Cancel" : "Edit"}
                 </Button>
                 {editMode.location && (
-                  <Button onClick={() => handleSave("location")}>Save</Button>
+                  <Button
+                    onClick={() => handleSave("location")}
+                    disabled={formErrors.embedCode}
+                  >
+                    Save
+                  </Button>
                 )}
               </>
             )}
           </Box>
           {editMode.location ? (
-            <>
-              <div>
-                <TextField
-                  name="embedCode"
-                  value={updatedIdea.embedCode}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  placeholder="Embed Code"
-                  style={{ marginBottom: "1rem" }}
-                />
-              </div>
-              <div>
-                <TextField
-                  name="location"
-                  value={updatedIdea.location}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  style={{ marginBottom: "1rem" }}
-                />
-              </div>
-            </>
+            <Box display="flex" flexDirection="column">
+              <TextField
+                name="location"
+                value={updatedIdea.location}
+                onChange={handleChange}
+                variant="outlined"
+                fullWidth
+                style={{ marginBottom: "1rem" }}
+              />
+              <TextField
+                name="embedCode"
+                value={updatedIdea.embedCode}
+                onChange={(e) => {
+                  const embedCode = e.target.value;
+                  const isValidEmbedCode = embedCode.startsWith("<iframe");
+                  setEmbedCodeError(!isValidEmbedCode);
+                  setFormErrors((prevErrors) => ({
+                    ...prevErrors,
+                    embedCode: !isValidEmbedCode,
+                  }));
+                  setUpdatedIdea({ ...updatedIdea, embedCode });
+                }}
+                variant="outlined"
+                fullWidth
+                style={{ marginBottom: "1rem" }}
+                error={embedCodeError}
+                helperText={embedCodeError}
+              />
+              {embedCodeError && (
+                <Typography color="error">Invalid embed code.</Typography>
+              )}
+            </Box>
           ) : (
             <Paper elevation={3} className="location-container">
               {idea.embedCode && (
