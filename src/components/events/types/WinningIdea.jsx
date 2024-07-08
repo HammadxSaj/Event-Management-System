@@ -252,7 +252,7 @@ const WinningIdea = () => {
                                 idea.title
                             )}
                         </Typography>
-                        {userRole === "admin" && (
+                        {/* {userRole === "admin" && (
                             <>
                                 <Button onClick={() => handleEditToggle("title")}>
                                     {editMode.title ? "Cancel" : "Edit"}
@@ -261,7 +261,7 @@ const WinningIdea = () => {
                                     <Button onClick={() => handleSave("title")}>Save</Button>
                                 )}
                             </>
-                        )}
+                        )} */}
                     </Box>
                     <Box
                         display="flex"
@@ -279,7 +279,7 @@ const WinningIdea = () => {
                                 dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
                             )}
                         </Typography>
-                        {userRole === "admin" && (
+                        {/* {userRole === "admin" && (
                             <>
                                 <Button onClick={() => handleEditToggle("dateTime")}>
                                     {editMode.dateTime ? "Cancel" : "Edit"}
@@ -288,7 +288,7 @@ const WinningIdea = () => {
                                     <Button onClick={() => handleSave("dateTime")}>Save</Button>
                                 )}
                             </>
-                        )}
+                        )} */}
                     </Box>
                     <Divider style={{ margin: "1rem 0" }} />
                     <Box
@@ -299,7 +299,7 @@ const WinningIdea = () => {
                         <Typography variant="h5" component="div" gutterBottom>
                             Idea Description
                         </Typography>
-                        {userRole === "admin" && (
+                        {/* {userRole === "admin" && (
                             <>
                                 <Button onClick={() => handleEditToggle("description")}>
                                     {editMode.description ? "Cancel" : "Edit"}
@@ -310,7 +310,7 @@ const WinningIdea = () => {
                                     </Button>
                                 )}
                             </>
-                        )}
+                        )} */}
                     </Box>
                     {editMode.description ? (
                         <TextField
@@ -338,7 +338,7 @@ const WinningIdea = () => {
                         <Typography variant="h5" component="div" gutterBottom>
                             Idea Details
                         </Typography>
-                        {userRole === "admin" && (
+                        {/* {userRole === "admin" && (
                             <>
                                 <Button onClick={() => handleEditToggle("details")}>
                                     {editMode.details ? "Cancel" : "Edit"}
@@ -347,7 +347,7 @@ const WinningIdea = () => {
                                     <Button onClick={() => handleSave("details")}>Save</Button>
                                 )}
                             </>
-                        )}
+                        )} */}
                     </Box>
                     {editMode.details ? (
                         <TextField
@@ -375,7 +375,7 @@ const WinningIdea = () => {
                         <Typography variant="h5" component="div" gutterBottom>
                             Location
                         </Typography>
-                        {userRole === "admin" && (
+                        {/* {userRole === "admin" && (
                             <>
                                 <Button onClick={() => handleEditToggle("location")}>
                                     {editMode.location ? "Cancel" : "Edit"}
@@ -384,7 +384,7 @@ const WinningIdea = () => {
                                     <Button onClick={() => handleSave("location")}>Save</Button>
                                 )}
                             </>
-                        )}
+                        )} */}
                     </Box>
                     {editMode.location ? (
                         <>

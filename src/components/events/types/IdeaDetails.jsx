@@ -166,7 +166,7 @@ const IdeaDetails = () => {
     setUpdatedIdea({ ...updatedIdea, [name]: value });
   };
 
-  const handleDateTimeChange = (newDateTime) => {
+   const handleDateTimeChange = (newDateTime) => {
     const currentDate = dayjs();
     const isValidDateTime = newDateTime.isAfter(currentDate);
     setFormErrors((prevErrors) => ({
@@ -352,20 +352,17 @@ const IdeaDetails = () => {
             <Typography variant="h6" color="textSecondary" gutterBottom>
               {editMode.dateTime ? (
                 <DateTimePicker
-                  label="Date & Time"
-                  value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
-                  onChange={handleDateTimeChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      error={formErrors.dateTime}
-                      helperText={
-                        formErrors.dateTime &&
-                        "Date and time must be in the future."
-                      }
-                    />
-                  )}
+              label="Date & Time"
+              value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
+              onChange={handleDateTimeChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={formErrors.dateTime}
+                  helperText={formErrors.dateTime && "Date and time must be in the future."}
                 />
+              )}
+            />
               ) : (
                 dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
               )}
@@ -376,12 +373,7 @@ const IdeaDetails = () => {
                   {editMode.dateTime ? "Cancel" : "Edit"}
                 </Button>
                 {editMode.dateTime && (
-                  <Button
-                    onClick={() => handleSave("dateTime")}
-                    disabled={formErrors.dateTime}
-                  >
-                    Save
-                  </Button>
+                  <Button onClick={() => handleSave("dateTime")} disabled={formErrors.dateTime}>Save</Button>
                 )}
               </>
             )}
