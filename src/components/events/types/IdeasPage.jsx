@@ -295,9 +295,17 @@ const IdeasPage = () => {
           <AddIdeasButton eventId={eventId} />
         </div>
       )}
+
+      
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <h1>Ideas</h1>
+
+          {timeRemaining && (
+          <Grid item xs={12}>
+            <CountdownTimer timeRemaining={timeRemaining} />
+          </Grid>
+        )}
           {winnerDetermined && (
             <div>
               <h2>Winning Idea:</h2>
@@ -312,11 +320,7 @@ const IdeasPage = () => {
             </div>
           )}
         </Grid>
-        {timeRemaining && (
-          <Grid item xs={12}>
-            <CountdownTimer timeRemaining={timeRemaining} />
-          </Grid>
-        )}
+      
         {ideas.map((idea) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={idea.id}>
             <DisplayIdeas
