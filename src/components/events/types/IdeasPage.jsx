@@ -10,6 +10,8 @@ import AddIdeasButton from "../../admin/AddIdeasButton";
 import NavBar from "../../Home/NavBar";
 import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
+import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -306,17 +308,23 @@ const IdeasPage = () => {
             <CountdownTimer timeRemaining={timeRemaining} />
           </Grid>
         )}
-          {winnerDetermined && (
+          {winnerDetermined && votingEnded &&(
             <div>
               <h2>Winning Idea:</h2>
-              {winnerIdea && votingEnded && (
-                <DisplayIdeas
-                  idea={winnerIdea}
-                  votingEnded={true}
-                  winningIdea={true}
-                  eventId={eventId}
-                />
-              )}
+              <div className="winner-event-section">
+            <h2>The Winner Idea!</h2>
+            <DisplayIdeas idea={winnerIdea} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
+              <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`)}
+                  style={{ marginTop: 10, marginRight: 10 }}
+              >
+                  RSVP
+          </Button>
+            </div>
+              
             </div>
           )}
         </Grid>

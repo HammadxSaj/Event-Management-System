@@ -1,7 +1,14 @@
+
+body {
+  background-color: white;
+}
+
 .auth-container {
     font-family: 'Poppins', sans-serif;
     display: flex;
     min-height: 90vh;
+    
+    background-color: white;
   }
   
   .auth-form {

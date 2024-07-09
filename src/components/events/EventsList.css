@@ -1,5 +1,7 @@
 
-  .header-section {
+
+ 
+ .header-section {
     text-align: center; /* Center align the header */
     margin-bottom: 40px; /* Add margin at the bottom of the header */
   }
@@ -8,6 +10,7 @@
 .header-title {
   margin-bottom: 50px; /* Adjust the value as needed */
 }
+
 
 .winner-event-section {
   font-family: 'Times New Roman', Times, serif;
@@ -26,12 +29,19 @@ h2 {
   font-family: 'Times New Roman', Times, serif;
 }
 
-  .header-title {
+h3{
+    font-size: px; /* Adjust font size for the header */
+ 
+    color:#5F767C;
+}
+
+.header-title {
     font-size: 36px; /* Adjust font size for the header */
     
     font-weight: bold; /* Set font weight to bold */
-    color: #1a4d66; /* Set text color */
-  }
+    color:#1CA8DD;
+
+}
   
   .events-list-container {
     padding: 20px; /* Add padding to the container */

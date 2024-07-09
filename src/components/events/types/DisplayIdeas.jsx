@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../DisplayCards.css';
@@ -15,6 +16,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
   const { authUser } = useAuth();
 
   const [upvoteCount, setUpvoteCount] = useState(0);
+  const [count, setCount] = useState(upvoteCount);
   const [downvoteCount, setDownvoteCount] = useState(0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
@@ -91,29 +93,40 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
   };
 
   const handleUpvote = async () => {
-    if (!hasUpvoted && idea && idea.upvote !== undefined && authUser) {
+    if (idea && idea.upvote !== undefined && authUser) {
       const newUpvotes = new Set(idea.upvote || []);
       const newDownvotes = new Set(idea.downvote || []);
-
-      newUpvotes.add(authUser.uid);
-      newDownvotes.delete(authUser.uid);
-
+  
+      if (hasUpvoted) {
+        // Undo the upvote
+        newUpvotes.delete(authUser.uid);
+        setHasUpvoted(false);
+        setCount(newUpvotes.size);  
+      } else {
+        // Add the upvote
+        newUpvotes.add(authUser.uid);
+        newDownvotes.delete(authUser.uid);
+       
+        setHasUpvoted(true);
+        setHasDownvoted(false);
+        setCount(newUpvotes.size);  
+      }
+  
       setUpvoteCount(newUpvotes.size);
       setDownvoteCount(newDownvotes.size);
-      setHasUpvoted(true);
-      setHasDownvoted(false);
-
+  
       try {
         await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
           upvote: Array.from(newUpvotes),
           downvote: Array.from(newDownvotes),
         });
-        console.log("Upvoted");
+        console.log(hasUpvoted ? "Undo Upvoted" : "Upvoted");
       } catch (error) {
         console.error("Error updating upvotes:", error);
       }
     }
   };
+  
 
   const handleDownvote = async () => {
     if (!hasDownvoted && idea && idea.downvote !== undefined && authUser) {
@@ -255,24 +268,22 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
         )}
       </CardContent> */}
       <CardActions className="card-actions">
-        <Button
-          size="small"
-          color="primary"
-          onClick={handleUpvote}
-          startIcon={<ArrowUpwardIcon />}
-          disabled={hasUpvoted || votingEnded || !votingStarted}
-        >
-          Upvote ({upvoteCount})
-        </Button>
-        <Button
-          size="small"
-          color="secondary"
-          onClick={handleDownvote}
-          startIcon={<ArrowDownwardIcon />}
-          disabled={hasDownvoted || votingEnded || !votingStarted}
-        >
-          Downvote ({downvoteCount})
-        </Button>
+      <Button
+       variant="contained" // Boxed button
+       size="small"
+       color="primary"
+       fullWidth // Make button span full width
+       onClick={handleUpvote}
+       startIcon={<ArrowUpwardIcon />}
+       disabled={votingEnded || !votingStarted}
+     >
+       {hasUpvoted ? 'Undo Vote' : 'Vote'} 
+ 
+    </Button>
+
+       
+     
+    
       </CardActions>
     </Card>
   );

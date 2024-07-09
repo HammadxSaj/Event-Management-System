@@ -363,7 +363,9 @@ const EventsList = () => {
     };
 
     fetchData();
+
   }, []);
+  fetchUserRole();
   
 
   return (
@@ -371,7 +373,7 @@ const EventsList = () => {
       <NavBar />
       {userRole === 'admin' && (
         <div style={{ float: 'right' }}>
-          <DatePicker
+          {/* <DatePicker
             selected={votingEndDate}
             onChange={handleDateUpdate}
             showTimeSelect
@@ -384,15 +386,15 @@ const EventsList = () => {
             showTimeSelect
             dateFormat="Pp"
             customInput={<TextField label="Voting Start Date" />}
-          />
+          /> */}
           <AddEventButton />
         </div>
       )}
       <div className="events-list-container">
         <div className="header-section">
-          <h1 className="header-title">Explore the best event ideas to choose from!</h1>
-          
-          {votingStarted && (
+          <h1 className="header-title">Choose the event that will spark our community's celebration</h1>
+          <h3 className='header-slogan'>Your vote calls for our next epic event!</h3>
+          {/* {votingStarted && (
             <div>
               <h2>Countdown Timer</h2>
               <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
@@ -400,15 +402,15 @@ const EventsList = () => {
           )}
           {!votingStarted && votingStartDate && (
             <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
-          )}
+          )} */}
         </div>
         
-        {votingEnded && winnerEvent && (
+        {/* {votingEnded && winnerEvent && (
           <div className="winner-event-section">
             <h2>The Winner Event!</h2>
             <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted}/>
           </div>
-        )}
+        )} */}
         <h2>The Events</h2>
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
@@ -419,7 +421,7 @@ const EventsList = () => {
         </Grid>
         {winners.length > 0 && (
           <div className="past-winners-section">
-            <h2>Past Winners</h2>
+         
             
             
             <div>
@@ -430,8 +432,9 @@ const EventsList = () => {
                   
                   {winnerIdeas.map((idea, index) => (
                     <div key={index}>
-                      {idea && idea.id === event.winnerIdea && (
+                      {idea && idea.id === event.winnerIdea && idea.votingEnded && (
                         <div>
+                          <h2>Past Winners</h2>
                           <PastIdeas idea = {idea} eventId = {event.id}/>
                           {/* <p>{idea.title}</p>
                           <p>{idea.description}</p>

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box } from '@mui/material';
+import {
+  ArrowUpward as ArrowUpwardIcon,
+  ArrowDownward as ArrowDownwardIcon,
+  Delete as DeleteIcon,
+  LocationOn as LocationOnIcon,
+  Event as EventIcon,
+  AccessTime as AccessTimeIcon,
+} from '@mui/icons-material';
 import './DisplayCards.css';
 import eventi from '../../assets/event1.jpg';
 import { updateDoc, doc, getDoc, deleteDoc, setDoc, getDocs, collection } from 'firebase/firestore';
@@ -199,12 +204,22 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
           <Typography gutterBottom variant="h5" component="div">
             {event.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {new Date(event.date).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
+          {/* <Typography variant="body2" color="text.secondary">
+            <LocationOnIcon /> {event.location}
+          </Typography> */}
+          <Box>
+          <Box my={2} />
+            <Typography variant="body2" color="text.secondary">
+              <EventIcon /> {new Date(event.date).toLocaleDateString()}
+            </Typography>
+            <Box my={1} /> {/* This will add vertical space between the components */}
+            <Typography variant="body2" color="text.secondary">
+              <AccessTimeIcon /> {new Date(event.date).toLocaleTimeString()}
+            </Typography>
+          </Box>
+          {/* <Typography variant="body2" color="text.secondary">
             {event.description}
-          </Typography>
+          </Typography> */}
         </CardContent>
       </CardActionArea>
       {userRole === 'admin' && (
@@ -264,7 +279,6 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
           onClick={handleUpvote}
           startIcon={<ArrowUpwardIcon />}
           disabled={hasUpvoted || votingEnded || !votingStarted}
-         
         >
           Upvote ({upvoteCount})
         </Button>
@@ -274,7 +288,6 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
           onClick={handleDownvote}
           startIcon={<ArrowDownwardIcon />}
           disabled={hasDownvoted || votingEnded || !votingStarted}
-          
         >
           Downvote ({downvoteCount})
         </Button>
@@ -282,5 +295,4 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
     </Card>
   );
 };
-
 export default DisplayCards;
