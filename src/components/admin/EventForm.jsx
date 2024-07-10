@@ -157,13 +157,13 @@ const IdeaForm = () => {
       // Step 1: Add event details to Firestore (excluding images)
       const docRef = await addDoc(collection(db, 'events'), {
         title: formData.title,
-        location: formData.location,
-        dateTime: formData.dateTime.toISOString(),
-        description: formData.description,
-        details: formData.details,
-        embedCode: formData.embedCode,
-        upvote: [],
-        downvote: [],
+        // location: formData.location,
+        // dateTime: formData.dateTime.toISOString(),
+        // description: formData.description,
+        // details: formData.details,
+        // embedCode: formData.embedCode,
+        // upvote: [],
+        // downvote: [],
       });
 
       // Step 2: Upload images to Firebase Storage and get their download URLs
@@ -207,7 +207,7 @@ const IdeaForm = () => {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <TextField
                 fullWidth
                 label="Location Name"
@@ -259,7 +259,7 @@ const IdeaForm = () => {
                 inputProps={{ maxLength: 1000 }}
               />
               {formErrors.details && <div className="text-danger">Details exceed 1000 characters.</div>}
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group className="mb-3">
               <Form.Label>Title Image</Form.Label>
               <Form.Control
@@ -288,7 +288,7 @@ const IdeaForm = () => {
                 ))}
               </div>
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/*<Form.Group className="mb-3">
               <TextField
                 fullWidth
                 label="Google Maps Embed Code"
@@ -312,7 +312,7 @@ const IdeaForm = () => {
                 className="map-preview mt-3"
                 dangerouslySetInnerHTML={{ __html: mapPreview }}
               ></div>
-            </Form.Group>
+            </Form.Group> */}
             <Button variant="primary" type="submit" className="w-100">
               Add Event
             </Button>

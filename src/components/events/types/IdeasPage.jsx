@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Grid } from '@mui/material';
+import { Grid } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "../../../Firebase";
-import { collection, getDocs, getDoc, doc, setDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,21 +17,64 @@ import AddIdeasButton from "../../admin/AddIdeasButton";
 import NavBar from "../../Home/NavBar";
 import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 
 const IdeasPage = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
   const [ideas, setIdeas] = useState([]);
   const [userRole, setUserRole] = useState(null);
-  const [timeRemaining, setTimeRemaining] = useState('');
+  const [timeRemaining, setTimeRemaining] = useState("");
   const [votingEnded, setVotingEnded] = useState(false);
   const [votingEndDate, setVotingEndDate] = useState(null);
   const [winnerIdea, setWinnerIdea] = useState(null);
   const [winnerDetermined, setWinnerDetermined] = useState(false);
   const [votingStartDate, setVotingStartDate] = useState(null);
   const [votingStarted, setVotingStarted] = useState(false);
+  const [hasRSVPed, setHasRSVPed] = useState(false);
+  const [hostingDate, setHostingDate] = useState(null);
+
+  const checkRSVPStatus = async (userId, ideaId) => {
+    try {
+      const rsvpDoc = await getDoc(doc(db, "users", userId, "rsvps", ideaId));
+      return rsvpDoc.exists();
+    } catch (error) {
+      console.error("Error checking RSVP status:", error);
+      return false;
+    }
+  };
+
+  const fetchWinnerIdeaHostingDate = async (ideaId) => {
+    try {
+      const winnerIdeaDoc = await getDoc(
+        doc(db, "events", eventId, "ideas", ideaId)
+      );
+      if (winnerIdeaDoc.exists()) {
+        return winnerIdeaDoc.data().hostingDate.toDate();
+      }
+    } catch (error) {
+      console.error("Error fetching winner idea hosting date:", error);
+    }
+    return null;
+  };
+
+  const shouldDisableRSVP = () => {
+    if (!hostingDate) return false;
+    const oneDayBeforeHostingDate = new Date(hostingDate);
+    oneDayBeforeHostingDate.setDate(oneDayBeforeHostingDate.getDate() - 1);
+    return new Date() >= oneDayBeforeHostingDate;
+  };
+
+  const handleRSVP = async (userId, ideaId) => {
+    try {
+      await setDoc(doc(db, "users", userId, "rsvps", ideaId), {
+        rsvp: true,
+      });
+    } catch (error) {
+      console.error("Error submitting RSVP:", error);
+    }
+  };
 
   const determineWinner = async () => {
     try {
@@ -37,14 +87,16 @@ const IdeasPage = () => {
         const ideaData = docRef.data();
         const ideaId = docRef.id;
 
-        const imagesCollection = collection(docRef.ref, 'images');
+        const imagesCollection = collection(docRef.ref, "images");
         const imagesSnapshot = await getDocs(imagesCollection);
-        const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
+        const imageUrls = imagesSnapshot.docs.map(
+          (imageDoc) => imageDoc.data().imageUrls[0]
+        );
 
         const ideaWithImages = {
           id: ideaId,
           ...ideaData,
-          images: imageUrls
+          images: imageUrls,
         };
 
         fetchedIdeas.push(ideaWithImages);
@@ -62,7 +114,10 @@ const IdeasPage = () => {
         console.log("Upvotes:", upvotes);
         const downvotes = idea.downvote.length;
 
-        if (upvotes > maxVotes || (upvotes === maxVotes && downvotes < minDownvotes)) {
+        if (
+          upvotes > maxVotes ||
+          (upvotes === maxVotes && downvotes < minDownvotes)
+        ) {
           maxVotes = upvotes;
           minDownvotes = downvotes;
           winningIdea = idea;
@@ -75,15 +130,17 @@ const IdeasPage = () => {
         setWinnerDetermined(true);
       }
     } catch (error) {
-      console.error('Error determining winner idea:', error);
+      console.error("Error determining winner idea:", error);
     }
   };
 
   const storeWinnerIdea = async (ideaId) => {
     try {
-      await setDoc(doc(db, "events", eventId, "details", "winnerIdea"), { ideaId });
+      await setDoc(doc(db, "events", eventId, "details", "winnerIdea"), {
+        ideaId,
+      });
     } catch (error) {
-      console.error('Error storing winner idea in Firebase:', error);
+      console.error("Error storing winner idea in Firebase:", error);
     }
   };
 
@@ -98,14 +155,16 @@ const IdeasPage = () => {
           const ideaData = docRef.data();
           const ideaId = docRef.id;
 
-          const imagesCollection = collection(docRef.ref, 'images');
+          const imagesCollection = collection(docRef.ref, "images");
           const imagesSnapshot = await getDocs(imagesCollection);
-          const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
+          const imageUrls = imagesSnapshot.docs.map(
+            (imageDoc) => imageDoc.data().imageUrls[0]
+          );
 
           const ideaWithImages = {
             id: ideaId,
             ...ideaData,
-            images: imageUrls
+            images: imageUrls,
           };
 
           fetchedIdeas.push(ideaWithImages);
@@ -120,20 +179,22 @@ const IdeasPage = () => {
     const fetchUserRole = async (user) => {
       try {
         if (user) {
-          const userDocRef = doc(db, 'users', user.uid);
+          const userDocRef = doc(db, "users", user.uid);
           const userDoc = await getDoc(userDocRef);
           if (userDoc.exists()) {
             setUserRole(userDoc.data().role);
           }
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        console.error("Error fetching user role:", error);
       }
     };
 
     const fetchVotingDates = async () => {
       try {
-        const votingDetailsDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
+        const votingDetailsDoc = await getDoc(
+          doc(db, "events", eventId, "details", "votingDetails")
+        );
         if (votingDetailsDoc.exists()) {
           const data = votingDetailsDoc.data();
           const fetchedEndDate = data.votingEndDate.toDate();
@@ -154,20 +215,28 @@ const IdeasPage = () => {
             setWinnerDetermined(false);
           }
         } else {
-          console.log('Document does not exist for voting dates.');
+          console.log("Document does not exist for voting dates.");
         }
       } catch (error) {
-        console.error('Error fetching voting dates:', error);
+        console.error("Error fetching voting dates:", error);
       }
     };
 
     const fetchWinnerIdea = async () => {
       if (votingEnded) {
         try {
-          const winnerIdeaDoc = await getDoc(doc(db, "events", eventId, "details", "winnerIdea"));
+          const winnerIdeaDoc = await getDoc(
+            doc(db, "events", eventId, "details", "winnerIdea")
+          );
           if (winnerIdeaDoc.exists()) {
             const winnerIdeaId = winnerIdeaDoc.data().ideaId;
-            const winnerIdeaDocRef = doc(db, 'events', eventId, 'ideas', winnerIdeaId);
+            const winnerIdeaDocRef = doc(
+              db,
+              "events",
+              eventId,
+              "ideas",
+              winnerIdeaId
+            );
             const winnerIdeaDocSnapshot = await getDoc(winnerIdeaDocRef);
 
             if (winnerIdeaDocSnapshot.exists()) {
@@ -177,7 +246,7 @@ const IdeasPage = () => {
                 images: [],
               };
 
-              const imagesCollection = collection(winnerIdeaDocRef, 'images');
+              const imagesCollection = collection(winnerIdeaDocRef, "images");
               const imagesSnapshot = await getDocs(imagesCollection);
               imagesSnapshot.forEach((imageDoc) => {
                 const imageUrl = imageDoc.data().imageUrls;
@@ -191,16 +260,25 @@ const IdeasPage = () => {
             }
           }
         } catch (error) {
-          console.error('Error fetching winner idea:', error);
+          console.error("Error fetching winner idea:", error);
         }
       }
     };
 
     const fetchData = async (user) => {
-      fetchIdeas();
-      fetchUserRole(user);
-      fetchVotingDates();
-      determineWinner();
+      await fetchIdeas();
+      await fetchUserRole(user);
+      await fetchVotingDates();
+
+      if (user) {
+        const rsvpStatus = await checkRSVPStatus(user.uid, winnerIdea?.id);
+        setHasRSVPed(rsvpStatus);
+      }
+
+      if (winnerIdea) {
+        const hostingDate = await fetchWinnerIdeaHostingDate(winnerIdea.id);
+        setHostingDate(hostingDate);
+      }
     };
 
     const authListener = onAuthStateChanged(auth, (user) => {
@@ -212,7 +290,7 @@ const IdeasPage = () => {
     });
 
     return () => authListener();
-  }, [eventId]);
+  }, [eventId, winnerIdea]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -220,7 +298,9 @@ const IdeasPage = () => {
         const now = new Date();
         const distance = votingEndDate - now;
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -241,7 +321,7 @@ const IdeasPage = () => {
   }, [votingEndDate, votingStartDate, votingStarted]);
 
   const handleDateUpdate = async (date) => {
-    console.log('Voting end date changed');
+    console.log("Voting end date changed");
     setVotingEndDate(date);
     setVotingEnded(false); // Reset votingEnded state
     console.log("Winner Updated");
@@ -251,10 +331,10 @@ const IdeasPage = () => {
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
         votingEndDate: Timestamp.fromDate(date),
-        votingStartDate: Timestamp.fromDate(votingStartDate)
+        votingStartDate: Timestamp.fromDate(votingStartDate),
       });
     } catch (error) {
-      console.error('Error updating voting end date:', error);
+      console.error("Error updating voting end date:", error);
     }
   };
 
@@ -265,21 +345,21 @@ const IdeasPage = () => {
     try {
       await setDoc(doc(db, "events", eventId, "details", "votingDetails"), {
         votingEndDate: Timestamp.fromDate(votingEndDate),
-        votingStartDate: Timestamp.fromDate(date)
+        votingStartDate: Timestamp.fromDate(date),
       });
       if (new Date() >= date) {
         setVotingStarted(true);
       }
     } catch (error) {
-      console.error('Error updating voting start date:', error);
+      console.error("Error updating voting start date:", error);
     }
   };
 
   return (
     <>
       <NavBar />
-      {userRole === 'admin' && (
-        <div style={{ float: 'right' }}>
+      {userRole === "admin" && (
+        <div style={{ float: "right" }}>
           <DatePicker
             selected={votingEndDate}
             onChange={handleDateUpdate}
@@ -298,37 +378,48 @@ const IdeasPage = () => {
         </div>
       )}
 
-      
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <h1>Ideas</h1>
 
           {timeRemaining && (
-          <Grid item xs={12}>
-            <CountdownTimer timeRemaining={timeRemaining} />
-          </Grid>
-        )}
-          {winnerDetermined && votingEnded &&(
+            <Grid item xs={12}>
+              <CountdownTimer timeRemaining={timeRemaining} />
+            </Grid>
+          )}
+          {winnerDetermined && votingEnded && (
             <div>
               <h2>Winning Idea:</h2>
               <div className="winner-event-section">
-            <h2>The Winner Idea!</h2>
-            <DisplayIdeas idea={winnerIdea} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted} eventId={eventId} />
-              <Button
+                <h2>The Winner Idea!</h2>
+                <DisplayIdeas
+                  idea={winnerIdea}
+                  votingEnded={votingEnded}
+                  winningEventprop={true}
+                  votingStarted={votingStarted}
+                  eventId={eventId}
+                />
+                <Button
                   variant="contained"
                   color="primary"
                   startIcon={<AddIcon />}
-                  onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`)}
+                  onClick={() => {
+                    handleRSVP(auth.currentUser.uid, winnerIdea.id);
+                    setHasRSVPed(true);
+                    navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`);
+                  }}
                   style={{ marginTop: 10, marginRight: 10 }}
-              >
+                  disabled={hasRSVPed 
+                    // || shouldDisableRSVP()
+                  }
+                >
                   RSVP
-          </Button>
-            </div>
-              
+                </Button>
+              </div>
             </div>
           )}
         </Grid>
-      
+
         {ideas.map((idea) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={idea.id}>
             <DisplayIdeas

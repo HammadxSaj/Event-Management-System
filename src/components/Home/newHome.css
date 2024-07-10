@@ -1,0 +1,113 @@
+/* styles.css
+.container {
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.logo {
+  width: 210.62px;
+  height: 274.26px;
+  position: absolute;
+  top: 154px;
+}
+
+.logo-bg {
+  width: 192.05px;
+  height: 191.98px;
+  background-color: #1CA8DD;
+  position: absolute;
+  top: 82.29px;
+  left: 8.23px;
+}
+
+.logo-circle {
+  width: 42.03px;
+  height: 42.03px;
+  background-color: #1CA8DD;
+  position: absolute;
+  top: 74.93px;
+  left: 74.97px;
+}
+
+.logo-decor-1, .logo-decor-2, .logo-decor-3 {
+  border: 1px solid #38BEBE;
+  border-radius: 12px;
+  position: absolute;
+}
+
+.logo-decor-1 {
+  width: 148.14px;
+  height: 149.73px;
+  top: 0;
+  left: 105.56px;
+  transform: rotate(44.83deg);
+}
+
+.logo-decor-2 {
+  width: 154.66px;
+  height: 133.75px;
+  top: 32.60px;
+  left: 48.96px;
+  transform: rotate(18.97deg);
+}
+
+.logo-decor-3 {
+  width: 147px;
+  height: 147.74px;
+  top: 25.02px;
+  left: 144.17px;
+  transform: rotate(155.79deg);
+}
+
+.text-invest {
+  position: absolute;
+  top: 470px;
+  text-align: center;
+  color: #13B1A3;
+  font-size: 36px;
+  font-family: 'ITC Avant Garde Gothic Std';
+  font-weight: 300;
+  word-wrap: break-word;
+}
+
+.text-events {
+  position: absolute;
+  top: 647px;
+  text-align: center;
+  color: #13B1A3;
+  font-size: 54px;
+  font-family: 'ITC Avant Garde Gothic Std';
+  font-weight: 275;
+  word-wrap: break-word;
+}
+
+.button-container {
+  width: 294.93px;
+  height: 68.99px;
+  position: absolute;
+  top: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  width: 202.21px;
+  height: 45.26px;
+  background-color: #3994B7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 12px;
+  font-family: 'Circular Pro';
+  font-weight: 450;
+  line-height: 16px;
+  cursor: pointer;
+} */

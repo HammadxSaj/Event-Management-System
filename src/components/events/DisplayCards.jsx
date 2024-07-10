@@ -207,16 +207,16 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
           {/* <Typography variant="body2" color="text.secondary">
             <LocationOnIcon /> {event.location}
           </Typography> */}
-          <Box>
+          {/* <Box>
           <Box my={2} />
             <Typography variant="body2" color="text.secondary">
               <EventIcon /> {new Date(event.date).toLocaleDateString()}
             </Typography>
-            <Box my={1} /> {/* This will add vertical space between the components */}
+            <Box my={1} />
             <Typography variant="body2" color="text.secondary">
               <AccessTimeIcon /> {new Date(event.date).toLocaleTimeString()}
             </Typography>
-          </Box>
+          </Box> */}
           {/* <Typography variant="body2" color="text.secondary">
             {event.description}
           </Typography> */}

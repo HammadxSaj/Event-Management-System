@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db, storage } from "../../Firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Container, Form, Button, Card } from 'react-bootstrap';
-import { TextField, IconButton } from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import CloseIcon from '@mui/icons-material/Close';
-import dayjs from 'dayjs';
-import '../admin/EventForm.css';
+import { Container, Form, Button, Card } from "react-bootstrap";
+import { TextField, IconButton } from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import CloseIcon from "@mui/icons-material/Close";
+import dayjs from "dayjs";
+import "../admin/EventForm.css";
 
 const IdeaForm = () => {
   const navigate = useNavigate();
@@ -32,6 +32,8 @@ const IdeaForm = () => {
   const [ideas, setIdeas] = useState([]);
   const [embedCodeError, setEmbedCodeError] = useState(false);
   const [imageError, setImageError] = useState("");
+  const [rsvpQuestions, setRsvpQuestions] = useState([]);
+  const [newQuestion, setNewQuestion] = useState("");
   const [formErrors, setFormErrors] = useState({
     title: false,
     location: false,
@@ -96,7 +98,9 @@ const IdeaForm = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-    const invalidFiles = files.filter(file => !validImageTypes.includes(file.type));
+    const invalidFiles = files.filter(
+      (file) => !validImageTypes.includes(file.type)
+    );
     if (invalidFiles.length > 0) {
       setImageError("Please upload valid image files (jpeg, jpg, png)");
       setFormErrors((prevErrors) => ({
@@ -127,7 +131,10 @@ const IdeaForm = () => {
   const handleEmbedCodeSubmit = (e) => {
     e.preventDefault();
     try {
-      const doc = new DOMParser().parseFromString(formData.embedCode, "text/html");
+      const doc = new DOMParser().parseFromString(
+        formData.embedCode,
+        "text/html"
+      );
       if (doc.body.children.length > 0) {
         setMapPreview(formData.embedCode);
         setEmbedCodeError(false);
@@ -151,40 +158,73 @@ const IdeaForm = () => {
     }
   };
 
+  /* your entire previous code */
+
+  const handleAddRsvpQuestion = () => {
+    if (newQuestion.trim() !== "") {
+      setRsvpQuestions([...rsvpQuestions, newQuestion]);
+      setNewQuestion("");
+    }
+  };
+
+  const handleDeleteRsvpQuestion = (index) => {
+    setRsvpQuestions(rsvpQuestions.filter((_, i) => i !== index));
+  };
+
+  const handleEditRsvpQuestion = (index, updatedQuestion) => {
+    const updatedQuestions = [...rsvpQuestions];
+    updatedQuestions[index] = updatedQuestion;
+    setRsvpQuestions(updatedQuestions);
+  };
+
+  /* your entire previous code */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (eventId) {
-        if (Object.values(formErrors).some(error => error)) {
+        if (Object.values(formErrors).some((error) => error)) {
           alert("Please resolve all errors before submitting.");
           return;
         }
 
         // Step 1: Add idea details to Firestore (excluding images)
-        const docRef = await addDoc(collection(db, "events", eventId, "ideas"), {
-          title: formData.title,
-          location: formData.location,
-          dateTime: formData.dateTime.toISOString(),
-          description: formData.description,
-          details: formData.details,
-          embedCode: formData.embedCode,
-          upvote: formData.upvote,
-          downvote: formData.downvote,
-          creator: formData.creator,
-        });
+        const docRef = await addDoc(
+          collection(db, "events", eventId, "ideas"),
+          {
+            title: formData.title,
+            location: formData.location,
+            dateTime: formData.dateTime.toISOString(),
+            description: formData.description,
+            details: formData.details,
+            embedCode: formData.embedCode,
+            upvote: formData.upvote,
+            downvote: formData.downvote,
+            creator: formData.creator,
+            rsvpQuestions: rsvpQuestions, // Add RSVP questions here
+          }
+        );
 
         // Step 2: Upload images to Firebase Storage and get their download URLs
         const imageUploadPromises = formData.images.map((image) => {
-          const storageRef = ref(storage, `events/${eventId}/ideas/${docRef.id}/${image.name}`);
-          return uploadBytes(storageRef, image).then((snapshot) => getDownloadURL(snapshot.ref));
+          const storageRef = ref(
+            storage,
+            `events/${eventId}/ideas/${docRef.id}/${image.name}`
+          );
+          return uploadBytes(storageRef, image).then((snapshot) =>
+            getDownloadURL(snapshot.ref)
+          );
         });
 
         const imageUrls = await Promise.all(imageUploadPromises);
 
         // Step 3: Update the Firestore document with the image URLs
-        await addDoc(collection(db, "events", eventId, "ideas", docRef.id, "images"), {
-          imageUrls: imageUrls,
-        });
+        await addDoc(
+          collection(db, "events", eventId, "ideas", docRef.id, "images"),
+          {
+            imageUrls: imageUrls,
+          }
+        );
 
         setIdeas([...ideas, formData]);
         setFormData({
@@ -209,12 +249,17 @@ const IdeaForm = () => {
       alert("Error adding idea");
     }
 
-    navigate(`/event/${eventId}/ideas`)
+    navigate(`/event/${eventId}/ideas`);
   };
 
   return (
     <>
-      <button className='back-button' onClick={() => navigate(`/event/${eventId}/ideas`)}>Back</button>
+      <button
+        className="back-button"
+        onClick={() => navigate(`/event/${eventId}/ideas`)}
+      >
+        Back
+      </button>
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="p-4 shadow-lg form-card">
           <h2 className="text-center mb-4">Add Idea</h2>
@@ -249,7 +294,11 @@ const IdeaForm = () => {
                 onChange={handleDateTimeChange}
                 required
               />
-              {formErrors.dateTime && <div className="text-danger">Date and time must be in the future.</div>}
+              {formErrors.dateTime && (
+                <div className="text-danger">
+                  Date and time must be in the future.
+                </div>
+              )}
             </Form.Group>
             <Form.Group className="mb-3">
               <TextField
@@ -261,11 +310,14 @@ const IdeaForm = () => {
                 multiline
                 rows={3}
                 variant="outlined"
-                required
                 helperText={`${descriptionCount}/250 characters`}
                 inputProps={{ maxLength: 250 }}
               />
-              {formErrors.description && <div className="text-danger">Description exceeds 250 characters.</div>}
+              {formErrors.description && (
+                <div className="text-danger">
+                  Description exceeds 250 characters.
+                </div>
+              )}
             </Form.Group>
             <Form.Group className="mb-3">
               <TextField
@@ -277,11 +329,49 @@ const IdeaForm = () => {
                 multiline
                 rows={5}
                 variant="outlined"
-                required
                 helperText={`${detailsCount}/1000 characters`}
                 inputProps={{ maxLength: 1000 }}
               />
-              {formErrors.details && <div className="text-danger">Details exceed 1000 characters.</div>}
+              {formErrors.details && (
+                <div className="text-danger">
+                  Details exceed 1000 characters.
+                </div>
+              )}
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>RSVP Questions</Form.Label>
+              {rsvpQuestions.map((question, index) => (
+                <div key={index} className="d-flex align-items-center mb-2">
+                  <TextField
+                    fullWidth
+                    value={question}
+                    onChange={(e) =>
+                      handleEditRsvpQuestion(index, e.target.value)
+                    }
+                    variant="outlined"
+                  />
+                  <IconButton onClick={() => handleDeleteRsvpQuestion(index)}>
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              ))}
+              <div className="d-flex align-items-center">
+                <TextField
+                  fullWidth
+                  label="Add new question"
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  variant="outlined"
+                />
+                <Button
+                  onClick={handleAddRsvpQuestion}
+                  variant="contained"
+                  color="primary"
+                  className="ml-2"
+                >
+                  Add
+                </Button>
+              </div>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Title Image</Form.Label>
@@ -329,7 +419,9 @@ const IdeaForm = () => {
               >
                 Preview Map
               </Button>
-              {embedCodeError && <div className="text-danger">Invalid Embed Code</div>}
+              {embedCodeError && (
+                <div className="text-danger">Invalid Embed Code</div>
+              )}
               {formErrors.embedCode && <div className="text-danger"></div>}
               <div
                 className="map-preview mt-3"

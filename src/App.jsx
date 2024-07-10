@@ -34,7 +34,7 @@ function App() {
         <AuthProvider>
           <AuthDetails /> 
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<EventsPage />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/admin" element={<Admin />} />

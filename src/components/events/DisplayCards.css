@@ -1,8 +1,8 @@
 /* DisplayCards.css */
 
 .card {
-  width: 300px;  /* Set your desired fixed width */
-  height: 520px; /* Set your desired fixed height */
+  width: 300px;  
+  height: 520px; 
   margin: 16px;
   display: flex;
   flex-direction: column;

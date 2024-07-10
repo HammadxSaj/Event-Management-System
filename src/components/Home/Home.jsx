@@ -3,7 +3,6 @@ import HomePageNav from './HomepageNav'
 import NavBar from './NavBar'
 import HomePageWhite from './Homepagewhite'
 import HomepageCards from './HomepageCards';
-import Footer from './Footer';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 
 function Home() {
@@ -14,8 +13,7 @@ function Home() {
             <HomePageWhite />
             <HomepageCards />
             <Footer />
-        </div> 
+        </div>
     );
 }
-
 export default Home;
