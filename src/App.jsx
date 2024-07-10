@@ -23,6 +23,7 @@ import IdeaForm from './components/admin/IdeaForm';
 import IdeaDetails from './components/events/types/IdeaDetails';
 import RSVP from './components/events/types/RSVP';
 import WinningIdea from './components/events/types/WinningIdea';
+import LogIn from './components/HomePage/LoginPage';
 
 
 function App() {
@@ -34,9 +35,11 @@ function App() {
         <AuthProvider>
           <AuthDetails /> 
           <Routes>
-            <Route path="/" element={<EventsPage />} />
+            {/* <Route path="/" element={<EventsPage />} />
             <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signup" element={<SignUp />} /> */}
+            <Route path="/" element={<LogIn/>} />
+        
             <Route path="/admin" element={<Admin />} />
             <Route path="/user" element={<User />} />
             <Route path="/event" element={<EventsPage />} />

@@ -1,0 +1,83 @@
+@font-face {
+    font-family: 'Custom';
+    src: url('../../fonts/Didact_Gothic/DidactGothic-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 100 900;
+    src: url('./fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: 100 900;
+    src: url('./fonts/OpenSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+}
+
+.auth-container {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    min-height: 100vh;
+}
+
+.auth-form h1 {
+    font-family: 'Custom';
+    margin-top: 20px;
+    font-size: 30px;
+    color: #13B1A3;
+}
+
+.auth-form h2 {
+    font-family: 'Open Sans', sans-serif;
+    margin-top: 1px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #266268;
+}
+
+.auth-form input {
+    font-family: 'Poppins', sans-serif;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    font-size: 16px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form button {
+    padding: 10px;
+    background-color: #54b9de;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+    margin-top: 1px;
+}
+
+.securiti {
+    width: 250px;
+    height: auto;
+    margin-top: 50px;
+    /* margin-right: 50px; */
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    color:#676767;
+  }
+  
