@@ -45,6 +45,10 @@ const IdeasPage = () => {
     }
   };
 
+  const removeIdea = (ideaId) => {
+    setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== ideaId));
+  };
+
   const fetchWinnerIdeaHostingDate = async (ideaId) => {
     try {
       const winnerIdeaDoc = await getDoc(
@@ -409,25 +413,35 @@ const IdeasPage = () => {
                     navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`);
                   }}
                   style={{ marginTop: 10, marginRight: 10 }}
-                  disabled={hasRSVPed 
+                  disabled={
+                    hasRSVPed
                     // || shouldDisableRSVP()
                   }
                 >
                   RSVP
                 </Button>
+                {userRole === "admin" && <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/analytics`)}
+                  style={{ marginTop: 10 }}
+                >
+                  View Analytics
+                </Button>
+                }
               </div>
             </div>
           )}
         </Grid>
 
         {ideas.map((idea) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={idea.id}>
+          <Grid item xs={12} sm={6} md={4} key={idea.id}>
             <DisplayIdeas
               idea={idea}
               votingEnded={votingEnded}
-              winningIdea={winnerIdea}
               votingStarted={votingStarted}
               eventId={eventId}
+              removeIdea={removeIdea} // Pass the removeIdea function as a prop
             />
           </Grid>
         ))}

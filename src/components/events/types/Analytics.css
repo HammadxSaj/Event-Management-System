@@ -1,0 +1,21 @@
+/* Analytics.css */
+.chart-container {
+    width: 300px;
+    /* Adjust the width as needed */
+    height: 300px;
+    /* Adjust the height as needed */
+    margin: 0 auto;
+    /* Center the chart */
+}
+
+.modal-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: white;
+    box-shadow: 24;
+    padding: 20px;
+    border-radius: 8px;
+}

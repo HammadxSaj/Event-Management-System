@@ -33,7 +33,7 @@ const setAdminRole = async (userId) => {
 };
 
 // Hardcode the UID of the user you want to set as admin
-const adminUserId = 'gLnQ3THOB7SL5ak786g8lYFJfV63';
+const adminUserId = 'ot3xLJ8IfDZJX1G7NIFYOiLCrpy2';
 setAdminRole(adminUserId);
 
 export { auth, db, storage, provider };

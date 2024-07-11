@@ -1,17 +1,40 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, Button, Radio, RadioGroup, FormControlLabel, FormControl, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  CardActionArea,
+  CardActions,
+  Button,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import DeleteIcon from '@mui/icons-material/Delete';
-import '../DisplayCards.css';
-import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
-import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
-import { db } from '../../../Firebase';
-import { useAuth } from '../../auth/AuthContext';
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import DeleteIcon from "@mui/icons-material/Delete";
+import "../DisplayCards.css";
+import ideaImage from "../../../assets/event1.jpg"; // Replace with appropriate idea image
+import { updateDoc, doc, getDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { db } from "../../../Firebase";
+import { useAuth } from "../../auth/AuthContext";
 
-const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }) => {
+const DisplayIdeas = ({
+  idea,
+  votingEnded,
+  votingStarted,
+  eventId,
+  removeIdea,
+}) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -33,23 +56,23 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
       setDownvoteCount(idea.downvote ? idea.downvote.length : 0);
       setHasUpvoted(idea.upvote && idea.upvote.includes(authUser.uid));
       setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
-    
+
       fetchRsvp();
       fetchUserRole();
-      console.log('Voting ended',votingEnded);
+      console.log("Voting ended", votingEnded);
 
       if (votingEnded) {
         checkIfWinner();
-        console.log('Winner Idea:', );
+        console.log("Winner Idea:");
       }
-
-     
     }
   }, [idea, authUser, votingEnded]);
 
   const fetchRsvp = async () => {
     try {
-      const rsvpDoc = await getDoc(doc(db, 'ideas', idea.id, 'rsvps', authUser.uid));
+      const rsvpDoc = await getDoc(
+        doc(db, "ideas", idea.id, "rsvps", authUser.uid)
+      );
       if (rsvpDoc.exists()) {
         setRsvp(rsvpDoc.data().response);
       }
@@ -64,8 +87,10 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
         console.error("Missing eventId or idea.id");
         return;
       }
-      
-      const winnerIdeaDoc = await getDoc(doc(db, 'events', eventId, 'details', 'winnerIdea'));
+
+      const winnerIdeaDoc = await getDoc(
+        doc(db, "events", eventId, "details", "winnerIdea")
+      );
       if (winnerIdeaDoc.exists() && winnerIdeaDoc.data().ideaId === idea.id) {
         setIsWinner(true);
       }
@@ -76,7 +101,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
 
   const fetchUserRole = async () => {
     try {
-      const userDoc = await getDoc(doc(db, 'users', authUser.uid));
+      const userDoc = await getDoc(doc(db, "users", authUser.uid));
       if (userDoc.exists()) {
         setUserRole(userDoc.data().role);
       }
@@ -89,34 +114,34 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/event/${eventId}/ideas/${idea.id}`)
+    navigate(`/event/${eventId}/ideas/${idea.id}`);
   };
 
   const handleUpvote = async () => {
     if (idea && idea.upvote !== undefined && authUser) {
       const newUpvotes = new Set(idea.upvote || []);
       const newDownvotes = new Set(idea.downvote || []);
-  
+
       if (hasUpvoted) {
         // Undo the upvote
         newUpvotes.delete(authUser.uid);
         setHasUpvoted(false);
-        setCount(newUpvotes.size);  
+        setCount(newUpvotes.size);
       } else {
         // Add the upvote
         newUpvotes.add(authUser.uid);
         newDownvotes.delete(authUser.uid);
-       
+
         setHasUpvoted(true);
         setHasDownvoted(false);
-        setCount(newUpvotes.size);  
+        setCount(newUpvotes.size);
       }
-  
+
       setUpvoteCount(newUpvotes.size);
       setDownvoteCount(newDownvotes.size);
-  
+
       try {
-        await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
+        await updateDoc(doc(db, "events", eventId, "ideas", idea.id), {
           upvote: Array.from(newUpvotes),
           downvote: Array.from(newDownvotes),
         });
@@ -126,7 +151,6 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
       }
     }
   };
-  
 
   const handleDownvote = async () => {
     if (!hasDownvoted && idea && idea.downvote !== undefined && authUser) {
@@ -142,7 +166,7 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
       setHasDownvoted(true);
 
       try {
-        await updateDoc(doc(db, 'events', eventId, 'ideas', idea.id), {
+        await updateDoc(doc(db, "events", eventId, "ideas", idea.id), {
           upvote: Array.from(newUpvotes),
           downvote: Array.from(newDownvotes),
         });
@@ -159,10 +183,10 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
     setRsvp(response);
 
     try {
-      const rsvpDocRef = doc(db, 'ideas', idea.id, 'rsvps', authUser.uid);
+      const rsvpDocRef = doc(db, "ideas", idea.id, "rsvps", authUser.uid);
       await setDoc(rsvpDocRef, {
         response: response,
-        email: authUser.email
+        email: authUser.email,
       });
       console.log("RSVP saved in", idea.id);
     } catch (error) {
@@ -174,11 +198,11 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
 
   const handleDeleteIdea = async () => {
     try {
-      await deleteDoc(doc(db, 'events', eventId, 'ideas', idea.id));
+      await deleteDoc(doc(db, "events", eventId, "ideas", idea.id));
       setOpenDeleteDialog(false);
-      window.location.reload(); // Reload the page to update the list of ideas
+      removeIdea(idea.id); // Call the removeIdea function to update the state
     } catch (error) {
-      console.error('Error deleting idea:', error);
+      console.error("Error deleting idea:", error);
     }
   };
 
@@ -216,8 +240,8 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
           </Typography>
         </CardContent>
       </CardActionArea>
-      
-      {userRole === 'admin' && (
+
+      {userRole === "admin" && (
         <CardActions className="card-actions">
           <Button
             size="small"
@@ -233,10 +257,13 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">
+              {"Confirm Delete"}
+            </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete this idea? This action cannot be undone.
+                Are you sure you want to delete this idea? This action cannot be
+                undone.
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -268,22 +295,17 @@ const DisplayIdeas = ({ idea, votingEnded, winningIdea, votingStarted, eventId }
         )}
       </CardContent> */}
       <CardActions className="card-actions">
-      <Button
-       variant="contained" // Boxed button
-       size="small"
-       color="primary"
-       fullWidth // Make button span full width
-       onClick={handleUpvote}
-       startIcon={<ArrowUpwardIcon />}
-       disabled={votingEnded || !votingStarted}
-     >
-       {hasUpvoted ? 'Undo Vote' : 'Vote'} 
- 
-    </Button>
-
-       
-     
-    
+        <Button
+          variant="contained" // Boxed button
+          size="small"
+          color="primary"
+          fullWidth // Make button span full width
+          onClick={handleUpvote}
+          startIcon={<ArrowUpwardIcon />}
+          disabled={votingEnded || !votingStarted}
+        >
+          {hasUpvoted ? "Undo Vote" : "Vote"}
+        </Button>
       </CardActions>
     </Card>
   );

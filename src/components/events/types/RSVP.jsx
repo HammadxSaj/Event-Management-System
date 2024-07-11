@@ -110,27 +110,30 @@ const RSVP = () => {
           </Typography>
           <div className="rsvp-questions-section mt-4">
             {rsvpQuestions.map((question, index) => (
-              <FormControl
-                component="fieldset"
-                key={index}
-                className="rsvp-question mb-3"
-              >
-                <FormLabel component="legend">{question}</FormLabel>
-                <RadioGroup
-                  row
-                  name={`response-${index}`}
-                  onChange={(e) =>
-                    handleRsvpResponseChange(question, e.target.value)
-                  }
-                >
-                  <FormControlLabel
-                    value="yes"
-                    control={<Radio />}
-                    label="Yes"
-                  />
-                  <FormControlLabel value="no" control={<Radio />} label="No" />
-                </RadioGroup>
-              </FormControl>
+              <div key={index} className="rsvp-question mb-3">
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">{question}</FormLabel>
+                  <RadioGroup
+                    row
+                    name={`response-${index}`}
+                    onChange={(e) =>
+                      handleRsvpResponseChange(question, e.target.value)
+                    }
+                    className="d-flex justify-content-center"
+                  >
+                    <FormControlLabel
+                      value="yes"
+                      control={<Radio />}
+                      label="Yes"
+                    />
+                    <FormControlLabel
+                      value="no"
+                      control={<Radio />}
+                      label="No"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
             ))}
           </div>
           <Typography variant="h6" component="div" gutterBottom>

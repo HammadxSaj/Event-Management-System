@@ -33,6 +33,10 @@ const EventsList = () => {
     navigate('/');
   };
 
+  const handleDeleteEvent = (eventId) => {
+    setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
+  };
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -415,7 +419,7 @@ const EventsList = () => {
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} />
+              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} onDeleteEvent={handleDeleteEvent}/>
             </Grid>
           ))}
         </Grid>

@@ -16,7 +16,8 @@ import { deleteObject, ref } from 'firebase/storage';
 import { db, storage } from '../../Firebase';
 import { useAuth } from '../auth/AuthContext';
 
-const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) => {
+const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onDeleteEvent }) => {
+
   const navigate = useNavigate();
   const { authUser } = useAuth();
 
@@ -176,7 +177,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted }) =
     await deleteDoc(doc(db, 'events', event.id));
 
     setOpenDeleteDialog(false);
-    window.location.reload();
+    onDeleteEvent(event.id); // Notify the parent component about the deletion
   } catch (error) {
     console.error('Error deleting event:', error);
   }
