@@ -4,6 +4,7 @@ import { db } from "../../../Firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { Pie } from "react-chartjs-2";
 import { Card, Container, Typography, Modal, Box } from "@mui/material";
+import Chart from 'chart.js/auto'; // Make sure to import chart.js/auto for the latest version
 import "./Analytics.css";
 
 const Analytics = () => {
