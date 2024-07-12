@@ -396,8 +396,8 @@ const EventsList = () => {
       )}
       <div className="events-list-container">
         <div className="header-section">
-          <h1 className="header-title">Choose the event that will spark our community's celebration</h1>
-          <h3 className='header-slogan'>Your vote calls for our next epic event!</h3>
+          <h1 className="header-title">Your Choice, Our Arrangement</h1>
+          <h3 className='header-slogan'>View events to help us choose ideas for your Happiness</h3>
           {/* {votingStarted && (
             <div>
               <h2>Countdown Timer</h2>

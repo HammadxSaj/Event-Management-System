@@ -1,26 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Menu, MenuItem } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../Firebase'; // Adjust the import according to your Firebase configuration
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth, db } from '../../Firebase';
+import { signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import './NavBar.css';
 import Logo from '../../assets/Logo.png';
 import { useAuth } from '../auth/AuthContext';
 
-
 function NavBar() {
-  const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   const navigate = useNavigate();
-  const { authUser, userSignOut } = useAuth();
+  const { authUser, loading } = useAuth();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+    const fetchUserProfile = async () => {
+      if (authUser && authUser.uid) {
+        console.log('Fetching user profile for UID:', authUser.uid);
+        const userDoc = await getDoc(doc(db, 'user_data', authUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserProfile(userData);
+          console.log('User profile data:', userData);
+          console.log('Profile photo URL:', userData.photoURL);
+        } else {
+          console.log('No such document!');
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [authUser]);
 
   const handleSignOut = async () => {
     try {
@@ -39,12 +51,26 @@ function NavBar() {
     setAnchorEl(null);
   };
 
+  const handleImageError = (e) => {
+    console.error('Error loading profile image:', e);
+    console.log('Failed image URL:', e.target.src);
+    if (retryCount < 3) { // Retry up to 3 times
+      setRetryCount(retryCount + 1);
+      e.target.src = userProfile.photoURL + `?retry=${retryCount}`; // Append a query parameter to force reload
+    } else {
+      e.target.onerror = null; 
+      e.target.src = 'https://via.placeholder.com/40'; // Placeholder image URL
+    }
+  };
+
+  if (loading) {
+    console.log('Loading...');
+    return null; // Or a loading spinner
+  }
+
   return (
     <AppBar position="relative" className="custom-NavBar">
       <Toolbar>
-        {/* <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleMenuOpen} sx={{ mr: 2 }}>
-          <MenuIcon />
-        </IconButton> */}
         <Typography variant="h6" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
           <img
             alt="Eventiti Logo"
@@ -53,46 +79,28 @@ function NavBar() {
             height="40"
             className="d-inline-block align-top"
           />{' '}
-          Eventiti
         </Typography>
-      
-          <>
-            <Button color="inherit" className="custom-logout-button" onClick={handleSignOut}>Sign Out</Button>
-            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>Past Events</Button> 
-            {authUser.photoURL && (
-            <img src={authUser.photoURL} alt="Profile" className="profile-pic" />
+        <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
+        <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>Past Events</Button>
+        {userProfile ? (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {userProfile.photoURL ? (
+              <img
+                src={userProfile.photoURL} 
+                referrerPolicy="no-referrer"
+                alt="Profile"
+                className="profile-pic"
+                style={{ borderRadius: '50%', marginLeft: '10px', width: '40px', height: '40px' }}
+                onError={handleImageError}
+              />
+            ) : (
+              <Typography variant="body1" color="inherit" style={{ marginLeft: '10px' }}>Profile</Typography>
             )}
-            
-          </>
-       
-      </Toolbar>
-      {/* <Menu
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        {user ? (
-          <>
-            <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-            <MenuItem onClick={() => navigate('/event')}>View Events</MenuItem>
-          </>
+          </div>
         ) : (
-          <>
-            <MenuItem onClick={() => navigate('/signup')}>Signup</MenuItem>
-            <MenuItem onClick={() => navigate('/signin')}>Login</MenuItem>
-          </>
+          <Button color="inherit" className="custom-login-button" onClick={() => navigate('/login')}>Sign In</Button>
         )}
-      </Menu> */}
+      </Toolbar>
     </AppBar>
   );
 }

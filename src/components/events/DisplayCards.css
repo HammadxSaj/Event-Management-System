@@ -5,7 +5,7 @@
 
 .display-card {
   width: 250px;  
-  height: 310px; 
+  height: 320px; 
   margin: 16px;
   display: flex;
   flex-direction: column;
@@ -27,10 +27,13 @@
 
 .display-card-content .MuiTypography-root {
   font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
-  font-weight: bold; /* Change to your desired font weight */
-  font-size: 20px; /* Change to your desired font size */
+  font-size: 25px; /* Change to your desired font size */
+  
 }
 
+
+
+
 .display-card-actions {
-  margin-top: 0.1px;
+  margin-top: 10px;
 }

@@ -17,11 +17,23 @@
 }
 
 .custom-NavBar {
-    background-color: #ffffff !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
    
 }
 
-.custom-signup-button,x
+.custom-NavBar h4 {
+    display: inline-block;
+    margin-right: 100px;
+    margin-top: 10px;
+    color:#125d78;
+    font-size: 16px;
+    font-family: 'Quicksand';
+    vertical-align: middle;
+}
+
+
+.custom-signup-button,
 .custom-login-button,
 .custom-logout-button,
 .custom-NavBar .MuiButton-root {

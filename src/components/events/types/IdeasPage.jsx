@@ -20,6 +20,7 @@ import CountdownTimer from "../CountdownTimer";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
+import './IdeasPage.css'
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -372,6 +373,7 @@ const IdeasPage = () => {
   }, [eventId, winnerIdea]);
 
   useEffect(() => {
+  
     const interval = setInterval(() => {
       if (votingEndDate && votingStartDate) {
         const now = new Date();
@@ -388,8 +390,15 @@ const IdeasPage = () => {
         if (distance < 0) {
           clearInterval(interval);
           setTimeRemaining(`0d 0h 0m 0s`);
-          setVotingEnded(true);
-          determineWinner();
+          if (!votingEnded)
+          {
+            setVotingEnded(true);
+            console.log("CALCULATING WINNER HERE");
+
+            determineWinner();
+
+          }
+         
         } else if (!votingStarted && now >= votingStartDate) {
           setVotingStarted(true);
         }
@@ -403,6 +412,7 @@ const IdeasPage = () => {
     console.log("Voting end date changed");
     setVotingEndDate(date);
     setVotingEnded(false); // Reset votingEnded state
+    console.log("CALCULATING WINNER HERE");
     console.log("Winner Updated");
     determineWinner();
     console.log(winnerIdea);
@@ -512,8 +522,12 @@ const IdeasPage = () => {
               </div>
             </div>
           )}
-        </Grid>
+        </Grid> 
 
+
+        <div className="hold-container">
+
+     
         {ideas.map((idea) => (
           <Grid item xs={12} sm={6} md={4} key={idea.id}>
             <DisplayIdeas
@@ -524,7 +538,9 @@ const IdeasPage = () => {
               removeIdea={removeIdea} // Pass the removeIdea function as a prop
             />
           </Grid>
+
         ))}
+         </div>
       </Grid>
     </>
   );

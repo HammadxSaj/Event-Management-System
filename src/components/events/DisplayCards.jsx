@@ -205,22 +205,6 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           <Typography gutterBottom variant="h5" component="div">
             {event.title}
           </Typography>
-          {/* <Typography variant="body2" color="text.secondary">
-            <LocationOnIcon /> {event.location}
-          </Typography> */}
-          {/* <Box>
-          <Box my={2} />
-            <Typography variant="body2" color="text.secondary">
-              <EventIcon /> {new Date(event.date).toLocaleDateString()}
-            </Typography>
-            <Box my={1} />
-            <Typography variant="body2" color="text.secondary">
-              <AccessTimeIcon /> {new Date(event.date).toLocaleTimeString()}
-            </Typography>
-          </Box> */}
-          {/* <Typography variant="body2" color="text.secondary">
-            {event.description}
-          </Typography> */}
         </CardContent>
       </CardActionArea>
       {userRole === 'admin' && (

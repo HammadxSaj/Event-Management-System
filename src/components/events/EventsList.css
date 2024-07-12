@@ -5,42 +5,34 @@
   src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
 }
 
+
+
  .header-section {
     text-align: center; /* Center align the header */
     margin-bottom: 40px; /* Add margin at the bottom of the header */
   }
   
 
-.header-title {
-  margin-bottom: 50px; /* Adjust the value as needed */
-}
 
 
-.winner-event-section {
-  font-family: 'Quicksand';
-  border: 1px solid #ddd;
-  padding: 20px;
-  margin: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-}
 
 
 h2 {
   margin-top:30px; /* Adjust the value as needed */
   color: #1a4d66; /* Set text color */
   font-family: 'Quicksand';
+ 
 }
 
 h3{
-  font-size: px; /* Adjust font size for the header */
+  font-size: 16px; /* Adjust font size for the header */
   font-family: 'Quicksand';
+
   color:#5F767C;
 }
 
 .header-title {
-    font-size: 36px; /* Adjust font size for the header */
+    font-size: 40px; /* Adjust font size for the header */
     font-family: 'Quicksand';
     font-weight: bold; /* Set font weight to bold */
     color:#1CA8DD;

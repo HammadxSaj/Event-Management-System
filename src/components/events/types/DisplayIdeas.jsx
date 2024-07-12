@@ -18,13 +18,13 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DisplayIdeas.css';
 import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
-import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../Firebase';
 import { useAuth } from '../../auth/AuthContext';
 
@@ -37,6 +37,8 @@ const DisplayIdeas = ({
 }) => {
   const navigate = useNavigate();
   const { authUser } = useAuth();
+  const [upvotedUserProfiles, setUpvotedUserProfiles] = useState([]);
+
 
   const [upvoteCount, setUpvoteCount] = useState(0);
   const [count, setCount] = useState(upvoteCount);
@@ -59,14 +61,50 @@ const DisplayIdeas = ({
 
       fetchRsvp();
       fetchUserRole();
+      fetchUpvotedUserProfiles();
       console.log("Voting ended", votingEnded);
 
       if (votingEnded) {
         checkIfWinner();
-        console.log("Winner Idea:");
       }
     }
   }, [idea, authUser, votingEnded]);
+
+  const fetchUpvotedUserProfiles = async () => {
+    try {
+      // Get the upvotes from the specific idea document
+      const ideaDoc = await getDoc(doc(db, "events", eventId, "ideas", idea.id));
+
+      if (!ideaDoc.exists()) {
+        console.error("Idea document not found");
+        setUpvotedUserProfiles([]);
+        return;
+      }
+
+      const ideaData = ideaDoc.data();
+      const upvotes = ideaData.upvote || [];
+
+      // Fetch user profiles (photoURLs) who have upvoted
+      const userProfiles = await Promise.all(upvotes.map(async userId => {
+        const userDoc = await getDoc(doc(db, "users_data", userId));
+        return userDoc.exists() ? userDoc.data().photoURL : null;
+      }));
+
+      // Filter out null values (for non-existing users or missing photoURLs)
+      const filteredUserProfiles = userProfiles.filter(profile => profile !== null);
+
+      // Log the profile URLs
+      console.log('Fetched user profile URLs:', filteredUserProfiles);
+
+      setUpvotedUserProfiles(filteredUserProfiles);
+    } catch (error) {
+      console.error('Error fetching upvoted user profiles:', error);
+      setUpvotedUserProfiles([]); // Handle error by setting empty array or showing an error message
+    }
+  };
+
+
+  
 
   const fetchRsvp = async () => {
     try {
@@ -93,6 +131,7 @@ const DisplayIdeas = ({
       );
       if (winnerIdeaDoc.exists() && winnerIdeaDoc.data().ideaId === idea.id) {
         setIsWinner(true);
+        console.log("Winner Idea:");
       }
     } catch (error) {
       console.error("Error checking winner idea:", error);
@@ -127,6 +166,7 @@ const DisplayIdeas = ({
         newUpvotes.delete(authUser.uid);
         setHasUpvoted(false);
         setCount(newUpvotes.size);
+        fetchUpvotedUserProfiles();
       } else {
         // Add the upvote
         newUpvotes.add(authUser.uid);
@@ -152,50 +192,6 @@ const DisplayIdeas = ({
     }
   };
 
-  const handleDownvote = async () => {
-    if (!hasDownvoted && idea && idea.downvote !== undefined && authUser) {
-      const newDownvotes = new Set(idea.downvote || []);
-      const newUpvotes = new Set(idea.upvote || []);
-
-      newDownvotes.add(authUser.uid);
-      newUpvotes.delete(authUser.uid);
-
-      setUpvoteCount(newUpvotes.size);
-      setDownvoteCount(newDownvotes.size);
-      setHasUpvoted(false);
-      setHasDownvoted(true);
-
-      try {
-        await updateDoc(doc(db, "events", eventId, "ideas", idea.id), {
-          upvote: Array.from(newUpvotes),
-          downvote: Array.from(newDownvotes),
-        });
-        console.log("Downvoted");
-      } catch (error) {
-        console.error("Error updating downvotes:", error);
-      }
-    }
-  };
-
-  const handleRsvpChange = async (e) => {
-    setRsvpLoading(true);
-    const response = e.target.value;
-    setRsvp(response);
-
-    try {
-      const rsvpDocRef = doc(db, "ideas", idea.id, "rsvps", authUser.uid);
-      await setDoc(rsvpDocRef, {
-        response: response,
-        email: authUser.email,
-      });
-      console.log("RSVP saved in", idea.id);
-    } catch (error) {
-      console.error("Error saving RSVP:", error);
-    }
-
-    setRsvpLoading(false);
-  };
-
   const handleDeleteIdea = async () => {
     try {
       await deleteDoc(doc(db, "events", eventId, "ideas", idea.id));
@@ -206,6 +202,8 @@ const DisplayIdeas = ({
     }
   };
 
+
+
   const openDialog = () => {
     setOpenDeleteDialog(true);
   };
@@ -215,7 +213,7 @@ const DisplayIdeas = ({
   };
 
   if (loadingRole) {
-    return <div>Loading...</div>; // You can replace this with a spinner or skeleton component
+    return <div>Loading...</div>; 
   }
 
   return (
@@ -232,12 +230,45 @@ const DisplayIdeas = ({
           <Typography gutterBottom variant="h5" component="div">
             {idea.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {new Date(idea.dateTime).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {idea.location}
-          </Typography>
+         
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+            <FaCalendarAlt style={{ marginRight: '8px', color : "#D96758"}} />
+            <Typography variant="body2" color="text.secondary">
+              Date: {new Date(idea.dateTime).toLocaleDateString()}
+            </Typography>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+            <FaClock style={{ marginRight: '8px', color : "#D96758" }} />
+            <Typography variant="body2" color="text.secondary">
+              Time: {new Date(idea.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </Typography>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <FaMapMarkerAlt style={{ marginRight: '8px', color : "#D96758" }} />
+            <Typography variant="body2" color="text.secondary">
+              Location: {idea.location}
+            </Typography>
+          </div>
+          <div className="upvoted-profiles-container">
+          {upvotedUserProfiles.length > 0 ? (
+            <>
+              {upvotedUserProfiles.slice(0, 5).map((profile, index) => (
+                <div key={index} className="profile-container">
+                  <img src={profile} referrerPolicy="no-referrer" alt="User Profile" className="voting-pic" />
+                </div>
+              ))}
+              {upvotedUserProfiles.length > 5 && (
+                <div className="profile-container more-profiles">
+                  + {upvotedUserProfiles.length - 5} more
+                </div>
+              )}
+            </>
+          ) : (
+            <p>No users have upvoted this idea yet.</p>
+          )}
+        </div>
+
+    
         </CardContent>
       </CardActionArea>
       
@@ -277,40 +308,22 @@ const DisplayIdeas = ({
           </Dialog>
         </CardActions>
       )}
-      {/* <CardContent className="card-content">
-        {isWinner && (
-          <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
-            <Typography variant="h6">RSVP</Typography>
-            <RadioGroup
-              aria-label="rsvp"
-              name="rsvp"
-              value={rsvp}
-              onChange={handleRsvpChange}
-              row
-            >
-              <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
-              <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
-            </RadioGroup>
-          </FormControl>
-        )}
-      </CardContent> */}
       <CardActions className="event-card-actions">
-      <Button
-       variant="contained" // Boxed button
-       size="small"
-       color="primary"
-       fullWidth // Make button span full width
-       onClick={handleUpvote}
-       startIcon={<ArrowUpwardIcon />}
-       disabled={votingEnded || !votingStarted}
-     >
-       {hasUpvoted ? 'Undo Vote' : 'Vote'} 
- 
-    </Button>
-
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          fullWidth
+          style={{ backgroundColor: votingEnded || !votingStarted ? '#cccccc' : '#D96758',
+            color: hasUpvoted ?  '#000000' : '#ffffff' // Change text color based on hasUpvoted state
+          }}
        
-     
-    
+          onClick={handleUpvote}
+          startIcon={<ArrowUpwardIcon />}
+          disabled={votingEnded || !votingStarted}
+        >
+          {hasUpvoted ? 'Undo Vote' : 'Vote'} 
+        </Button>
       </CardActions>
     </Card>
   );

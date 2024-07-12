@@ -31,6 +31,7 @@
     justify-content: center;
 }
 
+
 /*upon hover, buttons expand smoothly*/
 .buttons .MuiButton-root:hover {
     transform: scale(1.1);
