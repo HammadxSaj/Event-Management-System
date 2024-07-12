@@ -3,14 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db, storage } from "../../Firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Container, Form, Button, Card } from 'react-bootstrap';
-import { TextField, IconButton } from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import CloseIcon from '@mui/icons-material/Close';
-import dayjs from 'dayjs';
-import '../admin/EventForm.css';
+import { Container, Form, Button, Card } from "react-bootstrap";
+import { TextField, IconButton } from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import CloseIcon from "@mui/icons-material/Close";
+import dayjs from "dayjs";
+import axios from "axios";
+import "../admin/EventForm.css";
 
-const IdeaForm = () => {
+const EventForm = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
   const [formData, setFormData] = useState({
@@ -41,6 +42,17 @@ const IdeaForm = () => {
     images: false,
     embedCode: false,
   });
+
+  const fetchUserEmails = async () => {
+    try {
+      const usersCollection = collection(db, "users");
+      const usersSnapshot = await getDocs(usersCollection);
+      return usersSnapshot.docs.map((doc) => doc.data().email);
+    } catch (error) {
+      console.error("Error fetching user emails:", error);
+      return [];
+    }
+  };
 
   useEffect(() => {
     if (eventId) {
@@ -96,7 +108,9 @@ const IdeaForm = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
-    const invalidFiles = files.filter(file => !validImageTypes.includes(file.type));
+    const invalidFiles = files.filter(
+      (file) => !validImageTypes.includes(file.type)
+    );
     if (invalidFiles.length > 0) {
       setImageError("Please upload valid image files (jpeg, jpg, png)");
       setFormErrors((prevErrors) => ({
@@ -127,7 +141,10 @@ const IdeaForm = () => {
   const handleEmbedCodeSubmit = (e) => {
     e.preventDefault();
     try {
-      const doc = new DOMParser().parseFromString(formData.embedCode, "text/html");
+      const doc = new DOMParser().parseFromString(
+        formData.embedCode,
+        "text/html"
+      );
       if (doc.body.children.length > 0) {
         setMapPreview(formData.embedCode);
         setEmbedCodeError(false);
@@ -155,43 +172,52 @@ const IdeaForm = () => {
     e.preventDefault();
     try {
       // Step 1: Add event details to Firestore (excluding images)
-      const docRef = await addDoc(collection(db, 'events'), {
+      const docRef = await addDoc(collection(db, "events"), {
         title: formData.title,
-        // location: formData.location,
-        // dateTime: formData.dateTime.toISOString(),
-        // description: formData.description,
-        // details: formData.details,
-        // embedCode: formData.embedCode,
-        // upvote: [],
-        // downvote: [],
+        // Add other event details here
       });
 
       // Step 2: Upload images to Firebase Storage and get their download URLs
       const imageUploadPromises = formData.images.map((image) => {
         const storageRef = ref(storage, `events/${docRef.id}/${image.name}`);
-        return uploadBytes(storageRef, image).then((snapshot) => getDownloadURL(snapshot.ref));
+        return uploadBytes(storageRef, image).then((snapshot) =>
+          getDownloadURL(snapshot.ref)
+        );
       });
 
       const imageUrls = await Promise.all(imageUploadPromises);
 
       // Step 3: Update the Firestore document with the image URLs
-      await addDoc(collection(db, 'events', docRef.id, 'images'), {
+      await addDoc(collection(db, "events", docRef.id, "images"), {
         imageUrls: imageUrls,
       });
 
-      alert('Event added successfully');
+      // Fetch all user emails
+      const userEmails = await fetchUserEmails();
+
+      // Send email notifications
+      await axios.post("http://localhost:3000/send-email", {
+        to: userEmails,
+        subject: "New Event Created",
+        html: `<strong>${formData.title} event has been created!</strong>
+             <p>You can now go ahead and vote for the idea that suits you the most.</p>`,
+      });
+
+      alert("Event added successfully");
 
       // Navigate to /event page after successful addition
-      navigate('/event');
+      navigate("/event");
     } catch (error) {
-      console.error('Error adding event: ', error);
-      alert('Error adding event');
+      console.error("Error adding event: ", error);
+      alert("Error adding event");
     }
   };
 
   return (
     <>
-      <button className='back-button' onClick={() => navigate(`/event`)}>Back</button>
+      <button className="back-button" onClick={() => navigate(`/event`)}>
+        Back
+      </button>
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="p-4 shadow-lg form-card">
           <h2 className="text-center mb-4">Add Event</h2>
@@ -323,4 +349,4 @@ const IdeaForm = () => {
   );
 };
 
-export default IdeaForm;
+export default EventForm;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios"; // Import axios for making HTTP requests
 import { db, auth } from "../../../Firebase";
 import { doc, getDoc, collection, addDoc } from "firebase/firestore";
 import { Container, Card, Button, Typography } from "@mui/material";
@@ -78,6 +79,24 @@ const RSVP = () => {
         responses: rsvpResponses,
       });
       setResponse(isAvailable ? "Yes" : "No");
+
+      // Prepare the responses HTML
+      const responsesHtml = Object.entries(rsvpResponses)
+        .map(
+          ([question, answer]) =>
+            `<p><strong>${question}:</strong> ${answer}</p>`
+        )
+        .join("");
+
+      // Send email notification
+      await axios.post("http://localhost:3000/send-email", {
+        to: currentUser.email,
+        subject: "RSVP Confirmation",
+        html: `<strong>You have responded with ${
+          isAvailable ? "Yes" : "No"
+        } to the RSVP form for the event ${idea.title}</strong>
+             ${responsesHtml}`,
+      });
 
       setTimeout(() => {
         navigate(`/event/${eventId}/ideas`);

@@ -19,6 +19,7 @@ import DisplayIdeas from "./DisplayIdeas";
 import CountdownTimer from "../CountdownTimer";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import axios from "axios";
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -80,6 +81,73 @@ const IdeasPage = () => {
     }
   };
 
+  const fetchUserEmails = async () => {
+    try {
+      const usersCollection = collection(db, "users");
+      const usersSnapshot = await getDocs(usersCollection);
+      return usersSnapshot.docs.map((doc) => doc.data().email);
+    } catch (error) {
+      console.error("Error fetching user emails:", error);
+      return [];
+    }
+  };
+
+  const fetchEventName = async (eventId) => {
+    try {
+      const eventDoc = await getDoc(doc(db, "events", eventId));
+      if (eventDoc.exists()) {
+        return eventDoc.data().title; // Adjust this based on your actual response structure
+      } else {
+        console.error("Event document does not exist.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching event name:", error);
+      return null;
+    }
+  };
+
+  const sendNotificationEmail = async () => {
+    try {
+      // Fetch all user emails
+      const userEmails = await fetchUserEmails();
+
+      // Fetch event name
+      const eventName = await fetchEventName(eventId);
+
+      // Send email notifications
+      await axios.post("http://localhost:3000/send-email", {
+        to: userEmails,
+        subject: "Voting Ending Soon",
+        html: `<strong>One hour left before the voting ends!</strong>
+             <p>Don't forget to cast your vote for the event: ${eventName}.</p>`,
+      });
+
+      console.log("Notification email sent successfully");
+    } catch (error) {
+      console.error("Error sending notification email: ", error);
+    }
+  };
+
+  const sendWinnerNotificationEmail = async (ideaName, eventName) => {
+    try {
+      // Fetch all user emails
+      const userEmails = await fetchUserEmails();
+
+      // Send email notifications
+      await axios.post("http://localhost:3000/send-email", {
+        to: userEmails,
+        subject: "Winning Idea Announcement",
+        html: `<strong>The idea "${ideaName}" for the event "${eventName}" has won based on public consensus.</strong>
+           <p>Please RSVP to confirm your participation.</p>`,
+      });
+
+      console.log("Winner notification email sent successfully");
+    } catch (error) {
+      console.error("Error sending winner notification email: ", error);
+    }
+  };
+
   const determineWinner = async () => {
     try {
       // Re-fetch the ideas before determining the winner
@@ -130,21 +198,17 @@ const IdeasPage = () => {
 
       if (winningIdea) {
         setWinnerIdea(winningIdea);
-        await storeWinnerIdea(winningIdea.id);
+        //await storeWinnerIdea(winningIdea.id);
         setWinnerDetermined(true);
+
+        // Fetch event name
+        const eventName = await fetchEventName(eventId);
+
+        // Send winner notification email
+        //await sendWinnerNotificationEmail(winningIdea.title, eventName);
       }
     } catch (error) {
       console.error("Error determining winner idea:", error);
-    }
-  };
-
-  const storeWinnerIdea = async (ideaId) => {
-    try {
-      await setDoc(doc(db, "events", eventId, "details", "winnerIdea"), {
-        ideaId,
-      });
-    } catch (error) {
-      console.error("Error storing winner idea in Firebase:", error);
     }
   };
 
@@ -210,6 +274,17 @@ const IdeasPage = () => {
 
           setVotingEnded(now >= fetchedEndDate);
           setVotingStarted(now >= fetchedStartDate);
+
+          if (now < fetchedEndDate) {
+            // Schedule email notification for one hour before voting end
+            const oneHourBeforeEnd = new Date(fetchedEndDate);
+            oneHourBeforeEnd.setHours(oneHourBeforeEnd.getHours() - 1);
+            if (now < oneHourBeforeEnd) {
+              const timeUntilNotification =
+                oneHourBeforeEnd.getTime() - now.getTime();
+              setTimeout(sendNotificationEmail, timeUntilNotification);
+            }
+          }
 
           if (now >= fetchedEndDate) {
             await fetchWinnerIdea();
@@ -420,15 +495,20 @@ const IdeasPage = () => {
                 >
                   RSVP
                 </Button>
-                {userRole === "admin" && <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/analytics`)}
-                  style={{ marginTop: 10 }}
-                >
-                  View Analytics
-                </Button>
-                }
+                {userRole === "admin" && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() =>
+                      navigate(
+                        `/event/${eventId}/ideas/${winnerIdea.id}/analytics`
+                      )
+                    }
+                    style={{ marginTop: 10 }}
+                  >
+                    View Analytics
+                  </Button>
+                )}
               </div>
             </div>
           )}

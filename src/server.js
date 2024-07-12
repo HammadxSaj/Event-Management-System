@@ -1,41 +1,53 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import { Resend } from 'resend';
+import "dotenv/config";
+import express from "express";
+import nodemailer from "nodemailer";
+import bodyParser from "body-parser";
+import cors from "cors";
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
-// Initialize the Resend client
-const resend = new Resend('re_45WTopdn_PaEDMnkUSnR7kJr7WTBncCf3');
-
-app.use(bodyParser.json());
+// Enable CORS for all routes
 app.use(cors());
+app.use(bodyParser.json());
 
-app.post('/emails', async (req, res) => {
-  const { to, subject, text } = req.body;
+app.get("/", async (_req, res) => {
+  res.status(200).json({ hello: "world" });
+});
+
+app.post("/send-email", async (req, res) => {
+  const { to, subject, html } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Use `true` for port 465, `false` for all other ports
+    auth: {
+      user: `hammad.sajid@foundri.net`,
+      pass: `bxqbawdppqeyfmls`,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  const mailOptions = {
+    from: "hammad.sajid@foundri.net",
+    to: Array.isArray(to) ? to.join(", ") : to,
+    subject: subject,
+    html: html,
+  };
 
   try {
-    console.log('Sending email to:', to);
-    console.log('Email subject:', subject);
-    console.log('Email text:', text);
-
-    // Send email using the Resend API
-    const result = await resend.emails.send({
-      to,
-      subject,
-      text,
-    });
-
-    console.log('Email sent successfully:', result);
-    res.status(200).json(result);
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+    res.status(200).json({ message: "Emails sent successfully" });
   } catch (error) {
-    console.error('Error in /emails route:', error);
-    console.error('Full error response:', error.response ? await error.response.json() : error.message);
-    res.status(500).json({ error: error.message });
+    console.error("Error sending email:", error);
+    res.status(500).json({ message: "Error sending email", error });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Listening on http://localhost:${port}`);
 });
