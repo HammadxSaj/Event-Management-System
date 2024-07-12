@@ -1,21 +1,29 @@
 // src/components/auth/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../../Firebase';// Make sure this is the correct path to your firebase configuration
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '../../Firebase'; // Make sure this is the correct path to your firebase configuration
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setAuthUser(user);
-      
+      if (user) {
+        console.log('User signed in:', user); // Log user details for debugging
+        setAuthUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        });
+      } else {
+        console.log('No user signed in');
+        setAuthUser(null);
+      }
     });
 
     return () => unsubscribe();

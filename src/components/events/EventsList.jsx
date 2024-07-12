@@ -415,7 +415,7 @@ const EventsList = () => {
             <DisplayCards event={winnerEvent} votingEnded={votingEnded} winningEventprop={true} votingStarted={votingStarted}/>
           </div>
         )} */}
-        <h2>The Events</h2>
+        {/* <h2>The Events</h2> */}
         <Grid container spacing={4} justifyContent="center">
           {events.map((event) => (
             <Grid item key={event.id}>
@@ -425,6 +425,7 @@ const EventsList = () => {
         </Grid>
         {winners.length > 0 && (
           <div className="past-winners-section">
+            <h2>Past Winners</h2>
          
             
             
@@ -433,12 +434,12 @@ const EventsList = () => {
               <div key={event.id}>
               
                 <div>
-                  
+                
                   {winnerIdeas.map((idea, index) => (
                     <div key={index}>
-                      {idea && idea.id === event.winnerIdea && idea.votingEnded && (
-                        <div>
-                          <h2>Past Winners</h2>
+
+                      {idea && idea.id === event.winnerIdea && (
+                        <div>  
                           <PastIdeas idea = {idea} eventId = {event.id}/>
                           {/* <p>{idea.title}</p>
                           <p>{idea.description}</p>

@@ -17,6 +17,11 @@
     src: url('./fonts/OpenSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Quicksand';
+    src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+  }
+
 .auth-container {
     font-family: 'Poppins', sans-serif;
     display: flex;
@@ -24,7 +29,7 @@
 }
 
 .auth-form h1 {
-    font-family: 'Custom';
+    font-family: 'Quicksand';
     margin-top: 20px;
     font-size: 30px;
     color: #13B1A3;

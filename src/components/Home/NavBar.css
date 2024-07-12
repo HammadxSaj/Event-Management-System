@@ -1,52 +1,59 @@
-body {
-    color: white;
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 100 900;
+    src: url('./fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Custom';
+    src: url('../../fonts/Didact_Gothic/DidactGothic-Regular.ttf') format('truetype');
 }
 
 .custom-NavBar {
-    background-color: #123456 !important;
+    background-color: #ffffff !important;
+   
 }
 
-.custom-signup-button {
-    color: #fcfcfc;
-    margin-right: 20px;
-    cursor: pointer;
+.custom-signup-button,x
+.custom-login-button,
+.custom-logout-button,
+.custom-NavBar .MuiButton-root {
+    color:#5F767C;
+    text-transform: none; 
+    font-size:16px;
+    font-family: 'Quicksand';
+    margin-top: 5px;
+    margin-right: 10px;
+
+   
 }
 
-/* Upon hover change color of signup button */
-.custom-signup-button:hover {
-    color: #afa9a9;
-    transform: scale(1.1);
-    transition: transform 0.3s;
-}
 
-.custom-login-button {
-    color: #fcfcfc;
-    font-size: 16px;
-    cursor: pointer;
-}
 
-/* Upon hover change color of login button */
-.custom-login-button:hover {
-    color: #afa9a9;
-    transform: scale(1.1);
-    transition: transform 0.3s;
-}
+
+
+
+
+
 
 .custom-logout-button:hover{
-    color: #afa9a9;
+  
     transform: scale(1.1);
-    transition: transform 0.3s;
+  
 }
 
-/* .buttons .MuiButton-root:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s;
-} */
+
 
 @media (max-width: 992px) {
     .custom-NavBar .MuiButton-root {
         margin: 10px 0;
-        color: white;
-        /* Add margin to nav links in dropdown */
+
     }
 }

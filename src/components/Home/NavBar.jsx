@@ -5,12 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../../Firebase'; // Adjust the import according to your Firebase configuration
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import './NavBar.css';
-import Logo from '../../assets/LogoCropped.png';
+import Logo from '../../assets/Logo.png';
+import { useAuth } from '../auth/AuthContext';
+
 
 function NavBar() {
   const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const { authUser, userSignOut } = useAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -52,17 +55,17 @@ function NavBar() {
           />{' '}
           Eventiti
         </Typography>
-        {user ? (
+      
           <>
             <Button color="inherit" className="custom-logout-button" onClick={handleSignOut}>Sign Out</Button>
-            <Button color="inherit" className="custom-logout-button" onClick={() => navigate('/event')}>View Events</Button>
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>Past Events</Button> 
+            {authUser.photoURL && (
+            <img src={authUser.photoURL} alt="Profile" className="profile-pic" />
+            )}
+            
           </>
-        ) : (
-          <>
-            <Button color="inherit" className="custom-signup-button" onClick={() => navigate('/signup')}>Signup</Button>
-            <Button color="inherit" className="custom-login-button" onClick={() => navigate('/signin')}>Login</Button>
-          </>
-        )}
+       
       </Toolbar>
       {/* <Menu
         anchorEl={anchorEl}

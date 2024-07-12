@@ -1,25 +1,36 @@
-/* DisplayCards.css */
+@font-face {
+  font-family: 'Quicksand';
+  src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+}
 
-.card {
-  width: 300px;  
-  height: 520px; 
+.display-card {
+  width: 250px;  
+  height: 310px; 
   margin: 16px;
   display: flex;
   flex-direction: column;
 }
 
-.card-media {
+.display-card-media {
   width: 100%; 
   height: 200px; /* Adjust if needed to fit within the card height */
   object-fit: cover;
+  font-family: 'Quicksand';
 }
 
-.card-content {
+.display-card-content {
   flex-grow: 1;
+  text-align: center;
   overflow: hidden; /* Ensure content does not overflow */
+  margin-top: 1px;
 }
 
-.card-actions {
-  display: flex;
-  justify-content: space-between;
+.display-card-content .MuiTypography-root {
+  font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
+  font-weight: bold; /* Change to your desired font weight */
+  font-size: 20px; /* Change to your desired font size */
+}
+
+.display-card-actions {
+  margin-top: 0.1px;
 }

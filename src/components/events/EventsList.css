@@ -1,6 +1,10 @@
 
 
- 
+@font-face {
+  font-family: 'Quicksand';
+  src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+}
+
  .header-section {
     text-align: center; /* Center align the header */
     margin-bottom: 40px; /* Add margin at the bottom of the header */
@@ -13,7 +17,7 @@
 
 
 .winner-event-section {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Quicksand';
   border: 1px solid #ddd;
   padding: 20px;
   margin: 20px;
@@ -26,24 +30,25 @@
 h2 {
   margin-top:30px; /* Adjust the value as needed */
   color: #1a4d66; /* Set text color */
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Quicksand';
 }
 
 h3{
-    font-size: px; /* Adjust font size for the header */
- 
-    color:#5F767C;
+  font-size: px; /* Adjust font size for the header */
+  font-family: 'Quicksand';
+  color:#5F767C;
 }
 
 .header-title {
     font-size: 36px; /* Adjust font size for the header */
-    
+    font-family: 'Quicksand';
     font-weight: bold; /* Set font weight to bold */
     color:#1CA8DD;
 
 }
   
   .events-list-container {
+    
     padding: 20px; /* Add padding to the container */
     margin: 50px auto 0; /* Center align the container and add top margin */
     max-width: 1200px; /* Limit maximum width of the container */

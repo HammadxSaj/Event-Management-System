@@ -192,16 +192,16 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   };
 
   return (
-    <Card className="card">
+    <Card className="display-card">
       <CardActionArea onClick={handleDetails}>
         <CardMedia
           component="img"
-          className="card-media"
+          className="display-card-media"
           image={event.images.length > 0 ? event.images[0] : eventi}
           alt={event.title}
           title={event.title}
         />
-        <CardContent className="card-content">
+        <CardContent className="display-card-content">
           <Typography gutterBottom variant="h5" component="div">
             {event.title}
           </Typography>
@@ -224,7 +224,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
         </CardContent>
       </CardActionArea>
       {userRole === 'admin' && (
-        <CardActions className="card-actions">
+        <CardActions className="display-card-actions">
           <Button
             size="small"
             color="error"
@@ -256,7 +256,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           </Dialog>
         </CardActions>
       )}
-      <CardContent className="card-content">
+      <CardContent className="display-card-content">
         {isWinner && winningEventprop && (
           <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
             <Typography variant="h6">RSVP</Typography>
@@ -273,26 +273,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           </FormControl>
         )}
       </CardContent>
-      <CardActions className="card-actions">
-        <Button
-          size="small"
-          color="primary"
-          onClick={handleUpvote}
-          startIcon={<ArrowUpwardIcon />}
-          disabled={hasUpvoted || votingEnded || !votingStarted}
-        >
-          Upvote ({upvoteCount})
-        </Button>
-        <Button
-          size="small"
-          color="secondary"
-          onClick={handleDownvote}
-          startIcon={<ArrowDownwardIcon />}
-          disabled={hasDownvoted || votingEnded || !votingStarted}
-        >
-          Downvote ({downvoteCount})
-        </Button>
-      </CardActions>
+
     </Card>
   );
 };

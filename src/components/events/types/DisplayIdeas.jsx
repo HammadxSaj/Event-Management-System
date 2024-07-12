@@ -20,13 +20,13 @@ import {
 } from "@mui/material";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import DeleteIcon from "@mui/icons-material/Delete";
-import "../DisplayCards.css";
-import ideaImage from "../../../assets/event1.jpg"; // Replace with appropriate idea image
-import { updateDoc, doc, getDoc, deleteDoc, setDoc } from "firebase/firestore";
-import { db } from "../../../Firebase";
-import { useAuth } from "../../auth/AuthContext";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import DeleteIcon from '@mui/icons-material/Delete';
+import './DisplayIdeas.css';
+import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
+import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../../Firebase';
+import { useAuth } from '../../auth/AuthContext';
 
 const DisplayIdeas = ({
   idea,
@@ -219,16 +219,16 @@ const DisplayIdeas = ({
   }
 
   return (
-    <Card className="card">
+    <Card className="event-card">
       <CardActionArea onClick={handleDetails}>
         <CardMedia
           component="img"
-          className="card-media"
+          className="event-card-media"
           image={idea.images.length > 0 ? idea.images[0] : ideaImage}
           alt={idea.title}
           title={idea.title}
         />
-        <CardContent className="card-content">
+        <CardContent className="event-card-content">
           <Typography gutterBottom variant="h5" component="div">
             {idea.title}
           </Typography>
@@ -236,13 +236,13 @@ const DisplayIdeas = ({
             {new Date(idea.dateTime).toLocaleString()}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {idea.description}
+            {idea.location}
           </Typography>
         </CardContent>
       </CardActionArea>
-
-      {userRole === "admin" && (
-        <CardActions className="card-actions">
+      
+      {userRole === 'admin' && (
+        <CardActions className="event-card-actions">
           <Button
             size="small"
             color="error"
@@ -294,18 +294,23 @@ const DisplayIdeas = ({
           </FormControl>
         )}
       </CardContent> */}
-      <CardActions className="card-actions">
-        <Button
-          variant="contained" // Boxed button
-          size="small"
-          color="primary"
-          fullWidth // Make button span full width
-          onClick={handleUpvote}
-          startIcon={<ArrowUpwardIcon />}
-          disabled={votingEnded || !votingStarted}
-        >
-          {hasUpvoted ? "Undo Vote" : "Vote"}
-        </Button>
+      <CardActions className="event-card-actions">
+      <Button
+       variant="contained" // Boxed button
+       size="small"
+       color="primary"
+       fullWidth // Make button span full width
+       onClick={handleUpvote}
+       startIcon={<ArrowUpwardIcon />}
+       disabled={votingEnded || !votingStarted}
+     >
+       {hasUpvoted ? 'Undo Vote' : 'Vote'} 
+ 
+    </Button>
+
+       
+     
+    
       </CardActions>
     </Card>
   );

@@ -1,0 +1,36 @@
+/* src/components/auth/AuthDetails.css */
+.profile-pic {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #1CA8DD; /* Add a border with a nice color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */
+    margin-top: 3px;
+  }
+  
+  .auth-details-container {
+    text-align: center; /* Center align the text and image */
+    margin-top: 20px;
+  }
+  
+  .auth-details-container p {
+    font-size: 1.2em; /* Increase the font size for better readability */
+    color: #333; /* Darker color for the text */
+    margin-bottom: 10px; /* Add space between text and the image */
+  }
+  
+  .auth-details-container button {
+    background-color: #1CA8DD; /* Primary button color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .auth-details-container button:hover {
+    background-color: #1484aa; /* Darken the button color on hover */
+  }
+  
