@@ -51,9 +51,12 @@ const IdeasPage = () => {
     setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== ideaId));
   };
 
+
+  // not workingg
   const fetchWinnerIdeaHostingDate = async (ideaId) => {
     try {
       const winnerIdeaDoc = await getDoc(
+  
         doc(db, "events", eventId, "ideas", ideaId)
       );
       if (winnerIdeaDoc.exists()) {
@@ -148,6 +151,8 @@ const IdeasPage = () => {
       console.error("Error sending winner notification email: ", error);
     }
   };
+  
+  
 
   const determineWinner = async () => {
     try {
@@ -198,9 +203,12 @@ const IdeasPage = () => {
       });
 
       if (winningIdea) {
+        console.log("winner calculation complete");
+        console.log(winningIdea.title);
         setWinnerIdea(winningIdea);
-        //await storeWinnerIdea(winningIdea.id);
         setWinnerDetermined(true);
+        await storeWinnerIdea(winningIdea.id);
+      
 
         // Fetch event name
         const eventName = await fetchEventName(eventId);
@@ -212,6 +220,46 @@ const IdeasPage = () => {
       console.error("Error determining winner idea:", error);
     }
   };
+  const storeWinnerIdea = async (ideaId) => {
+    try {
+      const winnerIdeaDocRef = doc(db, "events", eventId, "ideas", ideaId);
+      const winnerIdeaDocSnapshot = await getDoc(winnerIdeaDocRef);
+  
+      if (winnerIdeaDocSnapshot.exists()) {
+        const winnerIdea = {
+          id: winnerIdeaDocSnapshot.id,
+          ...winnerIdeaDocSnapshot.data(),
+          images: [],
+        };
+  
+        const imagesCollection = collection(winnerIdeaDocRef, "images");
+        const imagesSnapshot = await getDocs(imagesCollection);
+        imagesSnapshot.forEach((imageDoc) => {
+          const imageUrl = imageDoc.data().imageUrls;
+          if (imageUrl) {
+            winnerIdea.images.push(imageUrl[0]);
+          }
+        });
+  
+        // Store the winner idea in the "details" subcollection
+        await setDoc(doc(db, "events", eventId, "details", "winnerIdea"), {
+          ideaId: winnerIdea.id,
+          title: winnerIdea.title,
+          dateTime: winnerIdea.dateTime,
+          description: winnerIdea.description,
+          images: winnerIdea.images,
+        });
+  
+        console.log("Winner idea stored successfully");
+      }
+    } catch (error) {
+      console.error("Error storing winner idea:", error);
+    }
+  };
+  
+
+
+  
 
   useEffect(() => {
     const fetchIdeas = async () => {
@@ -287,7 +335,7 @@ const IdeasPage = () => {
             }
           }
 
-          if (now >= fetchedEndDate) {
+          if (now >= fetchedEndDate && winnerDetermined) {
             await fetchWinnerIdea();
           } else {
             // Clear winner idea state if voting is still ongoing
@@ -304,6 +352,7 @@ const IdeasPage = () => {
 
     const fetchWinnerIdea = async () => {
       if (votingEnded) {
+        console.log("voting has ended");
         try {
           const winnerIdeaDoc = await getDoc(
             doc(db, "events", eventId, "details", "winnerIdea")
@@ -390,12 +439,14 @@ const IdeasPage = () => {
         if (distance < 0) {
           clearInterval(interval);
           setTimeRemaining(`0d 0h 0m 0s`);
-          if (!votingEnded)
+          if (votingEnded && !winnerDetermined)
           {
+            console.log("problem 1")
             setVotingEnded(true);
             console.log("CALCULATING WINNER HERE");
 
             determineWinner();
+          
 
           }
          
@@ -474,6 +525,8 @@ const IdeasPage = () => {
           {timeRemaining && (
             <Grid item xs={12}>
               <CountdownTimer timeRemaining={timeRemaining} />
+              <h1>{`${winnerDetermined}`}</h1>
+
             </Grid>
           )}
           {winnerDetermined && votingEnded && (

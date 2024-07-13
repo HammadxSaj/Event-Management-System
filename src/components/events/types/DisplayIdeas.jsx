@@ -51,6 +51,7 @@ const DisplayIdeas = ({
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
+  const [winnerDisplayed, setWinnerDisplayed] = useState(false);
 
   useEffect(() => {
     if (idea && authUser) {
@@ -58,13 +59,15 @@ const DisplayIdeas = ({
       setDownvoteCount(idea.downvote ? idea.downvote.length : 0);
       setHasUpvoted(idea.upvote && idea.upvote.includes(authUser.uid));
       setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
+    
 
       fetchRsvp();
       fetchUserRole();
       fetchUpvotedUserProfiles();
-      console.log("Voting ended", votingEnded);
 
-      if (votingEnded) {
+  
+
+      if (votingEnded && !winnerDisplayed) {
         checkIfWinner();
       }
     }
@@ -131,7 +134,8 @@ const DisplayIdeas = ({
       );
       if (winnerIdeaDoc.exists() && winnerIdeaDoc.data().ideaId === idea.id) {
         setIsWinner(true);
-        console.log("Winner Idea:");
+        console.log("Winner Idea:",idea.id);
+        setWinnerDisplayed(true);
       }
     } catch (error) {
       console.error("Error checking winner idea:", error);
