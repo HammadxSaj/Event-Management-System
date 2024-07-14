@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import EventsList from './EventsList';
 import { db } from '../../Firebase';
 import { collection, getDocs } from 'firebase/firestore';

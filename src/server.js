@@ -1,4 +1,4 @@
-import "dotenv/config";
+import 'dotenv/config'
 import express from "express";
 import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
@@ -23,8 +23,8 @@ app.post("/send-email", async (req, res) => {
     port: 465,
     secure: true, // Use `true` for port 465, `false` for all other ports
     auth: {
-      user: `hammad.sajid@foundri.net`,
-      pass: `bxqbawdppqeyfmls`,
+      user: process.env.REACT_APP_EMAIL,
+      pass: process.env.REACT_APP_PASS,
     },
     tls: {
       rejectUnauthorized: false,
@@ -32,7 +32,7 @@ app.post("/send-email", async (req, res) => {
   });
 
   const mailOptions = {
-    from: "hammad.sajid@foundri.net",
+    from: process.env.REACT_APP_EMAIL,
     to: Array.isArray(to) ? to.join(", ") : to,
     subject: subject,
     html: html,
