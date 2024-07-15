@@ -98,7 +98,7 @@ const DisplayIdeas = ({
 
       // Fetch user profiles (photoURLs) who have upvoted
       const userProfiles = await Promise.all(upvotes.map(async userId => {
-        const userDoc = await getDoc(doc(db, "users_data", userId));
+        const userDoc = await getDoc(doc(db, "user_data", userId));
         return userDoc.exists() ? userDoc.data().photoURL : null;
       }));
 
