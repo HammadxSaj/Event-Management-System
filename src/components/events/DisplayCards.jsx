@@ -30,6 +30,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   const [isWinner, setIsWinner] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(true); 
   
   useEffect(() => {
     if (event && authUser) {
@@ -155,6 +156,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   };
 
   const handleDeleteEvent = async () => {
+  
   try {
     // Step 1: Retrieve the list of image URLs for the event
     const imagesSnapshot = await getDocs(collection(db, 'events', event.id, 'images'));
@@ -181,6 +183,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   } catch (error) {
     console.error('Error deleting event:', error);
   }
+  
 };
 
   const openDialog = () => {

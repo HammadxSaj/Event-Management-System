@@ -13,7 +13,9 @@
   }
   
 
-
+h1{
+   text-align: center;
+}
 
 
 
@@ -21,12 +23,20 @@ h2 {
   margin-top:30px; /* Adjust the value as needed */
   color: #1a4d66; /* Set text color */
   font-family: 'Quicksand';
- 
+
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ensures the loader is centered vertically in full viewport height */
 }
 
 h3{
   font-size: 16px; /* Adjust font size for the header */
   font-family: 'Quicksand';
+  text-align: center;
 
   color:#5F767C;
 }

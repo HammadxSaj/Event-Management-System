@@ -4,8 +4,8 @@
     align-items: center;
     gap: 10px;
     font-family:'Times New Roman', Times, serif;
-    color: white;
-    background-color: #6fbec2e2;
+    color: #a8aaab;
+    /* background-color: #1CA8DD; */
     padding: 20px;
     border-radius: 10px;
     width: fit-content;
@@ -22,7 +22,7 @@
   .timer-value {
     font-size: 2em;
     font-weight: bold;
-    background-color: #284d6f;
+    background-color: #ffffff;
     padding: 10px;
     border-radius: 5px;
   }

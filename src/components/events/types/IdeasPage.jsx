@@ -21,6 +21,7 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import './IdeasPage.css'
+import { ThreeDots} from 'react-loader-spinner';
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -36,6 +37,8 @@ const IdeasPage = () => {
   const [votingStarted, setVotingStarted] = useState(false);
   const [hasRSVPed, setHasRSVPed] = useState(false);
   const [hostingDate, setHostingDate] = useState(null);
+  const [loading, setLoading] = useState(true)
+
 
   const checkRSVPStatus = async (userId, ideaId) => {
     try {
@@ -68,12 +71,12 @@ const IdeasPage = () => {
     return null;
   };
 
-  const shouldDisableRSVP = () => {
-    if (!hostingDate) return false;
-    const oneDayBeforeHostingDate = new Date(hostingDate);
-    oneDayBeforeHostingDate.setDate(oneDayBeforeHostingDate.getDate() - 1);
-    return new Date() >= oneDayBeforeHostingDate;
-  };
+  // const shouldDisableRSVP = () => {
+  //   if (!hostingDate) return false;
+  //   const oneDayBeforeHostingDate = new Date(hostingDate);
+  //   oneDayBeforeHostingDate.setDate(oneDayBeforeHostingDate.getDate() - 1);
+  //   return new Date() >= oneDayBeforeHostingDate;
+  // };
 
   const handleRSVP = async (userId, ideaId) => {
     try {
@@ -264,6 +267,7 @@ const IdeasPage = () => {
 
   useEffect(() => {
     const fetchIdeas = async () => {
+      
       try {
         const ideasCollection = collection(db, "events", eventId, "ideas");
         const ideasSnapshot = await getDocs(ideasCollection);
@@ -291,6 +295,9 @@ const IdeasPage = () => {
         setIdeas(fetchedIdeas);
       } catch (error) {
         console.error("Error fetching ideas:", error);
+      }
+      finally {
+        setLoading(false);
       }
     };
 
@@ -405,10 +412,10 @@ const IdeasPage = () => {
         setHasRSVPed(rsvpStatus);
       }
 
-      if (winnerIdea) {
-        const hostingDate = await fetchWinnerIdeaHostingDate(winnerIdea.id);
-        setHostingDate(hostingDate);
-      }
+      // if (winnerIdea) {
+      //   const hostingDate = await fetchWinnerIdeaHostingDate(winnerIdea.id);
+      //   setHostingDate(hostingDate);
+      // }
     };
 
     const authListener = onAuthStateChanged(auth, (user) => {
@@ -499,6 +506,8 @@ const IdeasPage = () => {
   return (
     <>
       <NavBar />
+
+
       {userRole === "admin" && (
         <div style={{ float: "right" }}>
           <DatePicker
@@ -519,14 +528,19 @@ const IdeasPage = () => {
         </div>
       )}
 
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <h1>Ideas</h1>
+        <h1 className="header-title">Choose the event that will spark our community's celebration!</h1>
+        <h3 className='header-slogan'>Your vote, calls for our next epic event</h3>
+     
+          
+      
 
           {timeRemaining && (
             <Grid item xs={12}>
               <CountdownTimer timeRemaining={timeRemaining} />
-              <h1>{`${winnerDetermined}`}</h1>
+              {/* <h1>{`${winnerDetermined}`}</h1> */}
 
             </Grid>
           )}
@@ -576,25 +590,37 @@ const IdeasPage = () => {
               </div>
             </div>
           )}
+
         </Grid> 
 
 
         <div className="hold-container">
-
-     
-        {ideas.map((idea) => (
-          <Grid item xs={12} sm={6} md={4} key={idea.id}>
-            <DisplayIdeas
-              idea={idea}
-              votingEnded={votingEnded}
-              votingStarted={votingStarted}
-              eventId={eventId}
-              removeIdea={removeIdea} // Pass the removeIdea function as a prop
+        {loading ? (
+          <div className="loader-container">
+            <ThreeDots 
+              height="80" 
+              width="80" 
+              radius="9"
+              color="#1CA8DD" 
+              ariaLabel="three-dots-loading"
+              visible={true}
             />
-          </Grid>
+          </div>
+        ) : (
+          ideas.map((idea) => (
+            <Grid item xs={12} sm={6} md={4} key={idea.id}>
+              <DisplayIdeas
+                idea={idea}
+                votingEnded={votingEnded}
+                votingStarted={votingStarted}
+                eventId={eventId}
+                removeIdea={removeIdea} // Pass the removeIdea function as a prop
+              />
+            </Grid>
+          ))
+        )}
+      </div>
 
-        ))}
-         </div>
       </Grid>
     </>
   );

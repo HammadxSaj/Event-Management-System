@@ -10,6 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import axios from "axios";
 import "../admin/EventForm.css";
+import { ThreeDots} from 'react-loader-spinner';
 
 const EventForm = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const EventForm = () => {
   const [ideas, setIdeas] = useState([]);
   const [embedCodeError, setEmbedCodeError] = useState(false);
   const [imageError, setImageError] = useState("");
+  const [loading, setLoading] = useState(true)
   const [formErrors, setFormErrors] = useState({
     title: false,
     location: false,
@@ -171,6 +173,7 @@ const EventForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       // Step 1: Add event details to Firestore (excluding images)
       const docRef = await addDoc(collection(db, "events"), {
         title: formData.title,
@@ -211,10 +214,15 @@ const EventForm = () => {
       console.error("Error adding event: ", error);
       alert("Error adding event");
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
+    
+     
       <button className="back-button" onClick={() => navigate(`/event`)}>
         Back
       </button>

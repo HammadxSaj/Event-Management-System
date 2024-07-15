@@ -27,6 +27,8 @@ import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate 
 import { updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../Firebase';
 import { useAuth } from '../../auth/AuthContext';
+import { ThreeDots} from 'react-loader-spinner';
+
 
 const DisplayIdeas = ({
   idea,
@@ -52,6 +54,10 @@ const DisplayIdeas = ({
   const [userRole, setUserRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
   const [winnerDisplayed, setWinnerDisplayed] = useState(false);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const [loadingImage, setLoadingImage] = useState(true);
+
+
 
   useEffect(() => {
     if (idea && authUser) {
@@ -74,6 +80,8 @@ const DisplayIdeas = ({
   }, [idea, authUser, votingEnded]);
 
   const fetchUpvotedUserProfiles = async () => {
+    setLoadingProfiles(true);
+    
     try {
       // Get the upvotes from the specific idea document
       const ideaDoc = await getDoc(doc(db, "events", eventId, "ideas", idea.id));
@@ -81,6 +89,7 @@ const DisplayIdeas = ({
       if (!ideaDoc.exists()) {
         console.error("Idea document not found");
         setUpvotedUserProfiles([]);
+        setLoadingProfiles(false);
         return;
       }
 
@@ -103,6 +112,9 @@ const DisplayIdeas = ({
     } catch (error) {
       console.error('Error fetching upvoted user profiles:', error);
       setUpvotedUserProfiles([]); // Handle error by setting empty array or showing an error message
+    }
+    finally {
+      setLoadingProfiles(false);
     }
   };
 
@@ -174,20 +186,19 @@ const DisplayIdeas = ({
       } else {
         // Add the upvote
         newUpvotes.add(authUser.uid);
-        newDownvotes.delete(authUser.uid);
-
+        fetchUpvotedUserProfiles();
         setHasUpvoted(true);
         setHasDownvoted(false);
         setCount(newUpvotes.size);
       }
 
       setUpvoteCount(newUpvotes.size);
-      setDownvoteCount(newDownvotes.size);
+
 
       try {
         await updateDoc(doc(db, "events", eventId, "ideas", idea.id), {
           upvote: Array.from(newUpvotes),
-          downvote: Array.from(newDownvotes),
+  
         });
         console.log(hasUpvoted ? "Undo Upvoted" : "Upvoted");
       } catch (error) {
@@ -216,45 +227,70 @@ const DisplayIdeas = ({
     setOpenDeleteDialog(false);
   };
 
-  if (loadingRole) {
-    return <div>Loading...</div>; 
-  }
-
   return (
+
     <Card className="event-card">
-      <CardActionArea onClick={handleDetails}>
-        <CardMedia
-          component="img"
-          className="event-card-media"
-          image={idea.images.length > 0 ? idea.images[0] : ideaImage}
-          alt={idea.title}
-          title={idea.title}
+    {loadingRole ? ( // Conditional rendering for loading indicator
+      <div className="loader-container">
+        <ThreeDots
+          height={80}
+          width={80}
+          radius={9}
+          color="#1CA8DD"
+          ariaLabel="three-dots-loading"
+          visible={true}
         />
-        <CardContent className="event-card-content">
-          <Typography gutterBottom variant="h5" component="div">
-            {idea.title}
+      </div>
+    ) : (
+    <>
+    
+
+    
+
+    <CardActionArea onClick={handleDetails}>
+      <CardMedia
+        component="img"
+        className="event-card-media"
+        image={idea.images.length > 0 ? idea.images[0] : ideaImage}
+        alt={idea.title}
+        title={idea.title}
+      />
+      <CardContent className="event-card-content">
+        <Typography gutterBottom variant="h5" component="div">
+          {idea.title}
+        </Typography>
+       
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+          <FaCalendarAlt style={{ marginRight: '8px', color : "#D96758"}} />
+          <Typography variant="body2" color="text.secondary">
+            Date: {new Date(idea.dateTime).toLocaleDateString()}
           </Typography>
-         
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-            <FaCalendarAlt style={{ marginRight: '8px', color : "#D96758"}} />
-            <Typography variant="body2" color="text.secondary">
-              Date: {new Date(idea.dateTime).toLocaleDateString()}
-            </Typography>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-            <FaClock style={{ marginRight: '8px', color : "#D96758" }} />
-            <Typography variant="body2" color="text.secondary">
-              Time: {new Date(idea.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Typography>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <FaMapMarkerAlt style={{ marginRight: '8px', color : "#D96758" }} />
-            <Typography variant="body2" color="text.secondary">
-              Location: {idea.location}
-            </Typography>
-          </div>
-          <div className="upvoted-profiles-container">
-          {upvotedUserProfiles.length > 0 ? (
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+          <FaClock style={{ marginRight: '8px', color : "#D96758" }} />
+          <Typography variant="body2" color="text.secondary">
+            Time: {new Date(idea.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </Typography>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <FaMapMarkerAlt style={{ marginRight: '8px', color : "#D96758" }} />
+          <Typography variant="body2" color="text.secondary">
+            Location: {idea.location}
+          </Typography>
+        </div>
+        <div className="upvoted-profiles-container">
+        {loadingProfiles ? (
+        <div className="loader-profile-container">
+          <ThreeDots
+            height={80}
+            width={80}
+            radius={9}
+            color="#1CA8DD"
+            ariaLabel="three-dots-loading"
+            visible={true}
+          />
+        </div>
+          ) : upvotedUserProfiles.length > 0 ? (
             <>
               {upvotedUserProfiles.slice(0, 5).map((profile, index) => (
                 <div key={index} className="profile-container">
@@ -269,68 +305,75 @@ const DisplayIdeas = ({
             </>
           ) : (
             <p>No users have upvoted this idea yet.</p>
-          )}
-        </div>
 
+              )}
+            </div>
+
+  
+      </CardContent>
+    </CardActionArea>
     
-        </CardContent>
-      </CardActionArea>
-      
-      {userRole === 'admin' && (
-        <CardActions className="event-card-actions">
-          <Button
-            size="small"
-            color="error"
-            onClick={openDialog}
-            startIcon={<DeleteIcon />}
-          >
-            Delete Idea
-          </Button>
-          <Dialog
-            open={openDeleteDialog}
-            onClose={closeDialog}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Confirm Delete"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete this idea? This action cannot be
-                undone.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={closeDialog} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleDeleteIdea} color="error" autoFocus>
-                Delete
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </CardActions>
-      )}
+    {userRole === 'admin' && (
       <CardActions className="event-card-actions">
         <Button
-          variant="contained"
           size="small"
-          color="primary"
-          fullWidth
-          style={{ backgroundColor: votingEnded || !votingStarted ? '#cccccc' : '#D96758',
-            color: hasUpvoted ?  '#000000' : '#ffffff' // Change text color based on hasUpvoted state
-          }}
-       
-          onClick={handleUpvote}
-          startIcon={<ArrowUpwardIcon />}
-          disabled={votingEnded || !votingStarted}
+          color="error"
+          onClick={openDialog}
+          startIcon={<DeleteIcon />}
         >
-          {hasUpvoted ? 'Undo Vote' : 'Vote'} 
+          Delete Idea
         </Button>
+        <Dialog
+          open={openDeleteDialog}
+          onClose={closeDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Confirm Delete"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete this idea? This action cannot be
+              undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteIdea} color="error" autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </CardActions>
-    </Card>
-  );
+    )}
+    <CardActions className="event-card-actions">
+      <Button
+        variant="contained"
+        size="small"
+        color="primary"
+        fullWidth
+        style={{ backgroundColor: votingEnded || !votingStarted ? '#cccccc' : '#D96758',
+          color: hasUpvoted ?  '#000000' : '#ffffff' // Change text color based on hasUpvoted state
+        }}
+     
+        onClick={handleUpvote}
+        startIcon={<ArrowUpwardIcon />}
+        disabled={votingEnded || !votingStarted}
+      >
+        {hasUpvoted ? 'Undo Vote' : 'Vote'} 
+      </Button>
+    </CardActions>
+    </>
+    )}
+  </Card>
+);
 };
 
 export default DisplayIdeas;
+
+  
+
+

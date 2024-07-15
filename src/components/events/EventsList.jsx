@@ -11,6 +11,7 @@ import AddEventButton from '../admin/AddEventButton';
 import CountdownTimer from './CountdownTimer';
 import { useNavigate } from 'react-router-dom';
 import PastIdeas from './types/PastIdeas';
+import { ThreeDots} from 'react-loader-spinner';
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -26,6 +27,8 @@ const EventsList = () => {
   const [votingStarted, setVotingStarted] = useState(false);
   const [eventsWithWinners, setEventsWithWinners] = useState([]);
   const [winnerIdeas, setWinnerIdeas] = useState([]);
+  const [loading, setLoading] = useState(true); 
+
   
 
 
@@ -34,11 +37,14 @@ const EventsList = () => {
   };
 
   const handleDeleteEvent = (eventId) => {
+  
     setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
+ 
   };
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const eventsSnapshot = await getDocs(collection(db, 'events'));
         const eventPromises = eventsSnapshot.docs.map(async (docRef) => {
@@ -80,6 +86,9 @@ const EventsList = () => {
         setWinners(winnersList);
       } catch (error) {
         console.error('Error fetching events:', error);
+      }
+      finally {
+        setLoading(false); 
       }
     };
 
@@ -375,6 +384,7 @@ const EventsList = () => {
   return (
     <>
       <NavBar />
+
       {userRole === 'admin' && (
         <div style={{ float: 'right' }}>
           {/* <DatePicker
@@ -416,13 +426,37 @@ const EventsList = () => {
           </div>
         )} */}
         {/* <h2>The Events</h2> */}
-        <Grid container spacing={4} justifyContent="center">
-          {events.map((event) => (
-            <Grid item key={event.id}>
-              <DisplayCards event={event} votingEnded={votingEnded} winningEventprop={false} votingStarted={votingStarted} onDeleteEvent={handleDeleteEvent}/>
-            </Grid>
-          ))}
-        </Grid>
+
+        {loading ? (
+          <div className="loader-container">
+            <ThreeDots 
+              height="80" 
+              width="80" 
+              radius="9"
+              color="#1CA8DD" 
+              ariaLabel="three-dots-loading"
+              visible={true}
+            />
+          </div>
+        ) : (
+          <Grid container spacing={4} justifyContent="center">
+            {events.map((event) => (
+              <Grid item key={event.id}>
+                <DisplayCards
+                  event={event}
+                  votingEnded={votingEnded}
+                  winningEventprop={false}
+                  votingStarted={votingStarted}
+                  onDeleteEvent={handleDeleteEvent}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+
+
+ 
+
         {winners.length > 0 && (
           <div className="past-winners-section">
             <h2>Past Winners</h2>
