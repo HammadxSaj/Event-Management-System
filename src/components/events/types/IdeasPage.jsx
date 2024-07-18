@@ -21,6 +21,7 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import './IdeasPage.css'
+
 import { ThreeDots} from 'react-loader-spinner';
 
 const IdeasPage = () => {
@@ -545,9 +546,9 @@ const IdeasPage = () => {
           )}
           {winnerDetermined && votingEnded && (
             <div>
-              <h2>Winning Idea:</h2>
-              <div className="winner-event-section">
+              <div className="winner-idea-section">
                 <h2>The Winner Idea!</h2>
+                <div className="winner-idea">
                 <DisplayIdeas
                   idea={winnerIdea}
                   votingEnded={votingEnded}
@@ -555,6 +556,8 @@ const IdeasPage = () => {
                   votingStarted={votingStarted}
                   eventId={eventId}
                 />
+                </div>
+               
                 <Button
                   variant="contained"
                   color="primary"

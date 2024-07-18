@@ -1,19 +1,23 @@
+
+
 .hold-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  margin: 50px auto 0;
+  justify-content: center; /* Center cards horizontally */
+  padding: 20px;
+  margin: 50px auto 0; /* Center align the container and add top margin */
   max-width: 1200px;
 }
 
+
+
 .display-idea {
-  flex: 1 1 calc(33.333% - 30px);
+  flex: 1 1 calc(33.333% - 40px); 
   box-sizing: border-box;
   padding: 10px;
   margin: 10px;
   min-width: 300px;
-  max-width: 400px;
+  max-width: 300px;
 }
 
 .header-title {
@@ -24,14 +28,24 @@
   text-align: center;
 }
 
-.winner-event-section {
+.winner-idea-section {
   text-align: center;
   margin-top: 20px;
+  align-items: center;
+}
+
+.winner-idea {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Center cards horizontally */
+  padding: 20px;
+  
+  
 }
 
 .loader-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px; /* Adjust as needed */
+  height: 300px;
 }

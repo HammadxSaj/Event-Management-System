@@ -14,7 +14,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaSleigh } from 'react-icons/fa';
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DisplayIdeas.css';
@@ -46,12 +46,18 @@ const DisplayIdeas = ({
   const [winnerDisplayed, setWinnerDisplayed] = useState(false);
   const [loadingProfiles, setLoadingProfiles] = useState(true);
 
+  const [userProfiles, setUserProfiles] = useState(FaSleigh);
+
+
+
   useEffect(() => {
     if (idea && authUser) {
       setUpvoteCount(idea.upvote ? idea.upvote.length : 0);
       setHasUpvoted(idea.upvote && idea.upvote.includes(authUser.uid));
       setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
       fetchRsvp();
+
+    
       fetchUserRole();
     }
   }, [idea, authUser]);
@@ -59,6 +65,7 @@ const DisplayIdeas = ({
   useEffect(() => {
     if (votingEnded && !winnerDisplayed) {
       checkIfWinner();
+      fetchUpvotedUserProfiles();
     }
   }, [votingEnded, winnerDisplayed, idea]);
 
@@ -70,6 +77,7 @@ const DisplayIdeas = ({
         console.error("Idea document not found");
         setUpvotedUserProfiles([]);
         setLoadingProfiles(false);
+        setUserProfiles(true)
         return;
       }
       const ideaData = ideaDoc.data();
@@ -89,7 +97,8 @@ const DisplayIdeas = ({
   }, [eventId, idea.id]);
 
   useEffect(() => {
-    if (idea && idea.upvote) {
+    if (idea && idea.upvote && !userProfiles) {
+      console.log("fetch user profiles");
       fetchUpvotedUserProfiles();
     }
   }, [idea?.upvote, fetchUpvotedUserProfiles]);
@@ -99,6 +108,7 @@ const DisplayIdeas = ({
       const rsvpDoc = await getDoc(doc(db, "ideas", idea.id, "rsvps", authUser.uid));
       if (rsvpDoc.exists()) {
         setRsvp(rsvpDoc.data().response);
+        
       }
     } catch (error) {
       console.error("Error fetching RSVP:", error);
