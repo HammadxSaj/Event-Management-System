@@ -11,6 +11,10 @@
   flex-direction: column;
 }
 
+.display-card:hover{
+  transform: scale(1.05); 
+}
+
 .display-card-media {
   width: 100%; 
   height: 200px; /* Adjust if needed to fit within the card height */
