@@ -55,17 +55,23 @@ const DisplayIdeas = ({
       setUpvoteCount(idea.upvote ? idea.upvote.length : 0);
       setHasUpvoted(idea.upvote && idea.upvote.includes(authUser.uid));
       setHasDownvoted(idea.downvote && idea.downvote.includes(authUser.uid));
-      fetchRsvp();
-
-    
-      fetchUserRole();
+      
     }
   }, [idea, authUser]);
+  
+
+  useEffect(()=> {
+      console.log("fetching role")
+      fetchUserRole();
+      fetchUpvotedUserProfiles();
+    }
+  , [])
+
 
   useEffect(() => {
     if (votingEnded && !winnerDisplayed) {
       checkIfWinner();
-      fetchUpvotedUserProfiles();
+      fetchRsvp();
     }
   }, [votingEnded, winnerDisplayed, idea]);
 
@@ -96,12 +102,6 @@ const DisplayIdeas = ({
     }
   }, [eventId, idea.id]);
 
-  useEffect(() => {
-    if (idea && idea.upvote && !userProfiles) {
-      console.log("fetch user profiles");
-      fetchUpvotedUserProfiles();
-    }
-  }, [idea?.upvote, fetchUpvotedUserProfiles]);
 
   const fetchRsvp = async () => {
     try {

@@ -224,6 +224,9 @@ const IdeasPage = () => {
       console.error("Error determining winner idea:", error);
     }
   };
+
+
+
   const storeWinnerIdea = async (ideaId) => {
     try {
       const winnerIdeaDocRef = doc(db, "events", eventId, "ideas", ideaId);
@@ -265,9 +268,11 @@ const IdeasPage = () => {
 
   
 
+
   useEffect(() => {
+    
     const fetchIdeas = async () => {
-      
+    
       try {
         const ideasCollection = collection(db, "events", eventId, "ideas");
         const ideasSnapshot = await getDocs(ideasCollection);
@@ -403,6 +408,7 @@ const IdeasPage = () => {
     };
 
     const fetchData = async (user) => {
+      console.log("roles ideas and dates");
       await fetchIdeas();
       await fetchUserRole(user);
       await fetchVotingDates();
@@ -427,7 +433,7 @@ const IdeasPage = () => {
     });
 
     return () => authListener();
-  }, [eventId, winnerIdea]);
+  }, []);
 
   useEffect(() => {
   
@@ -447,17 +453,8 @@ const IdeasPage = () => {
         if (distance < 0) {
           clearInterval(interval);
           setTimeRemaining(`0d 0h 0m 0s`);
-          if (votingEnded && !winnerDetermined)
-          {
-            console.log("problem 1")
-            setVotingEnded(true);
-            console.log("CALCULATING WINNER HERE");
-
-            determineWinner();
-          
-
-          }
-         
+          setVotingEnded(true)
+      
         } else if (!votingStarted && now >= votingStartDate) {
           setVotingStarted(true);
         }
@@ -467,13 +464,22 @@ const IdeasPage = () => {
     return () => clearInterval(interval);
   }, [votingEndDate, votingStartDate, votingStarted]);
 
+
+  useEffect(() => {
+    if (votingEnded && !winnerDetermined){
+      console.log("CALCULATING WINNER HERE");
+      determineWinner();
+    }
+  }, [votingEnded]);
+  
+
   const handleDateUpdate = async (date) => {
     console.log("Voting end date changed");
     setVotingEndDate(date);
-    setVotingEnded(false); // Reset votingEnded state
-    console.log("CALCULATING WINNER HERE");
-    console.log("Winner Updated");
-    determineWinner();
+  
+    const now = new Date();
+    setVotingEnded(now >= date);
+  
     console.log(winnerIdea);
 
     try {
