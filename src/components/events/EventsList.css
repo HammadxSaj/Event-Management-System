@@ -55,3 +55,9 @@ h3{
     margin: 50px auto 0; /* Center align the container and add top margin */
     max-width: 1200px; /* Limit maximum width of the container */
   }
+  .past-winners-section {
+    
+    padding: 20px; /* Add padding to the container */
+    margin: 50px auto 0; /* Center align the container and add top margin */
+    max-width: 1200px; /* Limit maximum width of the container */
+  }

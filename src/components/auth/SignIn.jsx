@@ -79,11 +79,13 @@ const SignIn = () => {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          if (userData.role === 'admin') {
-            navigate('/admin');
-          } else {
-            navigate('/user');
-          }
+
+          navigate('/events')
+          // if (userData.role === 'admin') {
+          //   navigate('/admin');
+          // } else {
+          //   navigate('/user');
+          // }
         } else {
           await setDoc(userDocRef, { email: user.email, role: 'user' });
           navigate('/user');

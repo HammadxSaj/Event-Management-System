@@ -67,6 +67,7 @@ const DisplayIdeas = ({
     }
   , [])
 
+  
 
   useEffect(() => {
     if (votingEnded && !winnerDisplayed) {

@@ -43,11 +43,12 @@ const LogIn = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           if (!userData.role) return; // If role is empty, navigate nowhere
-          if (userData.role === 'admin') {
-            navigate('/admin');
-          } else {
-            navigate('/user');
-          }
+          navigate('/event');
+          // if (userData.role === 'admin') {
+          //   navigate('/admin');
+          // } else {
+          //   navigate('/user');
+          // }
         } else {
           await setDoc(userDocRef, { email: user.email, role: 'user' });
           navigate('/user');

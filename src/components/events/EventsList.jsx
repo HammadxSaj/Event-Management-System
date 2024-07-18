@@ -12,6 +12,8 @@ import CountdownTimer from './CountdownTimer';
 import { useNavigate } from 'react-router-dom';
 import PastIdeas from './types/PastIdeas';
 import { ThreeDots} from 'react-loader-spinner';
+import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
+
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -387,20 +389,7 @@ const EventsList = () => {
 
       {userRole === 'admin' && (
         <div style={{ float: 'right' }}>
-          {/* <DatePicker
-            selected={votingEndDate}
-            onChange={handleDateUpdate}
-            showTimeSelect
-            dateFormat="Pp"
-            customInput={<TextField label="Voting End Date" />}
-          />
-          <DatePicker
-            selected={votingStartDate}
-            onChange={handleStartDateUpdate}
-            showTimeSelect
-            dateFormat="Pp"
-            customInput={<TextField label="Voting Start Date" />}
-          /> */}
+    
           <AddEventButton />
         </div>
       )}
@@ -408,15 +397,6 @@ const EventsList = () => {
         <div className="header-section">
           <h1 className="header-title">Your Choice, Our Arrangement</h1>
           <h3 className='header-slogan'>View events to help us choose ideas for your Happiness</h3>
-          {/* {votingStarted && (
-            <div>
-              <h2>Countdown Timer</h2>
-              <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} votingStarted={votingStarted} />
-            </div>
-          )}
-          {!votingStarted && votingStartDate && (
-            <h2>{`Voting Starts on ${votingStartDate.getDate()} ${votingStartDate.toLocaleString('default', { month: 'long' })} ${votingStartDate.getFullYear()} at ${votingStartDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}!`}</h2>
-          )} */}
         </div>
         
         {/* {votingEnded && winnerEvent && (
@@ -458,12 +438,15 @@ const EventsList = () => {
  
 
         {winners.length > 0 && (
-          <div className="past-winners-section">
+          
+          <div>
+            <Element name="pastEvents">
             <h2>Past Winners</h2>
+            </Element>
          
             
             
-            <div>
+            <div className="past-winners-section">
             {eventsWithWinners.map(event => (
               <div key={event.id}>
               

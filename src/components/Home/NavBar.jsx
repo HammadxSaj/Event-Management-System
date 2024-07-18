@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import './NavBar.css';
 import Logo from '../../assets/Logo.png';
 import { useAuth } from '../auth/AuthContext';
+import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
 
 function NavBar() {
   const [userProfile, setUserProfile] = useState(null);
@@ -41,6 +42,14 @@ function NavBar() {
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  };
+
+  const handleScroll = (target) => {
+    scroller.scrollTo(target, {
+      duration: 800,
+      delay: 0,
+      smooth: 'easeInOutQuart'
+    });
   };
 
   const handleMenuOpen = (event) => {
@@ -81,7 +90,7 @@ function NavBar() {
           />{' '}
         </Typography>
         <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-        <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>Past Events</Button>
+        <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
         {userProfile ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {userProfile.photoURL ? (
