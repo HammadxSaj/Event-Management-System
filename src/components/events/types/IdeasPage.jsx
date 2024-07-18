@@ -607,7 +607,7 @@ const IdeasPage = () => {
           </div>
         ) : (
           ideas.map((idea) => (
-            <Grid item xs={12} sm={6} md={4} key={idea.id}>
+            <Grid item xs={12} sm={6} md={4} key={idea.id} className="display-idea">
               <DisplayIdeas
                 idea={idea}
                 votingEnded={votingEnded}

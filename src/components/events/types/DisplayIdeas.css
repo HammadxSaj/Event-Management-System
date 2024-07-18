@@ -1,88 +1,87 @@
 @font-face {
-    font-family: 'Quicksand';
-    src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
-  }
-  
-  .event-card {
-    width: 300px;  
-    height: 600px; 
-    margin: 16px; 
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .event-card-media {
-    width: 100%; 
-    height: 300px; /* Adjust if needed to fit within the card height */
-    object-fit: cover;
-    font-family: 'Quicksand';
-    font-size: 20px;
-  }
+  font-family: 'Quicksand';
+  src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+}
 
-  .loader-profile-container{
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-    margin: auto;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+.event-card {
+  width: 300px;  
+  height: 600px; 
+  margin: 16px; 
+  display: flex;
+  flex-direction: column;
+}
 
-  
-  .event-card-content {
-    flex-grow: 1;
-    text-align: center;
-    overflow: hidden; /* Ensure content does not overflow */
-    margin-top: 1px;
-    font-size: 20px;
-  }
-  
-  .event-card-content .MuiTypography-root {
-    font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
-    font-size: 15px; /* Change to your desired font size */
-  }
-  
-  .event-card-actions {
-    margin-top: 0.1px;
-  }
-  
-  .upvoted-profiles-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .profile-container {
-    display: inline-block;
-    margin-right: 1px;
-  }
-  
-  .voting-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-top: 10px;
-    object-fit: cover;
-    border: 2px solid #D96758; /* Optional: Add a border to match the screenshot */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Optional: Add a slight shadow */
-  }
-  
-  .more-profiles {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    color: #999; /* Optional: Adjust color as needed */
-  }
+.event-card-media {
+  width: 100%; 
+  height: 300px; /* Adjust if needed to fit within the card height */
+  object-fit: cover;
+  font-family: 'Quicksand';
+  font-size: 20px;
+}
 
-  p{
-  font-family: 'Quicksand', sans-serif;
-  margin-top: 20px;
-  font-size: 10px;
-  }
-  
+.loader-profile-container{
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.event-card-content {
+  flex-grow: 1;
+  text-align: center;
+  overflow: hidden; /* Ensure content does not overflow */
+  margin-top: 1px;
+  font-size: 20px;
+}
+
+.event-card-content .MuiTypography-root {
+  font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
+  font-size: 15px; /* Change to your desired font size */
+}
+
+.event-card-actions {
+  margin-top: 0.1px;
+}
+
+.upvoted-profiles-container {
+  display: flex;
+  align-items: center;
+}
+
+.profile-container {
+  display: inline-block;
+  margin-right: 1px;
+}
+
+.voting-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-top: 10px;
+  object-fit: cover;
+  border: 2px solid #D96758; /* Optional: Add a border to match the screenshot */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Optional: Add a slight shadow */
+}
+
+.more-profiles {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #999; /* Optional: Adjust color as needed */
+}
+
+p{
+font-family: 'Quicksand', sans-serif;
+margin-top: 20px;
+font-size: 10px;
+}

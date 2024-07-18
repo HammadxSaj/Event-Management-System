@@ -4,7 +4,7 @@ import { Card, CardContent, CardMedia, Typography, CardActionArea, CardActions, 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
-import '../DisplayCards.css';
+import '../DisplayCards.css'
 import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
 import { updateDoc, doc, getDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../Firebase';
@@ -36,25 +36,25 @@ const PastIdeas = ({ idea, eventId}) => {
 
 
   return (
-    <Card className="card">
+    <Card className="display-card">
       <CardActionArea onClick={handleDetails}>
         <CardMedia
           component="img"
-          className="card-media"
+          className="display-card-media"
           image={idea.images.length > 0 ? idea.images[0] : ideaImage}
           alt={idea.title}
           title={idea.title}
         />
-        <CardContent className="card-content">
+        <CardContent className="display-card-content">
           <Typography gutterBottom variant="h5" component="div">
             {idea.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          {/* <Typography variant="body2" color="text.secondary">
             {new Date(idea.dateTime).toLocaleString()}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {idea.description}
-          </Typography>
+          </Typography> */}
         </CardContent>
       </CardActionArea>
       
