@@ -7,10 +7,18 @@ import { Container, Form, Button, Card } from "react-bootstrap";
 import { TextField, IconButton } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import CloseIcon from "@mui/icons-material/Close";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import dayjs from "dayjs";
 import axios from "axios";
 import "../admin/EventForm.css";
-import { ThreeDots} from 'react-loader-spinner';
+import { ThreeDots } from "react-loader-spinner";
+import { alignCenter } from "fontawesome";
 
 const EventForm = () => {
   const navigate = useNavigate();
@@ -34,7 +42,7 @@ const EventForm = () => {
   const [ideas, setIdeas] = useState([]);
   const [embedCodeError, setEmbedCodeError] = useState(false);
   const [imageError, setImageError] = useState("");
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false); // Set to false initially
   const [formErrors, setFormErrors] = useState({
     title: false,
     location: false,
@@ -44,6 +52,9 @@ const EventForm = () => {
     images: false,
     embedCode: false,
   });
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogTitle, setDialogTitle] = useState("");
 
   const fetchUserEmails = async () => {
     try {
@@ -54,6 +65,16 @@ const EventForm = () => {
       console.error("Error fetching user emails:", error);
       return [];
     }
+  };
+
+  const openDialog = (title, message) => {
+    setDialogTitle(title);
+    setDialogMessage(message);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
   };
 
   useEffect(() => {
@@ -173,7 +194,7 @@ const EventForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      setLoading(true); // Set loading to true when submission starts
       // Step 1: Add event details to Firestore (excluding images)
       const docRef = await addDoc(collection(db, "events"), {
         title: formData.title,
@@ -203,27 +224,24 @@ const EventForm = () => {
         to: userEmails,
         subject: "New Event Created",
         html: `<strong>${formData.title} event has been created!</strong>
-             <p>You can now go ahead and vote for the idea that suits you the most.</p>`,
+              <p>You can now go ahead and vote for the idea that suits you the most.</p>`,
       });
 
-      alert("Event added successfully");
+      openDialog("Success", "The event has been added successfully");
 
       // Navigate to /event page after successful addition
       navigate("/event");
     } catch (error) {
       console.error("Error adding event: ", error);
-      alert("Error adding event");
-    }
-    finally {
-      setLoading(false);
+      openDialog("Error", "Error adding event, please resolve all errors");
+    } finally {
+      setLoading(false); // Set loading to false when submission is completed
     }
   };
 
   return (
     <>
-    
-     
-      <button className="back-button" onClick={() => navigate(`/event`)}>
+      <button className="back-button" onClick={() => navigate("/event")}>
         Back
       </button>
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
@@ -233,7 +251,7 @@ const EventForm = () => {
             <Form.Group className="mb-3">
               <TextField
                 fullWidth
-                label="Idea Title"
+                label="Event Title"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
@@ -241,59 +259,6 @@ const EventForm = () => {
                 required
               />
             </Form.Group>
-            {/* <Form.Group className="mb-3">
-              <TextField
-                fullWidth
-                label="Location Name"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                variant="outlined"
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <DateTimePicker
-                renderInput={(props) => <TextField fullWidth {...props} />}
-                label="Date and Time"
-                value={formData.dateTime}
-                onChange={handleDateTimeChange}
-                required
-              />
-              {formErrors.dateTime && <div className="text-danger">Date and time must be in the future.</div>}
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <TextField
-                fullWidth
-                label="Idea Description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                multiline
-                rows={3}
-                variant="outlined"
-                required
-                helperText={`${descriptionCount}/250 characters`}
-                inputProps={{ maxLength: 250 }}
-              />
-              {formErrors.description && <div className="text-danger">Description exceeds 250 characters.</div>}
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <TextField
-                fullWidth
-                label="Idea Details"
-                name="details"
-                value={formData.details}
-                onChange={handleChange}
-                multiline
-                rows={5}
-                variant="outlined"
-                required
-                helperText={`${detailsCount}/1000 characters`}
-                inputProps={{ maxLength: 1000 }}
-              />
-              {formErrors.details && <div className="text-danger">Details exceed 1000 characters.</div>}
-            </Form.Group> */}
             <Form.Group className="mb-3">
               <Form.Label>Title Image</Form.Label>
               <Form.Control
@@ -322,37 +287,44 @@ const EventForm = () => {
                 ))}
               </div>
             </Form.Group>
-            {/*<Form.Group className="mb-3">
-              <TextField
-                fullWidth
-                label="Google Maps Embed Code"
-                name="embedCode"
-                value={formData.embedCode}
-                onChange={handleEmbedCodeChange}
-                multiline
-                rows={3}
-                variant="outlined"
-              />
-              <Button
-                variant="secondary"
-                onClick={handleEmbedCodeSubmit}
-                className="w-100 mt-2"
-              >
-                Preview Map
-              </Button>
-              {embedCodeError && <div className="text-danger">Invalid Embed Code</div>}
-              {formErrors.embedCode && <div className="text-danger"></div>}
-              <div
-                className="map-preview mt-3"
-                dangerouslySetInnerHTML={{ __html: mapPreview }}
-              ></div>
-            </Form.Group> */}
-            <Button variant="primary" type="submit" className="w-100">
-              Add Event
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '38px'
+              }}
+            >
+              {loading ? (
+                <ThreeDots
+                  color="#fff"
+                  height={20}
+                  width={20}
+                  style={{
+                    alignCenter: true
+                  }}
+                />
+              ) : (
+                "Add Event"
+              )}
             </Button>
           </Form>
         </Card>
       </Container>
+      <Dialog open={dialogOpen} onClose={closeDialog}>
+        <DialogTitle>{dialogTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{dialogMessage}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

@@ -123,12 +123,12 @@ const IdeasPage = () => {
       const eventName = await fetchEventName(eventId);
 
       // Send email notifications
-      // await axios.post("http://localhost:3000/send-email", {
-      //   to: userEmails,
-      //   subject: "Voting Ending Soon",
-      //   html: `<strong>One hour left before the voting ends!</strong>
-      //        <p>Don't forget to cast your vote for the event: ${eventName}.</p>`,
-      // });
+      await axios.post("http://localhost:3000/send-email", {
+        to: userEmails,
+        subject: "Voting Ending Soon",
+        html: `<strong>One hour left before the voting ends!</strong>
+             <p>Don't forget to cast your vote for the event: ${eventName}.</p>`,
+      });
 
       console.log("Notification email sent successfully");
     } catch (error) {
@@ -142,13 +142,12 @@ const IdeasPage = () => {
       // Fetch all user emails
       const userEmails = await fetchUserEmails();
 
-      // Send email notifications
-      // await axios.post("http://localhost:3000/send-email", {
-      //   to: userEmails,
-      //   subject: "Winning Idea Announcement",
-      //   html: `<strong>The idea "${ideaName}" for the event "${eventName}" has won based on public consensus.</strong>
-      //      <p>Please RSVP to confirm your participation.</p>`,
-      // });
+      await axios.post("http://localhost:3000/send-email", {
+        to: userEmails,
+        subject: "Winning Idea Announcement",
+        html: `<strong>The idea "${ideaName}" for the event "${eventName}" has won based on public consensus.</strong>
+           <p>Please RSVP to confirm your participation.</p>`,
+      });
 
       console.log("Winner notification email sent successfully");
     } catch (error) {

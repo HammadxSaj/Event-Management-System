@@ -7,8 +7,11 @@ import { Container, Form, Button, Card } from "react-bootstrap";
 import { TextField, IconButton } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import CloseIcon from "@mui/icons-material/Close";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import dayjs from "dayjs";
+import { ThreeDots } from "react-loader-spinner";
 import "../admin/EventForm.css";
+
 
 const IdeaForm = () => {
   const navigate = useNavigate();
@@ -34,6 +37,10 @@ const IdeaForm = () => {
   const [imageError, setImageError] = useState("");
   const [rsvpQuestions, setRsvpQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState("");
+  const [loading, setLoading] = useState(false); // Set to false initially
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogTitle, setDialogTitle] = useState("");
   const [formErrors, setFormErrors] = useState({
     title: false,
     location: false,
@@ -43,6 +50,17 @@ const IdeaForm = () => {
     images: false,
     embedCode: false,
   });
+
+  const openDialog = (title, message) => {
+    setDialogTitle(title);
+    setDialogMessage(message);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+  };
+
 
   useEffect(() => {
     if (eventId) {
@@ -182,9 +200,10 @@ const IdeaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true); 
       if (eventId) {
         if (Object.values(formErrors).some((error) => error)) {
-          alert("Please resolve all errors before submitting.");
+          openDialog("Error", "Error adding Idea, please resolve all errors");
           return;
         }
 
@@ -240,16 +259,19 @@ const IdeaForm = () => {
           creator: "",
         });
 
-        alert("Idea added successfully");
+        openDialog("Success", "The idea has been added successfully");
+
+        navigate(`/event/${eventId}/ideas`);
       } else {
         console.error("eventId is undefined");
       }
     } catch (error) {
-      console.error("Error adding idea: ", error);
-      alert("Error adding idea");
+      console.error("Error adding Idea: ", error);
+      openDialog("Error", "Error adding Idea, please resolve all errors");
+    } finally {
+      setLoading(false); // Set loading to false when submission is completed
     }
 
-    navigate(`/event/${eventId}/ideas`);
   };
 
   return (
@@ -428,12 +450,44 @@ const IdeaForm = () => {
                 dangerouslySetInnerHTML={{ __html: mapPreview }}
               ></div>
             </Form.Group>
-            <Button variant="primary" type="submit" className="w-100">
-              Add Idea
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '38px'
+              }}
+            >
+              {loading ? (
+                <ThreeDots
+                  color="#fff"
+                  height={20}
+                  width={20}
+                  style={{
+                    alignCenter: true
+                  }}
+                />
+              ) : (
+                "Add Idea"
+              )}
             </Button>
           </Form>
         </Card>
       </Container>
+      <Dialog open={dialogOpen} onClose={closeDialog}>
+        <DialogTitle>{dialogTitle}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{dialogMessage}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
