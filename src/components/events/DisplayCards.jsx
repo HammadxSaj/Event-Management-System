@@ -195,7 +195,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   };
 
   return (
-    <Card className="display-card">
+    <Card className={userRole === 'admin' ? 'display-card' : 'display-user-card'}>
       <CardActionArea onClick={handleDetails}>
         <CardMedia
           component="img"

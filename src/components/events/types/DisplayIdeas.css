@@ -3,7 +3,14 @@
   src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
 }
 
-.event-card {
+.idea-user-card {
+  width: 300px;  
+  height: 550px; 
+  margin: 16px; 
+  display: flex;
+  flex-direction: column;
+}
+.idea-card {
   width: 300px;  
   height: 600px; 
   margin: 16px; 

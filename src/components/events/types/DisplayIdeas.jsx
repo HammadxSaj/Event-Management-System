@@ -194,7 +194,7 @@ const DisplayIdeas = ({
   };
 
   return (
-    <Card className="event-card">
+    <Card className={userRole === 'admin' ? 'idea-card' : 'idea-user-card'}>
       {loadingRole ? (
         <div className="loader-container">
           <ThreeDots

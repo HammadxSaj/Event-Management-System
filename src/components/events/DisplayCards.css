@@ -11,6 +11,14 @@
   flex-direction: column;
 }
 
+.display-user-card {
+  width: 250px;  
+  height: 280px; 
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
 .display-card:hover{
   transform: scale(1.05); 
 }
