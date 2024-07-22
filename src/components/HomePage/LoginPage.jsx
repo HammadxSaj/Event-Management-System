@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { Circles } from 'react-loader-spinner';
 import ErrorMessage from '../auth/ErrorMessage';
 
-
 const LogIn = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); 
@@ -32,14 +31,29 @@ const LogIn = () => {
     };
   }, []);
 
+  const isEmailAllowed = (email) => {
+    const allowedDomains = ['foundri.net', 'securiti.ai'];
+    const emailDomain = email.split('@')[1];
+    return allowedDomains.includes(emailDomain);
+  };
+
   const handleGoogleSignIn = () => {
     const provider = new GoogleAuthProvider();
     setLoading(true);  
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const user = result.user;
+        const email = user.email;
+
+        if (!isEmailAllowed(email)) {
+          alert("Only emails from @foundri.net and @securiti.ai are allowed.");
+          setLoading(false);
+          return;
+        }
+
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
           if (!userData.role) return; // If role is empty, navigate nowhere
@@ -57,9 +71,7 @@ const LogIn = () => {
       .catch((error) => {
         console.log("Google sign in error:", error);
         setErrorMessage("Google sign in failed. Please try again.");
-      })
-      .finally(() => {
-        setLoading(false);  
+        setLoading(false);
       });
   };
 
@@ -76,7 +88,7 @@ const LogIn = () => {
               <Circles
                 height="100"
                 width="100"
-                color= "#1CA8DD" 
+                color="#1CA8DD"
                 ariaLabel="loading"
               />
             </div>
@@ -91,7 +103,7 @@ const LogIn = () => {
               Sign in with Google
             </Button>
           )}
-          
+
           {errorMessage && <ErrorMessage message={errorMessage} />}
         </div>
       </div>

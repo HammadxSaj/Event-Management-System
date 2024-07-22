@@ -62,7 +62,7 @@ const IdeaForm = () => {
   };
 
 
-  useEffect(() => {
+  useEffect(() => {   
     if (eventId) {
       const fetchIdeas = async () => {
         try {
@@ -76,7 +76,7 @@ const IdeaForm = () => {
         } catch (error) {
           console.error("Error fetching ideas:", error);
         }
-      };
+      }; 
 
       fetchIdeas();
     } else {
