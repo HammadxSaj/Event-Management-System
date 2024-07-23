@@ -16,6 +16,7 @@ app.get("/", async (_req, res) => {
 });
 
 app.post("/send-email", async (req, res) => {
+  console.log(req);
   const { to, subject, html } = req.body;
 
   const transporter = nodemailer.createTransport({
@@ -48,4 +49,6 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
-
+app.listen(port, () => {
+  console.log(`Listening on http://localhost:${port}`);
+});

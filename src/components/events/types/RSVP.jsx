@@ -80,6 +80,8 @@ const RSVP = () => {
       });
       setResponse(isAvailable ? "Yes" : "No");
 
+      // console.log("the current user is:", currentUser.email);
+
       // Prepare the responses HTML
       const responsesHtml = Object.entries(rsvpResponses)
         .map(
@@ -89,7 +91,7 @@ const RSVP = () => {
         .join("");
 
       // Send email notification
-      await axios.post("http://localhost:3000/send-email", {
+      await axios.post("https://eventiti-backend.vercel.app/send-email", {
         to: currentUser.email,
         subject: "RSVP Confirmation",
         html: `<strong>You have responded with ${

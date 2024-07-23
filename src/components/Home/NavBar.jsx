@@ -80,7 +80,7 @@ function NavBar() {
   return (
     <AppBar position="relative" className="custom-NavBar">
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
+        <Typography variant="h6" sx={{ flexGrow: 1}}>
           <img
             alt="Eventiti Logo"
             src={Logo}
