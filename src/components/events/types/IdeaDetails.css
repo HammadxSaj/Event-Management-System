@@ -1,46 +1,210 @@
-/* src/components/EventDetails.css */
-.container {
-    margin-top: 2rem;
+/* IdeaDetails.css */
+
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 100 900;
+    src: url('./fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
 }
 
-.card-media {
-    height: 300px;
-    object-fit: cover;
+@font-face {
+    font-family: 'Quicksand';
+    src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
 }
 
-.card-content {
-    padding: 2rem;
+@font-face {
+    font-family: 'Custom';
+    src: url('../../fonts/Didact_Gothic/DidactGothic-Regular.ttf') format('truetype');
 }
 
-.location-container {
+
+
+
+
+  .details-title{
+    margin-top: 50px;
+    font-family:"Quicksand";
+    font-weight: 600; /* Bold weight */
+    color:#D96758;
+    text-align: left;
+    
+  }
+
+
+  .text-overlay {
+    font-weight: 600;
+    color:white;
+    font-size: 20px;
+
+  }
+
+  h2{
+    font-weight: 600; /* Bold weight */
+    color: #1CA8DD;
+  }
+
+  .detail-image-wrapper {
+    padding-top: 100px;
+    padding-left: 200px; /* Adjust padding as needed */
+    padding-right: 200px; /* Adjust padding as needed */
+  }
+  .detail-image {
+    height: 400px;
+    border: 5px solid #1CA8DD; /* Add border */
+  }
+  
+  
+  .detail-card {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
+    overflow: auto; /* Ensure scrolling if content overflows */
+    padding-top: 50px;
+    padding-left: 200px;
+    padding-right: 200px;
+    
+  
+  }
+  
 
-.location-iframe {
-    width: 100%;
-    height: 300px;
-    max-width: 100%;
-    border: 0;
-    margin-top: 1rem;
-    overflow: hidden;
-    position: relative;
+  .profile-comment {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #D96758; /* Add a border with a nice color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */
+    margin-top: -5px;
+    margin-right: 10px;
+  }
+  
+
+  .detail-card-content {
+    flex: 1;
     display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    flex-direction: column;
+    padding: 200px;
+    font-family: "Quicksand" !important;
+    box-sizing: border-box;
+  }
 
-.location-iframe iframe {
+  .description-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: -200px;
+    padding: 200px;
+    font-family: "Quicksand" !important;
+    margin-bottom: -300px;
+ 
+  }
+
+  .divider {
+    
+    height: 1px; /* Adjust thickness */
+    background-color: #000; /* Color of the divider */
+    margin: 20px 0; /* Adjust spacing around the divider */
+    width: 100%; /* Adjust width */
+
+    
+  }
+
+
+  .description-card-content .MuiTypography-root {
+    font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
+
+  }
+  
+  .detail-card-content .MuiTypography-root {
+    font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
+
+  }
+  
+  .location-container {
+    position: relative;
+    width: 100%;
+    height: 500px; /* Adjust this height as needed */
+    overflow: hidden;
+    margin-top: 1rem;
+  }
+  
+  .location-iframe {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    border: 0;
+  }
+  
+  
+
+  
+/* General button styling */
+button.post-comment {
+  background-color: #D96758; /* Primary color (blue) */
+  color: #fff; /* Text color (white) */
+  font-size: 16px; /* Font size */
+  font-family: "Quicksand";
+  padding: 10px 20px; /* Padding (top-bottom, left-right) */
+  border-radius: 4px; /* Rounded corners */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transition effects */
 }
 
-.terms {
-    margin-top: 1rem;
+/* Hover effect */
+button.post-comment:hover {
+  background-color: #a14c40; /* Darker blue on hover */
+  transform: scale(1.05); /* Slightly enlarge button */
 }
+
+/* Focus effect */
+button.post-comment:focus {
+  outline: none; /* Remove default focus outline */
+  box-shadow: 0 0 0 2px #D96758; /* Add a custom focus ring */
+}
+
+/* Active effect */
+button.post-comment:active {
+  background-color: #4e241f; /* Even darker blue when button is pressed */
+  transform: scale(0.98); /* Slightly shrink button */
+}
+
+.image-card {
+  position: relative;
+  width: 100%;
+}
+
+
+.overlay-content {
+  font-family: "Quicksand";
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+  color: rgb(255, 255, 255);
+  margin-top: -60px;
+  
+
+}
+
+.ribbon {
+
+  background-color: rgba(197, 189, 189, 0.5);
+  border-radius: 4px;
+}
+.comment-container {
+  transition: box-shadow 0.3s ease;
+}
+
+.comment-container:hover {
+  box-shadow: 0 4px 8px #8eadb9;
+
+}
+
+
+

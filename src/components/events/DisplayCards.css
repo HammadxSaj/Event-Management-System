@@ -1,6 +1,19 @@
 @font-face {
   font-family: 'Quicksand';
   src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+  font-weight: 600px;
+}
+
+@font-face {
+  font-family: 'Custom';
+  src: url('../../fonts/Didact_Gothic/DidactGothic-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('./fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
 }
 
 .display-card {
@@ -9,6 +22,8 @@
   margin: 16px;
   display: flex;
   flex-direction: column;
+ 
+
 }
 
 .display-user-card {
@@ -17,6 +32,7 @@
   margin: 16px;
   display: flex;
   flex-direction: column;
+
 }
 
 .display-card:hover{
@@ -30,20 +46,70 @@
   font-family: 'Quicksand';
 }
 
-.display-card-content {
+.display-overlay-content {
   flex-grow: 1;
   text-align: center;
   overflow: hidden; /* Ensure content does not overflow */
-  margin-top: 1px;
+  margin-top: -40px;
+}
+
+.display-card-actions {
+  flex-grow: 1;
+  text-align: center;
+  overflow: hidden; /* Ensure content does not overflow */
+  
 }
 
 .display-card-content .MuiTypography-root {
-  font-family: 'Quicksand', sans-serif; /* Change to your desired font family */
+  font-family: "Quicksand";/* Change to your desired font family */
   font-size: 25px; /* Change to your desired font size */
+  font-weight: 600px;
+ 
   
 }
 
 
+
 .display-card-actions {
-  margin-top: 10px;
+  margin-top: -10px;
 }
+
+.stacked-card-container {
+  position: relative;
+  width: fit-content; /* Adjust according to your layout */
+}
+
+.stack-cards__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.stack-cards__item:nth-child(1) {
+  transform: translateY(0px) scale(1);
+  opacity: 1;
+  z-index: 4;
+}
+
+.stack-cards__item:nth-child(2) {
+  transform: translateY(20px) scale(0.95);
+  opacity: 0.9;
+  z-index: 3;
+}
+
+.stack-cards__item:nth-child(3) {
+  transform: translateY(40px) scale(0.9);
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.stack-cards__item:nth-child(4) {
+  transform: translateY(60px) scale(0.85);
+  opacity: 0.7;
+  z-index: 1;
+}
+

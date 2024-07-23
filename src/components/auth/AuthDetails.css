@@ -1,7 +1,7 @@
 /* src/components/auth/AuthDetails.css */
 .profile-pic {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 2px solid #1CA8DD; /* Add a border with a nice color */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */

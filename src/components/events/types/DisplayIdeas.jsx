@@ -209,6 +209,9 @@ const DisplayIdeas = ({
       ) : (
         <>
           <CardActionArea onClick={handleDetails}>
+            <div className="idea-wrapper">
+
+           
             <CardMedia
               component="img"
               className="event-card-media"
@@ -216,10 +219,17 @@ const DisplayIdeas = ({
               alt={idea.title}
               title={idea.title}
             />
+            
+            <div className="ribbon">
+            <h4 classname ="idea-overlay">{idea.title}</h4>
+            </div>
+         
+
+            </div>
             <CardContent className="event-card-content">
-              <Typography gutterBottom variant="h5" component="div">
+              {/* <Typography gutterBottom variant="h5" component="div">
                 {idea.title}
-              </Typography>
+              </Typography> */}
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />
                 <Typography variant="body2" color="text.secondary">

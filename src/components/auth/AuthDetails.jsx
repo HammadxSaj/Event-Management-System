@@ -10,26 +10,14 @@ const AuthDetails = () => {
 
   return (
     <div>
-      {authUser ? (
+      {/* {authUser ? (
         <>
-          <p>{`Signed In as ${authUser.displayName || 'User'} (${authUser.email})`}</p>
-          {authUser.photoURL ? (
-            <img src={authUser.photoURL} referrerPolicy='no-referrer' alt="Profile" className="profile-pic" />
-          ) : (
-            <p>No profile picture available</p>
-          )}
-          <button
-            onClick={() => {
-              userSignOut();
-              navigate('/');
-            }}
-          >
-            Sign Out
-          </button>
+       
+      
         </>
       ) : (
         <p>Signed Out</p>
-      )}
+      )} */}
     </div>
   );
 };

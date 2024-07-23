@@ -27,7 +27,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import "../EventDetails.css";
+
 
 const WinningIdea = () => {
     const navigate = useNavigate();

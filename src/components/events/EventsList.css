@@ -33,7 +33,7 @@ h2 {
   height: 100vh; /* Ensures the loader is centered vertically in full viewport height */
 }
 
-h3{
+.header-slogan{
   font-size: 16px; /* Adjust font size for the header */
   font-family: 'Quicksand';
   text-align: center;

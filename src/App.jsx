@@ -14,7 +14,7 @@ import AddEventButton from './components/admin/AddEventButton';
 import EventForm from './components/admin/EventForm';
 import { CssBaseline } from '@mui/material';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import EventDetails from './components/events/EventDetails';
+
 import User from './components/auth/User';
 import { AuthProvider } from './components/auth/AuthContext';
 import AuthDetails from './components/auth/AuthDetails'; // Import AuthDetails component

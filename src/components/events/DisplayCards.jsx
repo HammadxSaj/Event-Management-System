@@ -195,6 +195,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   };
 
   return (
+    
     <Card className={userRole === 'admin' ? 'display-card' : 'display-user-card'}>
       <CardActionArea onClick={handleDetails}>
         <CardMedia
@@ -203,6 +204,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           image={event.images.length > 0 ? event.images[0] : eventi}
           alt={event.title}
           title={event.title}
+          
         />
         <CardContent className="display-card-content">
           <Typography gutterBottom variant="h5" component="div">

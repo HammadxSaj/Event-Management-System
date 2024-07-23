@@ -27,7 +27,12 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import "../EventDetails.css";
+import "./IdeaDetails.css";
+import { useAuth } from "../../auth/AuthContext";
+import NavBar from "../../Home/NavBar";
+
+
+
 
 
 const IdeaDetails = () => {
@@ -36,6 +41,8 @@ const IdeaDetails = () => {
   const { ideaId } = useParams();
   console.log(ideaId);
   const [idea, setIdea] = useState(null); // State for storing idea details
+  const [userProfile, setUserProfile] = useState(null);
+  const { authUser, loading } = useAuth();
   const [editMode, setEditMode] = useState({
     title: false,
     description: false,
@@ -64,6 +71,8 @@ const IdeaDetails = () => {
     embedCode: false,
   });
 
+
+  
   useEffect(() => {
     const fetchIdea = async () => {
       try {
@@ -147,6 +156,19 @@ const IdeaDetails = () => {
     setEditMode({ ...editMode, [field]: !editMode[field] });
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+
+    const dayWithSuffix = day + (day % 10 === 1 && day !== 11 ? 'st' :
+                                  day % 10 === 2 && day !== 12 ? 'nd' :
+                                  day % 10 === 3 && day !== 13 ? 'rd' : 'th');
+
+    return `${dayWithSuffix} ${month} ${year}`;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -224,6 +246,7 @@ const IdeaDetails = () => {
           text: newComment,
           author: user.email,
           timestamp: new Date(),
+          profile: user.photoURL
         };
         const commentDoc = await addDoc(commentsCollection, commentData);
 
@@ -238,6 +261,7 @@ const IdeaDetails = () => {
         };
 
         // Add the new comment with the generated ID to the comments state
+        console.log("The photo URL is:",commentData.profile)
         setComments([...comments, formattedComment]);
         setNewComment("");
       }
@@ -298,29 +322,25 @@ const IdeaDetails = () => {
   }
 
   return (
-    <Container maxWidth="md" className="container">
-      <button
+    <>
+
+      {/* <button
         className="back-button"
         onClick={() => navigate(`/event/${eventId}/ideas`)}
       >
         Back
-      </button>
+      </button> */}
+    
       <Card>
-        {idea.images.length > 0 && (
-          <CardMedia
-            component="img"
-            height="300"
-            image={idea.images[0]}
-            alt={idea.title}
-          />
-        )}
-        <CardContent className="card-content">
-          <Box
+      <NavBar/>
+      <div className="description-card-content">
+      <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="h4" component="div" gutterBottom>
+              
               {editMode.title ? (
                 <TextField
                   name="title"
@@ -331,13 +351,14 @@ const IdeaDetails = () => {
                   style={{ marginBottom: "1rem" }}
                 />
               ) : (
-                idea.title
+                <h1 className="details-title">{idea.title}</h1>
               )}
+             
             </Typography>
             {userRole === "admin" && (
               <>
                 <Button onClick={() => handleEditToggle("title")}>
-                  {editMode.title ? "Cancel" : "Edit"}
+                  {editMode.title ? "Cancel" : <EditIcon sx={{ color: 'grey' }}/>}
                 </Button>
                 {editMode.title && (
                   <Button onClick={() => handleSave("title")}>Save</Button>
@@ -345,53 +366,28 @@ const IdeaDetails = () => {
               </>
             )}
           </Box>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h6" color="textSecondary" gutterBottom>
-              {editMode.dateTime ? (
-                <DateTimePicker
-              label="Date & Time"
-              value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
-              onChange={handleDateTimeChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  error={formErrors.dateTime}
-                  helperText={formErrors.dateTime && "Date and time must be in the future."}
-                />
-              )}
-            />
-              ) : (
-                dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
-              )}
-            </Typography>
-            {userRole === "admin" && (
-              <>
-                <Button onClick={() => handleEditToggle("dateTime")}>
-                  {editMode.dateTime ? "Cancel" : "Edit"}
-                </Button>
-                {editMode.dateTime && (
-                  <Button onClick={() => handleSave("dateTime")} disabled={formErrors.dateTime}>Save</Button>
-                )}
-              </>
-            )}
-          </Box>
-          <Divider style={{ margin: "1rem 0" }} />
+      
+
+
+     
+      
+
+
+        
+        <Divider style={{ margin: "1rem 0" }} />
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
             <Typography variant="h5" component="div" gutterBottom>
-              Idea Description
+             
             </Typography>
+           
             {userRole === "admin" && (
               <>
                 <Button onClick={() => handleEditToggle("description")}>
-                  {editMode.description ? "Cancel" : "Edit"}
+                  {editMode.description ? "Cancel" :  <EditIcon sx={{ color: 'grey' }}/>}
                 </Button>
                 {editMode.description && (
                   <Button onClick={() => handleSave("description")}>
@@ -427,19 +423,96 @@ const IdeaDetails = () => {
             </Typography>
           )}
           <Divider style={{ margin: "1rem 0" }} />
+          </div>
+         
 
+         {idea.images.length > 0 && (
+          <div className="detail-image-wrapper">
+            <CardMedia
+              className="detail-image"
+              component="img"
+              height="300"
+              image={idea.images[0]}
+              alt={idea.title}
+            />
+           
+            <div className="overlay-content">
+              <div className="ribbon">
+            
+              </div>
+            
+             
+                <h1 className="text-overlay">{idea.title}</h1>
+              
+                
+            </div>
+
+          </div>
+        )}
+        
+        <div className="detail-card">
+
+      
+        <CardContent className="detail-card-content">
+ 
+
+          <h2>Checking Details</h2>
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography variant="h5" component="div" gutterBottom>
-              Idea Details
+            <Typography variant="h6" color="textSecondary" gutterBottom>
+              {editMode.dateTime ? (
+                <DateTimePicker
+              label="Date & Time"
+              value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
+              onChange={handleDateTimeChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={formErrors.dateTime}
+                  helperText={formErrors.dateTime && "Date and time must be in the future."}
+                />
+              )}
+            />
+              ) : (
+                dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
+              )}
+
+           
             </Typography>
+           
+
+            
+            {userRole === "admin" && (
+              <>
+                <Button onClick={() => handleEditToggle("dateTime")}>
+                  {editMode.dateTime ? "Cancel" : <EditIcon sx={{ color: 'grey' }}/>}
+                </Button>
+                {editMode.dateTime && (
+                  <Button onClick={() => handleSave("dateTime")} disabled={formErrors.dateTime}>Save</Button>
+                )}
+              </>
+            )}
+          </Box>
+
+
+          
+          <hr className="divider" />
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            {/* <Typography variant="h5" component="div" gutterBottom>
+              Idea Details
+            </Typography> */}
+            <h2>Idea Details</h2>
             {userRole === "admin" && (
               <>
                 <Button onClick={() => handleEditToggle("details")}>
-                  {editMode.details ? "Cancel" : "Edit"}
+                  {editMode.details ? "Cancel" :  <EditIcon sx={{ color: 'grey' }}/>}
                 </Button>
                 {editMode.details && (
                   <Button onClick={() => handleSave("details")}>Save</Button>
@@ -480,12 +553,13 @@ const IdeaDetails = () => {
             alignItems="center"
           >
             <Typography variant="h5" component="div" gutterBottom>
-              Location
+            <h2>Location</h2>
             </Typography>
+           
             {userRole === "admin" && (
               <>
                 <Button onClick={() => handleEditToggle("location")}>
-                  {editMode.location ? "Cancel" : "Edit"}
+                  {editMode.location ? "Cancel" :  <EditIcon sx={{ color: 'grey' }}/>}
                 </Button>
                 {editMode.location && (
                   <Button
@@ -532,6 +606,7 @@ const IdeaDetails = () => {
               )}
             </Box>
           ) : (
+            <>
             <Paper elevation={3} className="location-container">
               {idea.embedCode && (
                 <div
@@ -540,10 +615,19 @@ const IdeaDetails = () => {
                 />
               )}
               <Typography variant="body1" style={{ marginTop: "0.5rem" }}>
-                {idea.location}
+           
               </Typography>
+           
+           
             </Paper>
+            <h2>{idea.location}</h2>
+            </>
+            
+            
+            
           )}
+
+          <hr className="divider" />
           <Divider style={{ margin: "1rem 0" }} />
           <Box
             display="flex"
@@ -551,7 +635,10 @@ const IdeaDetails = () => {
             alignItems="center"
           >
             <Typography variant="h5" component="div" gutterBottom>
-              Comments
+              <h2>
+              Feedback
+              </h2>
+              
             </Typography>
           </Box>
 
@@ -562,11 +649,22 @@ const IdeaDetails = () => {
           >
             {comments.map((comment) => (
               <Paper
+                className="comment-container"
                 key={comment.id}
                 style={{ padding: "1rem", marginBottom: "1rem" }}
               >
                 <Typography variant="body2" color="textSecondary" gutterBottom>
-                  {comment.author} -{" "}
+                 
+                 
+                  <img
+                  src= {comment.profile}
+                  referrerPolicy="no-referrer"
+                  alt="Profile"
+                  className="profile-comment"
+                 
+                  />
+
+                 {comment.author} -{" "}
                   {new Date(comment.timestamp.seconds * 1000).toLocaleString()}
                 </Typography>
                 {editCommentId === comment.id ? (
@@ -633,7 +731,7 @@ const IdeaDetails = () => {
                 <Button
                   onClick={handleAddComment}
                   variant="contained"
-                  color="primary"
+                  className="post-comment"
                 >
                   Post Comment
                 </Button>
@@ -641,8 +739,9 @@ const IdeaDetails = () => {
             )}
           </Box>
         </CardContent>
+        </div>
       </Card>
-    </Container>
+    </>
   );
 };
 

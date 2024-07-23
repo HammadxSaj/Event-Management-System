@@ -9,7 +9,7 @@ import Logo from '../../assets/Logo.png';
 import { useAuth } from '../auth/AuthContext';
 import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
 
-function NavBar() {
+function NavBar({eventId}) {
   const [userProfile, setUserProfile] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -77,6 +77,28 @@ function NavBar() {
     return null; // Or a loading spinner
   }
 
+  const renderNavButtons = () => {
+    switch (location.pathname) {
+
+      case '/event':
+        return (
+          <>
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/eventform')}>Add Event +</Button>
+            <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
+          </>
+        );
+
+      default:
+        return (
+          <>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideaform`)}> Add Idea + </Button>
+          </>
+        );
+    }
+  };
+
+
   return (
     <AppBar position="relative" className="custom-NavBar">
       <Toolbar>
@@ -84,13 +106,21 @@ function NavBar() {
           <img
             alt="Eventiti Logo"
             src={Logo}
-            width="40"
-            height="40"
+            width="45"
+            height="45"
             className="d-inline-block align-top"
           />{' '}
+          <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
+          
+
         </Typography>
-        <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-        <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
+
+        <div>
+          {renderNavButtons()};    
+        </div>
+        
+    
+  
         {userProfile ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {userProfile.photoURL ? (

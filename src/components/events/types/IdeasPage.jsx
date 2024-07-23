@@ -21,6 +21,7 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import './IdeasPage.css'
+import DisplayWinner from "./DisplayWinners";
 
 import { ThreeDots} from 'react-loader-spinner';
 
@@ -511,7 +512,7 @@ const IdeasPage = () => {
 
   return (
     <>
-      <NavBar />
+      <NavBar eventId={eventId}/>
 
 
       {userRole === "admin" && (
@@ -530,7 +531,7 @@ const IdeasPage = () => {
             dateFormat="Pp"
             placeholderText="Select Voting Start Date"
           />
-          <AddIdeasButton eventId={eventId} />
+          {/* <AddIdeasButton eventId={eventId} /> */}
         </div>
       )}
 
@@ -555,11 +556,8 @@ const IdeasPage = () => {
               <div className="winner-idea-section">
                 <h2>The Winner Idea!</h2>
                 <div className="winner-idea">
-                <DisplayIdeas
+                <DisplayWinner
                   idea={winnerIdea}
-                  votingEnded={votingEnded}
-                  winningEventprop={true}
-                  votingStarted={votingStarted}
                   eventId={eventId}
                 />
                 </div>

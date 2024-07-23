@@ -6,54 +6,44 @@ import {
   CardMedia,
   Typography,
   CardActionArea,
-  CardActions,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaSleigh } from 'react-icons/fa';
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import DeleteIcon from '@mui/icons-material/Delete';
-import './DisplayWinner.css';
+
+
 import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
-import { useAuth } from '../../auth/AuthContext';
+import "./DisplayWinners.css"
 import { ThreeDots } from 'react-loader-spinner';
 
 const DisplayWinner = ({
   idea,
+  eventId
 
 
 }) => {
+    const navigate = useNavigate();
+
+
+    const handleDetails = (e) => {
+        e.stopPropagation();
+        navigate(`/event/${eventId}/ideas/${idea.id}`);
+      };
   
 
 
+
   return (
-    <Card className={userRole === 'admin' ? 'idea-card' : 'idea-user-card'}>
-      {loadingRole ? (
-        <div className="loader-container">
-          <ThreeDots
-            height={80}
-            width={80}
-            radius={9}
-            color="#1CA8DD"
-            ariaLabel="three-dots-loading"
-            visible={true}
-          />
-        </div>
-      ) : (
+    <Card className="winner-event-card">
+
         <>
           <CardActionArea onClick={handleDetails}>
             <CardMedia
               component="img"
-              className="event-card-media"
+              className="winner-event-card-media"
               image={idea.images.length > 0 ? idea.images[0] : ideaImage}
               alt={idea.title}
               title={idea.title}
             />
-            <CardContent className="event-card-content">
+            <CardContent className="winner-event-card-content">
               <Typography gutterBottom variant="h5" component="div">
                 {idea.title}
               </Typography>
@@ -75,91 +65,14 @@ const DisplayWinner = ({
                   Location: {idea.location}
                 </Typography>
               </div>
-              <div className="upvoted-profiles-container">
-                {loadingProfiles ? (
-                  <div className="loader-profile-container">
-                    <ThreeDots
-                      height={80}
-                      width={80}
-                      radius={9}
-                      color="#1CA8DD"
-                      ariaLabel="three-dots-loading"
-                      visible={true}
-                    />
-                  </div>
-                ) : upvotedUserProfiles.length > 0 ? (
-                  <>
-                    {upvotedUserProfiles.slice(0, 5).map((profile, index) => (
-                      <div key={index} className="profile-container">
-                        <img src={profile} referrerPolicy="no-referrer" alt="User Profile" className="voting-pic" />
-                      </div>
-                    ))}
-                    {upvotedUserProfiles.length > 5 && (
-                      <div className="profile-container more-profiles">
-                        + {upvotedUserProfiles.length - 5} more
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p>No users have upvoted this idea yet.</p>
-                )}
-              </div>
+ 
+              
             </CardContent>
           </CardActionArea>
-          {userRole === 'admin' && (
-            <CardActions className="event-card-actions">
-              <Button
-                size="small"
-                color="error"
-                onClick={openDialog}
-                startIcon={<DeleteIcon />}
-              >
-                Delete Idea
-              </Button>
-              <Dialog
-                open={openDeleteDialog}
-                onClose={closeDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Confirm Delete"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete this idea? This action cannot be undone.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={closeDialog} color="primary">
-                    Cancel
-                  </Button>
-                  <Button onClick={handleDeleteIdea} color="error" autoFocus>
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </CardActions>
-          )}
-          <CardActions className="event-card-actions">
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              fullWidth
-              style={{
-                backgroundColor: votingEnded || !votingStarted ? '#cccccc' : '#D96758',
-                color: hasUpvoted ? '#000000' : '#ffffff'
-              }}
-              onClick={handleUpvote}
-              startIcon={<ArrowUpwardIcon />}
-              disabled={votingEnded || !votingStarted}
-            >
-              {hasUpvoted ? 'Undo Vote' : 'Vote'}
-            </Button>
-          </CardActions>
+
+
         </>
-      )}
+   
     </Card>
   );
 };

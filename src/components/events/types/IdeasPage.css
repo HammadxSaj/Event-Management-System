@@ -9,8 +9,6 @@
   max-width: 1200px;
 }
 
-
-
 .display-idea {
   flex: 1 1 calc(33.333% - 40px); 
   box-sizing: border-box;
