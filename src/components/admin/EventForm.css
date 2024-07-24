@@ -27,6 +27,11 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.preserve-whitespace {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 .image-remove-button {
     position: absolute;
     top: 5px;
