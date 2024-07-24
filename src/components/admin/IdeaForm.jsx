@@ -7,11 +7,16 @@ import { Container, Form, Button, Card } from "react-bootstrap";
 import { TextField, IconButton } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import CloseIcon from "@mui/icons-material/Close";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import dayjs from "dayjs";
 import { ThreeDots } from "react-loader-spinner";
 import "../admin/EventForm.css";
-
 
 const IdeaForm = () => {
   const navigate = useNavigate();
@@ -61,8 +66,7 @@ const IdeaForm = () => {
     setDialogOpen(false);
   };
 
-
-  useEffect(() => {   
+  useEffect(() => {
     if (eventId) {
       const fetchIdeas = async () => {
         try {
@@ -76,7 +80,7 @@ const IdeaForm = () => {
         } catch (error) {
           console.error("Error fetching ideas:", error);
         }
-      }; 
+      };
 
       fetchIdeas();
     } else {
@@ -200,7 +204,7 @@ const IdeaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true); 
+      setLoading(true);
       if (eventId) {
         if (Object.values(formErrors).some((error) => error)) {
           openDialog("Error", "Error adding Idea, please resolve all errors");
@@ -271,7 +275,6 @@ const IdeaForm = () => {
     } finally {
       setLoading(false); // Set loading to false when submission is completed
     }
-
   };
 
   return (
@@ -352,7 +355,10 @@ const IdeaForm = () => {
                 rows={5}
                 variant="outlined"
                 helperText={`${detailsCount}/1000 characters`}
-                inputProps={{ maxLength: 1000 }}
+                inputProps={{
+                  maxLength: 1000,
+                  className: "preserve-whitespace",
+                }}
               />
               {formErrors.details && (
                 <div className="text-danger">
@@ -360,6 +366,7 @@ const IdeaForm = () => {
                 </div>
               )}
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>RSVP Questions</Form.Label>
               {rsvpQuestions.map((question, index) => (
@@ -455,10 +462,10 @@ const IdeaForm = () => {
               type="submit"
               className="w-100"
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '38px'
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "38px",
               }}
             >
               {loading ? (
@@ -467,7 +474,7 @@ const IdeaForm = () => {
                   height={20}
                   width={20}
                   style={{
-                    alignCenter: true
+                    alignCenter: true,
                   }}
                 />
               ) : (
