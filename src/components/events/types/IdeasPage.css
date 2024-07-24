@@ -4,19 +4,23 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Center cards horizontally */
-  padding: 20px;
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-bottom: 50px;
+ 
   margin: 50px auto 0; /* Center align the container and add top margin */
   max-width: 1200px;
 }
 
 .display-idea {
-  flex: 1 1 calc(33.333% - 40px); 
+  flex: 1 1 calc(33.333% - 20px); /* Adjusted calculation */
   box-sizing: border-box;
-  padding: 10px;
+  padding: 10xpx;
   margin: 10px;
   min-width: 300px;
   max-width: 300px;
 }
+
 
 .header-title {
   text-align: center;
@@ -47,3 +51,16 @@
   align-items: center;
   height: 300px;
 }
+
+@media (max-width: 768px) {
+  .display-idea {
+    flex: 1 1 calc(50% - 20px); /* Two cards per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .display-idea {
+    flex: 1 1 calc(100% - 20px); /* One card per row */
+  }
+}
+

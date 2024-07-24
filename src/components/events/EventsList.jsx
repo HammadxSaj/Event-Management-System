@@ -435,13 +435,16 @@ const EventsList = () => {
         )}
 
 
- 
+
+
+
+        <hr className='main-page-divider'></hr>
 
         {winners.length > 0 && (
           
           <div>
             <Element name="pastEvents">
-            <h2>Past Winners</h2>
+            <h2 className='past-winner-title'>Past Events</h2>
             </Element>
          
             
@@ -457,12 +460,8 @@ const EventsList = () => {
 
                       {idea && idea.id === event.winnerIdea && (
                         <div>  
-                          <PastIdeas idea = {idea} eventId = {event.id}/>
-                          {/* <p>{idea.title}</p>
-                          <p>{idea.description}</p>
-                          {idea.images.map((image, imgIndex) => (
-                            <img key={imgIndex} src={image} alt={`Idea ${imgIndex}`} />
-                          ))} */}
+                          <PastIdeas idea = {idea} eventId = {event.id} eventTitle = {event.title} />
+                    
                         </div>
                       )}
                     </div>
@@ -471,13 +470,7 @@ const EventsList = () => {
               </div>
             ))}
           </div>
-            {/* <Grid container spacing={4} justifyContent="center"> */}
-              {/* {winners.map((winner) => ( */}
-                {/* <Grid item key={winner.id}> */}
-                  {/* <PastIdeas idea={winner}/> */}
-                {/* </Grid> */}
-              {/* ))} */}
-            {/* </Grid> */}
+          
           </div>
         )}
       </div>

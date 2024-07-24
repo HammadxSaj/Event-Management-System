@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { Timestamp } from "firebase/firestore";
 import PastIdeas from "./PastIdeas";
+import './EventList.css'
 
 const IdeasPage = () => {
   const navigate = useNavigate();

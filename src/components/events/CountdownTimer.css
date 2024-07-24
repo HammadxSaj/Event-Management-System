@@ -4,12 +4,14 @@
     align-items: center;
     gap: 10px;
     font-family:'Times New Roman', Times, serif;
-    color: #a8aaab;
+    color: #556268;
     /* background-color: #1CA8DD; */
     padding: 20px;
     border-radius: 10px;
     width: fit-content;
     margin: 0 auto;
+    margin-top: 50px;
+    padding-right: 100px;
     
   }
   

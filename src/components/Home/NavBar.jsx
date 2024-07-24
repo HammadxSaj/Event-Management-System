@@ -11,6 +11,7 @@ import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
 
 function NavBar({eventId}) {
   const [userProfile, setUserProfile] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const navigate = useNavigate();
@@ -33,7 +34,24 @@ function NavBar({eventId}) {
     };
 
     fetchUserProfile();
+    fetchUserRole();
+
   }, [authUser]);
+
+  const fetchUserRole = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setUserRole(userDoc.data().role);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user role:", error);
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -82,8 +100,10 @@ function NavBar({eventId}) {
 
       case '/event':
         return (
+
           <>
-            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/eventform')}>Add Event +</Button>
+           {userRole === "admin" && (
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/eventform')}>Add Event +</Button>)}
             <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
           </>
         );
@@ -92,7 +112,9 @@ function NavBar({eventId}) {
         return (
           <>
              <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideaform`)}> Add Idea + </Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideas`)}>View Ideas</Button>
+             {userRole === "admin" && (
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideaform`)}> Add Idea + </Button>)}
           </>
         );
     }

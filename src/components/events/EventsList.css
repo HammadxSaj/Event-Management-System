@@ -55,9 +55,31 @@ h2 {
     margin: 50px auto 0; /* Center align the container and add top margin */
     max-width: 1200px; /* Limit maximum width of the container */
   }
+  
+  .past-winner-title {
+    text-align: center; /* Center the title */
+    font-size: 2rem; /* Adjust font size as needed */
+    margin-bottom: 20px; /* Space below the title */
+    text-shadow: 2px 2px 4px rgba(233, 233, 233, 0.8); /* Adding text shadow */
+  }
+  
   .past-winners-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center cards horizontally */
+    gap: 20px; /* Space between cards */
+    padding: 20px; /* Padding around the section */
+  }
+
+
+
+  .main-page-divider{
+    margin-top: 500px
+  }
+
+
+  .past-event-title{
+    font-size: 20px;
+    margin-top: -50px;
     
-    padding: 20px; /* Add padding to the container */
-    margin: 50px auto 0; /* Center align the container and add top margin */
-    max-width: 1200px; /* Limit maximum width of the container */
   }
