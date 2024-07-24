@@ -195,6 +195,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   };
 
   return (
+
+    <div class="card-stack">
     
     <Card className={userRole === 'admin' ? 'display-card' : 'display-user-card'}>
       <CardActionArea onClick={handleDetails}>
@@ -245,25 +247,10 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           </Dialog>
         </CardActions>
       )}
-      <CardContent className="display-card-content">
-        {isWinner && winningEventprop && (
-          <FormControl component="fieldset" style={{ marginTop: '1rem' }}>
-            <Typography variant="h6">RSVP</Typography>
-            <RadioGroup
-              aria-label="rsvp"
-              name="rsvp"
-              value={rsvp}
-              onChange={handleRsvpChange}
-              row
-            >
-              <FormControlLabel value="yes" control={<Radio />} label="Yes" disabled={rsvpLoading} />
-              <FormControlLabel value="no" control={<Radio />} label="No" disabled={rsvpLoading} />
-            </RadioGroup>
-          </FormControl>
-        )}
-      </CardContent>
+      
 
     </Card>
+    </div>
   );
 };
 export default DisplayCards;

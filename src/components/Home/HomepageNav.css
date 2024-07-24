@@ -1,4 +1,4 @@
-.home-page {
+/* .home-page {
     background-color: #123456;
     padding: 7rem 0rem;
     text-align: center;
@@ -33,13 +33,13 @@
 
 
 /*upon hover, buttons expand smoothly*/
-.buttons .MuiButton-root:hover {
+/* .buttons .MuiButton-root:hover {
     transform: scale(1.1);
-    transition: transform 0.3s;
-}
+    transition: transform 0.3s; */
 
-@media (max-width: 800px) {
+
+/* @media (max-width: 800px) {
     .home-page {
         padding: 10rem 0rem;
     }
-}
+} */

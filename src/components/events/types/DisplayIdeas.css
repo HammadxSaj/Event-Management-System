@@ -5,7 +5,7 @@
 
 .idea-user-card {
   width: 300px;  
-  height: 550px; 
+  height: 560px; 
   margin: 16px; 
   display: flex;
   flex-direction: column;
@@ -102,14 +102,15 @@ h4 {
   font-weight: 600;
   position: relative;
   color:white;
-  background: rgba(100, 85, 84, 0.6); /* Translucent background using RGBA */
+  background: rgba(135, 118, 117, 0.6); /* Translucent background using RGBA */
   padding: 0.5rem 1rem;
   text-align: center;
   font-size: 1rem;
   font-weight: bold;
-  opacity: 0.8;
+  opacity: 1;
   margin: 0 auto;
   border-radius: 5px;
   margin-top: -40px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Adding text shadow */
 }
 
