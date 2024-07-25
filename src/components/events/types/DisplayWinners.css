@@ -5,7 +5,7 @@
   
 
   .winner-event-card {
-    width: 1000px;
+    width: 1200px;
     margin: 0 auto; /* Center the container if needed */
     box-sizing: border-box;
   }
@@ -16,9 +16,26 @@
     object-fit: cover;
     font-family: 'Quicksand';
     font-size: 20px;
+    border: 5px solid  #D96758; /* Add border */
   }
   
+  .deets{
+    font-size:15px;
+    color:#8F9094;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 30px;
+ 
 
+  }
+
+
+  .winner-title{
+    font-size:30px;
+    color:white;
+    margin-top: -60px;
+    margin-right: 890px;
+  }
   
   .winner-event-card-content {
     flex-grow: 1;
@@ -26,6 +43,7 @@
     overflow: hidden; /* Ensure content does not overflow */
     margin-top: 1px;
     font-size: 20px;
+    background-color:transparent;
   }
   
   .winner-event-card-content .MuiTypography-root {

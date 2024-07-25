@@ -538,13 +538,26 @@ const IdeasPage = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
-        <h1 className="header-title">Choose the event that will spark our community's celebration!</h1>
-        <h3 className='header-slogan'>Your vote, calls for our next epic event</h3>
+        { !votingEnded &&(
+          <>
+           <h1 className="header-title">Choose the event that will spark our community's celebration!</h1>
+           <h3 className='header-slogan'>Your vote, calls for our next epic event</h3>
+           </>
+        )
+        }
+          {votingEnded &&(
+          <>
+           <h1 className="header-title">Winner Event Locked!</h1>
+           <h3 className='header-slogan'>Invest in your Happiness with all your work friends for fun filled nights of laughter and Bliss!</h3>
+           </>
+        )
+        }
+       
      
           
       
 
-          {timeRemaining && (
+          {timeRemaining && !votingEnded &&(
             <Grid item xs={12}>
               <CountdownTimer timeRemaining={timeRemaining} />
               {/* <h1>{`${winnerDetermined}`}</h1> */}
@@ -554,7 +567,7 @@ const IdeasPage = () => {
           {winnerDetermined && votingEnded && (
             <div>
               <div className="winner-idea-section">
-                <h2>The Winner Idea!</h2>
+              
                 <div className="winner-idea">
                 <DisplayWinner
                   idea={winnerIdea}
@@ -563,6 +576,7 @@ const IdeasPage = () => {
                 </div>
                
                 <Button
+                  className="rsvp-button"
                   variant="contained"
                   color="primary"
                   startIcon={<AddIcon />}
@@ -577,10 +591,11 @@ const IdeasPage = () => {
                     // || shouldDisableRSVP()
                   }
                 >
-                  RSVP
+                  RSVP 
                 </Button>
                 {userRole === "admin" && (
                   <Button
+                    classname = "analytics-button"
                     variant="contained"
                     color="secondary"
                     onClick={() =>
@@ -593,11 +608,19 @@ const IdeasPage = () => {
                     View Analytics
                   </Button>
                 )}
+
+                <hr className="winner-hr"></hr>
+
+               
               </div>
+
+              
             </div>
+            
           )}
 
         </Grid> 
+     
 
 
         <div className="hold-container">

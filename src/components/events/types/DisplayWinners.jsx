@@ -42,10 +42,12 @@ const DisplayWinner = ({
               image={idea.images.length > 0 ? idea.images[0] : ideaImage}
               alt={idea.title}
               title={idea.title}
+              
             />
+             <h2 className="winner-title">{idea.title}</h2> 
             <CardContent className="winner-event-card-content">
               <Typography gutterBottom variant="h5" component="div">
-                {idea.title}
+                <h3 className="deets">{idea.description}</h3>
               </Typography>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />

@@ -21,6 +21,19 @@
   max-width: 300px;
 }
 
+.winner-annoucement{
+  font-size:100px
+}
+
+.winner-hr {
+  border: 0;
+  height: 2px; /* Adjust thickness */
+  width: 60%; /* Adjust width for a shorter length */
+  background-color: grey; /* Grey color */
+  margin: 20px auto; /* Centered and vertical spacing */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
 
 .header-title {
   text-align: center;
@@ -52,6 +65,8 @@
   height: 300px;
 }
 
+
+
 @media (max-width: 768px) {
   .display-idea {
     flex: 1 1 calc(50% - 20px); /* Two cards per row */
@@ -64,3 +79,80 @@
   }
 }
 
+
+
+/* Style for the RSVP button */
+/* EventForm.css */
+
+/* Style for the RSVP button */
+.rsvp-button {
+  background-color: #1CA8DD !important; /* Primary blue color */
+  color: white !important; /* White text color */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for button size */
+  font-size: 16px; /* Adjust font size */
+  font-weight: bold; /* Bold text */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+  margin-top: 10px; /* Margin for spacing */
+  margin-right: 10px; /* Margin for spacing */
+  /* Add shadow for depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect for the button */
+.rsvp-button:hover {
+  background-color: #18799c !important; /* Darker blue on hover */
+}
+
+/* Active effect for the button */
+.rsvp-button:active {
+  background-color: #092834 !important; /* Even darker blue when active */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slightly reduced shadow */
+}
+
+/* Disabled state for the button */
+.rsvp-button:disabled {
+  background-color: #cccccc !important; /* Grey color for disabled state */
+  color: #3f3c3c !important; /* Darker grey text for disabled state */
+  box-shadow: none !important; /* Remove shadow for disabled state */
+}
+
+
+
+
+
+
+
+/* Style for the Analytics button */
+
+/* Style for the Analytics button */
+.analytics-button{
+  background-color: #299841 !important; /* Secondary grey color */
+  color: white !important; /* White text color */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for button size */
+  font-size: 16px !important; /* Adjust font size */
+  font-weight: bold; /* Bold text */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+  margin-top: 10px !important; /* Margin for spacing */
+  margin-right: 10px !important; /* Margin for spacing */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+}
+
+/* Hover effect for the button */
+.analytics-button:hover {
+  background-color: #5a6268 !important; /* Darker grey on hover */
+}
+
+/* Active effect for the button */
+.analytics-button:active {
+  background-color: #545b62 !important; /* Even darker grey when active */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slightly reduced shadow */
+}
+
+/* Disabled state for the button */
+.analytics-button:disabled {
+  background-color: #cccccc !important; /* Grey color for disabled state */
+  color: #666666 !important; /* Darker grey text for disabled state */
+  box-shadow: none !important; /* Remove shadow for disabled state */
+}
