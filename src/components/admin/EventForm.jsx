@@ -220,7 +220,7 @@ const EventForm = () => {
       const userEmails = await fetchUserEmails();
 
       // Send email notifications
-      await axios.post("http://localhost:3000/send-email", {
+      await axios.post("https://eventiti-backend.vercel.app/send-email", {
         to: userEmails,
         subject: "New Event Created",
         html: `<strong>${formData.title} event has been created!</strong>

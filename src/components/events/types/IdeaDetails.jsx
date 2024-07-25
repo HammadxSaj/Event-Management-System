@@ -41,8 +41,8 @@ import NavBar from "../../Home/NavBar";
 const IdeaDetails = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
+  console.log("event is:", eventId)
   const { ideaId } = useParams();
-  console.log(ideaId);
   const [idea, setIdea] = useState(null); // State for storing idea details
   const [userProfile, setUserProfile] = useState(null);
   const { authUser, loading } = useAuth();
@@ -352,7 +352,7 @@ const IdeaDetails = () => {
       </button> */}
 
       <Card>
-        <NavBar />
+        <NavBar eventId={eventId}/>
         <div className="description-card-content">
           <Box
             display="flex"
