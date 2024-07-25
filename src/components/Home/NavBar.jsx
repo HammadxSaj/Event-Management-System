@@ -99,6 +99,7 @@ function NavBar({eventId}) {
     switch (location.pathname) {
 
       case '/event':
+
         return (
 
           <>
@@ -107,6 +108,17 @@ function NavBar({eventId}) {
             <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
           </>
         );
+
+      case '/eventform':
+        return (
+
+          <>
+           {userRole === "admin" && (
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>)}
+           
+          </>
+        );
+
 
       default:
         return (
