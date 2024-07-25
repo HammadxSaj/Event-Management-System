@@ -457,7 +457,7 @@ const IdeaForm = () => {
                 dangerouslySetInnerHTML={{ __html: mapPreview }}
               ></div>
             </Form.Group>
-            <Button
+            <Button 
               variant="primary"
               type="submit"
               className="w-100"

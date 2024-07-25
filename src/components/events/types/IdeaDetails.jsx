@@ -653,7 +653,7 @@ const IdeaDetails = () => {
                     style={{ marginTop: "0.5rem" }}
                   ></Typography>
                 </Paper>
-                <h2>{idea.location}</h2>
+                <h2 classname = "location-detail">{idea.location}</h2>
               </>
             )}
 

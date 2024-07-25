@@ -19,6 +19,7 @@ import axios from "axios";
 import "../admin/EventForm.css";
 import { ThreeDots } from "react-loader-spinner";
 import { alignCenter } from "fontawesome";
+import NavBar from "../Home/NavBar";
 
 const EventForm = () => {
   const navigate = useNavigate();
@@ -241,14 +242,35 @@ const EventForm = () => {
 
   return (
     <>
-      <button className="back-button" onClick={() => navigate("/event")}>
-        Back
-      </button>
-      <Container className="d-flex justify-content-center align-items-center min-vh-100">
-        <Card className="p-4 shadow-lg form-card">
-          <h2 className="text-center mb-4">Add Event</h2>
+    <NavBar/>
+     
+
+        <div className="header-section">
+          <h1 className="header-title">🚀 Launch Your Next Big Event!</h1>
+          <h3 className='header-slogan'>Get ready to bring people together and make memories!</h3>
+        </div>
+   
+
+
+
+       
+          <img
+            src="src/assets/form.png" // Replace this with your image file path
+            alt="Event"
+            className="left-image"
+          />
+      
+
+        
+  
+         <div className="form-container">
+
+      
+          <h2 className="text">Event Form</h2>
+          
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
+            <Form.Label>Event Title</Form.Label>
               <TextField
                 fullWidth
                 label="Event Title"
@@ -259,7 +281,7 @@ const EventForm = () => {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title2">
               <Form.Label>Title Image</Form.Label>
               <Form.Control
                 type="file"
@@ -312,8 +334,8 @@ const EventForm = () => {
               )}
             </Button>
           </Form>
-        </Card>
-      </Container>
+          </div>
+        
       <Dialog open={dialogOpen} onClose={closeDialog}>
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
