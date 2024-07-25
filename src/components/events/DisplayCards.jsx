@@ -196,13 +196,20 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
 
   return (
 
-    <div class="card-stack">
+    
+
+  <div class="card-container">
+  <img src="src/assets/bg2.png" class="background-image3" alt="Background Image"></img>
+  <img src="src/assets/bg4.jpeg" class="background-image2" alt="Background Image"></img>
+  <img src="src/assets/bg3.jpeg" class="background-image1" alt="Background Image"></img>
+  <img src="src/assets/form.png" class="background-image" alt="Background Image"></img>
+  
     
     <Card className={userRole === 'admin' ? 'display-card' : 'display-user-card'}>
       <CardActionArea onClick={handleDetails}>
         <CardMedia
           component="img"
-          className="display-card-media"
+          className={userRole === 'admin' ? 'display-card-media' : 'display-card-media-user'}
           image={event.images.length > 0 ? event.images[0] : eventi}
           alt={event.title}
           title={event.title}

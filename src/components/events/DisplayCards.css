@@ -16,24 +16,135 @@
   src: url('./fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
 }
 
+
+.card-container {
+  position: relative; /* Establishes a positioning context for absolute children */
+  width: 300px; /* Same width as your card */
+  margin: 100px;
+  margin-bottom: 100px;
+
+}
+
+.background-image {
+  position: absolute;
+  top: -15px; /* Adjust to control vertical placement */
+  left: -15px; /* Adjust to control horizontal placement */
+  width: 300px; /* Larger than the card to create the stack effect */
+  height: 400px; /* Larger than the card */
+  object-fit: cover;
+  z-index: 0; /* Behind the card */
+  filter: brightness(80%); /* Adjust for desired brightness */
+  transform: rotate(-3deg); /* Rotate the image slightly */
+  border-radius: 5px;
+}
+
+.background-image1 {
+  position: absolute;
+  top: -25px; /* Adjust to control vertical placement */
+  left: -30px; /* Adjust to control horizontal placement */
+  width: 300px; /* Larger than the card to create the stack effect */
+  height: 400px; /* Larger than the card */
+  object-fit: cover;
+  z-index: 0; /* Behind the card */
+  filter: brightness(80%); /* Adjust for desired brightness */
+  transform: rotate(-7deg); /* Rotate the image slightly */
+  border-radius: 5px;
+}
+.background-image2 {
+  position: absolute;
+  top: -40px; /* Adjust to control vertical placement */
+  left: -35px; /* Adjust to control horizontal placement */
+  width: 300px; /* Larger than the card to create the stack effect */
+  height: 400px; /* Larger than the card */
+  object-fit: cover;
+  z-index: 0; /* Behind the card */
+  filter: brightness(80%); /* Adjust for desired brightness */
+  transform: rotate(-10deg); /* Rotate the image slightly */
+  border-radius: 5px;
+}
+
+.background-image3 {
+  position: absolute;
+  top: -50px; /* Adjust to control vertical placement */
+  left: -40px; /* Adjust to control horizontal placement */
+  width: 300px; /* Larger than the card to create the stack effect */
+  height: 400px; /* Larger than the card */
+  object-fit: cover;
+  z-index: 0; /* Behind the card */
+  filter: brightness(80%); /* Adjust for desired brightness */
+  transform: rotate(-15deg); /* Rotate the image slightly */
+  border-radius: 5px;
+ 
+}
+
+.background-image3 {
+  position: absolute;
+  top: -50px;
+  left: -40px;
+  width: 300px;
+  height: 400px;
+  object-fit: cover;
+  z-index: 0;
+  filter: brightness(80%);
+  transform: rotate(-15deg);
+  border-radius: 5px;
+  transition: transform 0.5s ease, filter 0.5s ease;
+  box-shadow: -20px 20px 40px rgba(0, 0, 0, 0.9); /* Larger shadow, moved to the left */
+}
+
+
+.background-image3:hover {
+  transform: rotate(-15deg) scale(1.05);
+  filter: brightness(100%);
+  box-shadow: -25px 25px 50px rgba(0, 0, 0, 0.6); /* Even larger shadow on hover */
+}
+.background-image:hover {
+  transform: rotate(-5deg) scale(1.05);
+  filter: brightness(100%);
+}
+.background-image1:hover {
+  transform: rotate(-7deg) scale(1.05);
+  filter: brightness(100%);
+}
+
+.background-image2:hover {
+  transform: rotate(-10deg) scale(1.05);
+  filter: brightness(100%);
+}
+
+
+
+
+.background-image3:hover::after {
+  opacity: 1;
+}
+
+
+
 .display-card {
-  width: 250px;  
-  height: 300px; 
-  margin: 16px;
+  width: 300px;
+  height: 400px;
+  margin: 0; /* Remove margin to align with container */
   display: flex;
   flex-direction: column;
-  position: relative; /* To position the pseudo-element absolutely */
-  background: rgb(58, 30, 30); /* Assuming the card has a white background */
-  z-index: 1; /* To ensure the card is above the pseudo-element */
-  border-radius: 5px; /* Match the card's border radius */
+  position: relative;
+  background: rgb(58, 30, 30);
+  z-index: 1; /* Ensure the card is above the background image */
+  border-radius: 5px;
+  overflow: hidden; /* To ensure content does not overflow */
+
+}
+
+.display-card:hover {
+  transform: scale(1.05);
 }
 
 
 
 
 .display-user-card {
-  width: 250px;  
-  height: 250px; 
+  width: 300px;  
+  height: 400px; 
   margin: 16px;
   display: flex;
   flex-direction: column;
@@ -46,12 +157,19 @@
 
 .display-card-media {
   width: 100%; 
-  height: 250px; /* Adjust if needed to fit within the card height */
+  height: 350px; /* Adjust if needed to fit within the card height */
   object-fit: cover;
   font-family: 'Quicksand';
   filter: brightness(60%);
 }
 
+.display-card-media-user {
+  width: 100%; 
+  height: 400px; /* Adjust if needed to fit within the card height */
+  object-fit: cover;
+  font-family: 'Quicksand';
+  filter: brightness(60%);
+}
 
 .display-overlay-content {
   flex-grow: 1;
@@ -76,13 +194,12 @@
   color:white;
   background: rgba(14, 36, 47, 0.1); 
   padding: 0.3rem 1rem;
-
   text-align: center;
   font-weight: bold;
   opacity: 1;
   margin: 0 auto;
   border-radius: 10px;
-  margin-top: -150px;
+  margin-top: -200px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Adding text shadow */
 }
 
