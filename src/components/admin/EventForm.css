@@ -128,7 +128,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.w-100 {
+.w-101 {
 
 background-color: #D96758; /* Primary color (blue) */
 color: #fff; /* Text color (white) */
@@ -143,19 +143,19 @@ margin-bottom: -200px;
 }
 
 
-.w-100:hover {
+.w-101:hover {
 background-color: #a14c40; /* Darker blue on hover */
 transform: scale(1.05); /* Slightly enlarge button */
 }
 
 /* Focus effect */
-.w-100:focus {
+.w-101:focus {
 outline: none; /* Remove default focus outline */
 box-shadow: 0 0 0 2px #D96758; /* Add a custom focus ring */
 }
 
 /* Active effect */
-.w-100:active {
+.w-101:active {
 background-color: #4e241f; /* Even darker blue when button is pressed */
 transform: scale(0.98); /* Slightly shrink button */
 }

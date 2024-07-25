@@ -16,7 +16,8 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { ThreeDots } from "react-loader-spinner";
-import "../admin/EventForm.css";
+import "../admin/IdeaForm.css";
+import NavBar from "../Home/NavBar";
 
 const IdeaForm = () => {
   const navigate = useNavigate();
@@ -279,17 +280,29 @@ const IdeaForm = () => {
 
   return (
     <>
-      <button
-        className="back-button"
-        onClick={() => navigate(`/event/${eventId}/ideas`)}
-      >
-        Back
-      </button>
+
+    <NavBar eventId={eventId}/>
+   
+       
+
+    <div className="header-section">
+          <h1 className="header-title">🎉 Propose Your Next Inspiring Event!</h1>
+          <h3 className='header-slogan'>Share your ideas and contribute to our dynamic office culture.</h3>
+        </div>
+        <div className="content-container">
+        <img
+          src="/src/assets/form.png" // Ensure the path is correct
+          alt="Event"
+          className="idea-image"
+        />
+      
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="p-4 shadow-lg form-card">
-          <h2 className="text-center mb-4">Add Idea</h2>
+          <h2 className="text-idea">Idea Form</h2>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
+
+            <Form.Group className="title">
+            <Form.Label>Idea Title</Form.Label>
               <TextField
                 fullWidth
                 label="Idea Title"
@@ -300,7 +313,8 @@ const IdeaForm = () => {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
+            <Form.Label>Location Name</Form.Label>
               <TextField
                 fullWidth
                 label="Location Name"
@@ -311,7 +325,9 @@ const IdeaForm = () => {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
+           
+            
               <DateTimePicker
                 renderInput={(props) => <TextField fullWidth {...props} />}
                 label="Date and Time"
@@ -325,7 +341,8 @@ const IdeaForm = () => {
                 </div>
               )}
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
+            <Form.Label>Idea Description</Form.Label>
               <TextField
                 fullWidth
                 label="Idea Description"
@@ -344,7 +361,8 @@ const IdeaForm = () => {
                 </div>
               )}
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
+            <Form.Label>Idea Details</Form.Label>
               <TextField
                 fullWidth
                 label="Idea Details"
@@ -367,7 +385,7 @@ const IdeaForm = () => {
               )}
             </Form.Group>
 
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
               <Form.Label>RSVP Questions</Form.Label>
               {rsvpQuestions.map((question, index) => (
                 <div key={index} className="d-flex align-items-center mb-2">
@@ -402,7 +420,7 @@ const IdeaForm = () => {
                 </Button>
               </div>
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
               <Form.Label>Title Image</Form.Label>
               <Form.Control
                 type="file"
@@ -430,7 +448,8 @@ const IdeaForm = () => {
                 ))}
               </div>
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="title">
+            <Form.Label>Google Maps Embed Code</Form.Label>
               <TextField
                 fullWidth
                 label="Google Maps Embed Code"
@@ -495,6 +514,7 @@ const IdeaForm = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      </div>
     </>
   );
 };

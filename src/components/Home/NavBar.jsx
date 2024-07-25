@@ -119,6 +119,7 @@ function NavBar({eventId}) {
           </>
         );
 
+  
 
       default:
         return (
