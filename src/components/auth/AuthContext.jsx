@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         } else {
           // Sign out the user if the email domain is not allowed
           // alert('Only emails from @foundri.net and @securiti.ai are allowed.');
-          return
+          return;
           signOut(auth).catch((error) => {
             console.error('Sign out error:', error);
           });
