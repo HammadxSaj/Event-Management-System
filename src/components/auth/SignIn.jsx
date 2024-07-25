@@ -80,7 +80,7 @@ const SignIn = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
 
-          navigate('/events')
+          navigate('/events', { replace: true })
           // if (userData.role === 'admin') {
           //   navigate('/admin');
           // } else {
@@ -88,7 +88,7 @@ const SignIn = () => {
           // }
         } else {
           await setDoc(userDocRef, { email: user.email, role: 'user' });
-          navigate('/user');
+          navigate('/events', { replace: true })
         }
       })
       .catch((error) => {
