@@ -312,7 +312,7 @@ const EventForm = () => {
             <Button
               variant="primary"
               type="submit"
-              className="w-100"
+              className="w-101"
               style={{
                 display: 'flex',
                 justifyContent: 'center',

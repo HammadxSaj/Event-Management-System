@@ -1,10 +1,8 @@
-
 /* src/admin/EventForm.css */
 .form-card {
     max-width: 600px;
     width: 100%;
     border-radius: 10px;
-
 }
 
 .image-preview {
@@ -28,6 +26,16 @@
     border: 1px solid #ddd;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.idea-image {
+   
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    
+    filter: brightness(70%); /* Adjust brightness and blur */
+    opacity: 0.9;
+  }
 
 .preserve-whitespace {
     white-space: pre-wrap;
@@ -72,24 +80,55 @@
     background-color: darkgray;
 }
 
-.w-100{
-    background-color: #D96758; /* Primary color (blue) */
+.text-idea{
+
+    font-size: 50px;
+    margin-top: 30px;
+    color: #D96758;
+    text-align: center;
+    margin-bottom: 50px;
+   
+    
+
 }
+
+.form-card{
+    font-family: "Quicksand";
+    font-weight: 600;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    margin-top: 50px;
+    transform: translate(-50%, -50%); /* Center the form */
+    width: 70%; /* Adjust as needed for larger size */
+    max-width: 800px; /* Adjust as needed */
+    height: auto; /* Adjust height as needed */
+    padding: 40px; /* Increased padding for more space */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 1); /* More pronounced shadow */
+    overflow-y: auto; /* Allow vertical scrolling if content exceeds height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center contents vertically */
+  }
+  
 
 
 .w-100 {
-background-color: #D96758; /* Primary color (blue) */
-color: #fff; /* Text color (white) */
-font-size: 16px; /* Font size */
-font-family: "Quicksand";
-padding: 10px 20px; /* Padding (top-bottom, left-right) */
-border-radius: 4px; /* Rounded corners */
-border: none; /* Remove default border */
-cursor: pointer; /* Pointer cursor on hover */
-transition: background-color 0.3s ease, transform 0.2s ease; /* Transition effects */
+
+    background-color: #D96758; /* Primary color (blue) */
+    color: #fff; /* Text color (white) */
+    font-size: 16px; /* Font size */
+    font-family: "Quicksand";
+    padding: 10px 20px; /* Padding (top-bottom, left-right) */
+    border-radius: 4px; /* Rounded corners */
+    border: none; /* Remove default border */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transition effects */
 }
-
-
+    
+    
 .w-100:hover {
 background-color: #a14c40; /* Darker blue on hover */
 transform: scale(1.05); /* Slightly enlarge button */
@@ -102,7 +141,7 @@ box-shadow: 0 0 0 2px #D96758; /* Add a custom focus ring */
 }
 
 /* Active effect */
-.w-100:active {
+.w-101:active {
 background-color: #4e241f; /* Even darker blue when button is pressed */
 transform: scale(0.98); /* Slightly shrink button */
 }
