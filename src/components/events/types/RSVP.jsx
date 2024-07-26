@@ -12,6 +12,7 @@ import {
   FormLabel,
 } from "@mui/material";
 import "./RSVP.css";
+import NavBar from "../../Home/NavBar";
 
 const RSVP = () => {
   const navigate = useNavigate();
@@ -114,12 +115,8 @@ const RSVP = () => {
 
   return (
     <>
-      <button
-        className="back-button"
-        onClick={() => navigate(`/event/${eventId}/ideas`)}
-      >
-        Back
-      </button>
+    <NavBar/>
+ 
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Card className="p-4 shadow-lg form-card">
           <h2 className="text-center mb-4">RSVP</h2>

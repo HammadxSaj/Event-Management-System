@@ -196,8 +196,6 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
 
   return (
 
-    
-
   <div class="card-container">
   <img src="src/assets/bg2.png" class="background-image3" alt="Background Image"></img>
   <img src="src/assets/bg4.jpeg" class="background-image2" alt="Background Image"></img>
@@ -207,6 +205,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
     
     <Card className={userRole === 'admin' ? 'display-card' : 'display-user-card'}>
       <CardActionArea onClick={handleDetails}>
+       
         <CardMedia
           component="img"
           className={userRole === 'admin' ? 'display-card-media' : 'display-card-media-user'}
@@ -223,6 +222,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
       </CardActionArea>
       {userRole === 'admin' && (
         <CardActions className="display-card-actions">
+          <div className='display-card-delete'>
           <Button
             size="small"
             color="error"
@@ -231,6 +231,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           >
             Delete Event
           </Button>
+          </div>
           <Dialog
             open={openDeleteDialog}
             onClose={closeDialog}
@@ -254,9 +255,11 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
           </Dialog>
         </CardActions>
       )}
+   
       
 
     </Card>
+    <h2 className='event-title'>{event.title}</h2>
     </div>
   );
 };

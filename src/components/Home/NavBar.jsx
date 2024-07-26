@@ -98,6 +98,8 @@ function NavBar({eventId}) {
   const renderNavButtons = () => {
     switch (location.pathname) {
 
+
+
       case '/event':
 
         return (
@@ -109,12 +111,22 @@ function NavBar({eventId}) {
           </>
         );
 
+
+      case location.pathname.includes('/rsvp'):
+        return (
+
+          <>
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
+            
+          </>
+        );
+          
       case '/eventform':
         return (
 
           <>
-           {userRole === "admin" && (
-            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>)}
+       
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
            
           </>
         );
