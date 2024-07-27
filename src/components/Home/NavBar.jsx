@@ -97,41 +97,21 @@ function NavBar({eventId}) {
 
   const renderNavButtons = () => {
     switch (location.pathname) {
-
-
-
       case '/event':
-
         return (
-
           <>
            {userRole === "admin" && (
             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/eventform')}>Add Event +</Button>)}
             <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
           </>
         );
-
-
-      case location.pathname.includes('/rsvp'):
-        return (
-
-          <>
-            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-            
-          </>
-        );
-          
+   
       case '/eventform':
         return (
-
           <>
-       
             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-           
           </>
         );
-
-  
 
       default:
         return (
@@ -158,16 +138,11 @@ function NavBar({eventId}) {
             className="d-inline-block align-top"
           />{' '}
           <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
-          
 
         </Typography>
-
         <div>
           {renderNavButtons()};    
         </div>
-        
-    
-  
         {userProfile ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {userProfile.photoURL ? (

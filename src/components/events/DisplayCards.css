@@ -25,71 +25,47 @@
 
 }
 
-.background-image {
-  position: absolute;
-  top: -15px; /* Adjust to control vertical placement */
-  left: -15px; /* Adjust to control horizontal placement */
-  width: 300px; /* Larger than the card to create the stack effect */
-  height: 400px; /* Larger than the card */
-  object-fit: cover;
-  z-index: 0; /* Behind the card */
-  filter: brightness(80%); /* Adjust for desired brightness */
-  transform: rotate(-3deg); /* Rotate the image slightly */
-  border-radius: 5px;
-}
 
-.background-image1 {
+.background-common {
   position: absolute;
-  top: -25px; /* Adjust to control vertical placement */
-  left: -30px; /* Adjust to control horizontal placement */
-  width: 300px; /* Larger than the card to create the stack effect */
-  height: 400px; /* Larger than the card */
-  object-fit: cover;
-  z-index: 0; /* Behind the card */
-  filter: brightness(80%); /* Adjust for desired brightness */
-  transform: rotate(-7deg); /* Rotate the image slightly */
-  border-radius: 5px;
-}
-.background-image2 {
-  position: absolute;
-  top: -40px; /* Adjust to control vertical placement */
-  left: -35px; /* Adjust to control horizontal placement */
-  width: 300px; /* Larger than the card to create the stack effect */
-  height: 400px; /* Larger than the card */
-  object-fit: cover;
-  z-index: 0; /* Behind the card */
-  filter: brightness(80%); /* Adjust for desired brightness */
-  transform: rotate(-10deg); /* Rotate the image slightly */
-  border-radius: 5px;
-}
-
-.background-image3 {
-  position: absolute;
-  top: -50px; /* Adjust to control vertical placement */
-  left: -40px; /* Adjust to control horizontal placement */
-  width: 300px; /* Larger than the card to create the stack effect */
-  height: 400px; /* Larger than the card */
-  object-fit: cover;
-  z-index: 0; /* Behind the card */
-  filter: brightness(80%); /* Adjust for desired brightness */
-  transform: rotate(-15deg); /* Rotate the image slightly */
-  border-radius: 5px;
- 
-}
-
-.background-image3 {
-  position: absolute;
-  top: -50px;
-  left: -40px;
   width: 300px;
   height: 400px;
   object-fit: cover;
   z-index: 0;
   filter: brightness(80%);
-  transform: rotate(-15deg);
   border-radius: 5px;
+}
+
+.hover-common {
+  scale: 1.05;
+  filter: brightness(100%);
+  box-shadow: -25px 25px 50px rgba(0, 0, 0, 0.9);
+}
+
+.background-image {
+  top: -15px;
+  left: -15px;
+  transform: rotate(-3deg);
+}
+
+.background-image1 {
+  top: -25px;
+  left: -30px;
+  transform: rotate(-7deg);
+}
+
+.background-image2 {
+  top: -40px;
+  left: -35px;
+  transform: rotate(-10deg);
+}
+
+.background-image3 {
+  top: -50px;
+  left: -40px;
+  transform: rotate(-15deg);
   transition: transform 0.5s ease, filter 0.5s ease;
-  box-shadow: -20px 20px 40px rgba(0, 0, 0, 1); /* Larger shadow, moved to the left */
+  box-shadow: -20px 20px 40px rgba(0, 0, 0, 1);
 }
 
 
