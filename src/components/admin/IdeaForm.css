@@ -141,7 +141,7 @@ box-shadow: 0 0 0 2px #D96758; /* Add a custom focus ring */
 }
 
 /* Active effect */
-.w-101:active {
+.w-100:active {
 background-color: #4e241f; /* Even darker blue when button is pressed */
 transform: scale(0.98); /* Slightly shrink button */
 }

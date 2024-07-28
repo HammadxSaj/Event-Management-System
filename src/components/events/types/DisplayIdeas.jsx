@@ -227,9 +227,7 @@ const DisplayIdeas = ({
 
             </div>
             <CardContent className="event-card-content">
-              {/* <Typography gutterBottom variant="h5" component="div">
-                {idea.title}
-              </Typography> */}
+        
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />
                 <Typography variant="body2" color="text.secondary">

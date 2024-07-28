@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios"; // Import axios for making HTTP requests
 import { db, auth } from "../../../Firebase";
-import { doc, getDoc, collection, addDoc } from "firebase/firestore";
+import { doc, getDoc, collection, addDoc, getDocs } from "firebase/firestore";
 import { Container, Card, Button, Typography } from "@mui/material";
+import EmailIcon from '@mui/icons-material/Email';
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaSleigh } from 'react-icons/fa';
 import {
   Radio,
   RadioGroup,
@@ -13,16 +15,42 @@ import {
 } from "@mui/material";
 import "./RSVP.css";
 import NavBar from "../../Home/NavBar";
-
+import DisplayWinner from "./DisplayWinners";
+import { useAuth } from "../../auth/AuthContext";
+import PersonIcon from '@mui/icons-material/Person';
 const RSVP = () => {
   const navigate = useNavigate();
   const { eventId, ideaId } = useParams();
+  console.log("EventId",eventId);
   const [idea, setIdea] = useState(null);
   const [response, setResponse] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-
   const [rsvpQuestions, setRsvpQuestions] = useState([]);
   const [rsvpResponses, setRsvpResponses] = useState({});
+  const [userProfile, setUserProfile] = useState(null);
+  const { authUser, loading } = useAuth();
+
+  
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (authUser && authUser.uid) {
+        console.log('Fetching user profile for UID:', authUser.uid);
+        const userDoc = await getDoc(doc(db, 'user_data', authUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserProfile(userData);
+          console.log('User profile data:', userData);
+          console.log('Profile photo URL:', userData.photoURL);
+        } else {
+          console.log('No such document!');
+        }
+      }
+    };
+
+    fetchUserProfile();
+
+
+  }, [authUser]);
 
   useEffect(() => {
     const fetchCurrentUser = () => {
@@ -31,6 +59,7 @@ const RSVP = () => {
         setCurrentUser(user);
       }
     };
+    
 
     const fetchIdea = async () => {
       try {
@@ -38,7 +67,25 @@ const RSVP = () => {
         const ideaDoc = await getDoc(ideaRef);
 
         if (ideaDoc.exists()) {
-          setIdea(ideaDoc.data());
+          const ideaData = ideaDoc.data();
+
+          // Fetch the images associated with the idea
+          const imagesCollection = collection(ideaRef, "images");
+          const imagesSnapshot = await getDocs(imagesCollection);
+          const imageUrls = imagesSnapshot.docs.map(
+            (imageDoc) => imageDoc.data().imageUrls[0]
+          );
+
+          const ideaWithImages = {
+            ...ideaData,
+            images: imageUrls,
+          };
+
+          setIdea(ideaWithImages);
+
+
+
+
           setRsvpQuestions(ideaDoc.data().rsvpQuestions || []);
         } else {
           console.error("No such document!");
@@ -115,29 +162,115 @@ const RSVP = () => {
 
   return (
     <>
-    <NavBar/>
- 
-      <Container className="d-flex justify-content-center align-items-center min-vh-100">
-        <Card className="p-4 shadow-lg form-card">
-          <h2 className="text-center mb-4">RSVP</h2>
-          <Typography variant="h4" component="div" gutterBottom>
-            {idea.title}
-          </Typography>
-          <Typography variant="body1" paragraph>
-            {idea.description}
-          </Typography>
+    <Container className="rsvp-container rsvp-page">
+    <NavBar eventId={eventId}/>
+    <div className="header-container">
+      <h1 className="header-title">Register</h1>
+      <h3 className='header-slogan'>Don't Miss Out - Register Now for an Unforgettable Experience!</h3>
+    </div>
+    
+
+        <div className="image-container">
+          {idea.images.length > 0 && (
+            <img src={idea.images[0]} alt="Winner Idea" className="winner-image" />
+          )}
+        
+        </div>
+        <div className="deets-container">
+          <h2 className="deets-title">{idea.title}</h2> 
+          <h2 className="rsvp-detail">{idea.description}</h2>
+        </div>
+        
+    
+
+
+      <Container className="rsvp-container">
+        <Card className="p-4 shadow-lg rsvp-form-card">
+        
+
+     
+          {userProfile && userProfile.photoURL && (
+     
+                      
+            <div className="profile-picture-container text-center mb-4">
+              <img
+                src={userProfile.photoURL}
+                alt="User Profile"
+                className="user-profile-picture"
+              />
+
+              <div className="rsvp-user-info"> 
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <Typography variant="h6" component="div">
+                  <h1 className="rsvp-username">{userProfile.displayName}</h1>
+                </Typography>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <PersonIcon style={{ fontSize: 20, marginRight: '8px', color: "#4C4E54" }}/>
+                  <Typography variant="body2" color="text.secondary">
+                    {userProfile.uid}
+                  </Typography>
+                </div>
+          
+
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                <EmailIcon style={{ fontSize: 18, marginRight: '8px', color: "#4C4E54" }}  />
+                <Typography variant="body2" color="textSecondary">
+                  {userProfile.email}
+                </Typography>
+                </div>
+            
+              </div>
+
+
+          
+            <div className="rsvp-idea-deets"> 
+              
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />
+                <Typography variant="body2" color="text.secondary">
+                 <h2 className="rsvp-idea">{new Date(idea.dateTime).toLocaleDateString()}</h2>
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <FaClock style={{ marginRight: '8px', color: "#D96758" }} />
+                <Typography variant="body2" color="text.secondary">
+                  <h2 className="rsvp-idea">{new Date(idea.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h2>
+                </Typography>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center',  marginBottom: '20px' }}>
+                <FaMapMarkerAlt style={{ marginRight: '8px', color: "#D96758" }} />
+                <Typography variant="body2" color="text.secondary">
+                  <h2  className="rsvp-idea">{idea.location}</h2>
+                </Typography>
+              </div>
+            </div>
+
+
+
+
+
+
+            </div>
+            
+          )}
+
+          <hr></hr>
+          <h3 className="rsvp-title">RSVP Form</h3>
+
           <div className="rsvp-questions-section mt-4">
             {rsvpQuestions.map((question, index) => (
               <div key={index} className="rsvp-question mb-3">
                 <FormControl component="fieldset">
-                  <FormLabel component="legend">{question}</FormLabel>
+                  <FormLabel component="legend">{index + 1}. {question}</FormLabel>
                   <RadioGroup
                     row
                     name={`response-${index}`}
                     onChange={(e) =>
                       handleRsvpResponseChange(question, e.target.value)
                     }
-                    className="d-flex justify-content-center"
+                    className="d-flex justify-content-start"
                   >
                     <FormControlLabel
                       value="yes"
@@ -154,14 +287,24 @@ const RSVP = () => {
               </div>
             ))}
           </div>
+
+
+          <hr></hr>
+          <div className="rsvp-question">
+
+
+
+
+        
           <Typography variant="h6" component="div" gutterBottom>
-            Will you be available to be part of this event?
+            <h3 className="rsvp-mandatory-question">Will you be available to be part of this event?</h3>
           </Typography>
           <div className="d-flex justify-content-around">
             <Button
               variant="contained"
               color="primary"
               onClick={() => handleResponse(true)}
+              className="rsvp-no-button"
             >
               Yes
             </Button>
@@ -169,6 +312,7 @@ const RSVP = () => {
               variant="contained"
               color="secondary"
               onClick={() => handleResponse(false)}
+              className="rsvp-no-button"
             >
               No
             </Button>
@@ -178,7 +322,10 @@ const RSVP = () => {
               You have responded: {response}
             </Typography>
           )}
+          </div>
         </Card>
+    
+      </Container>
       </Container>
     </>
   );
