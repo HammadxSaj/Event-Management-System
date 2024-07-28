@@ -57,7 +57,7 @@ const LogIn = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           if (!userData.role) return; // If role is empty, navigate nowhere
-          navigate('/event');
+          navigate('/event', { replace: true });
           // if (userData.role === 'admin') {
           //   navigate('/admin');
           // } else {
@@ -65,7 +65,7 @@ const LogIn = () => {
           // }
         } else {
           await setDoc(userDocRef, { email: user.email, role: 'user' });
-          navigate('/user');
+          navigate('/event', { replace: true });
         }
       })
       .catch((error) => {
