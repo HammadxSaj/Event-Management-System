@@ -1,26 +1,239 @@
-.form-card {
-    max-width: 600px;
-    width: 100%;
-    border-radius: 10px;
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
 }
 
-.back-button {
+.rsvp-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 100vh;
+  
+}
+
+.rsvp-page {
+    background-color: white;
+    min-height: 50vh; 
+    min-width: 100vw; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
     position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    background-color: rgb(13, 40, 56);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.back-button:hover {
-    background-color: darkgray;
-}
-
-.container {
+    align-items: center;
+    padding: 20px;
     margin-top: 50px;
+    margin-left: 100px;
+    background-color: transparent;
+    max-width: 750px;
+    max-height: 600px;
+    width: 100%;
+    height: auto;
 }
+
+.deets-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    padding: 20px;
+    margin-top: 20px;
+    margin-left: 100px;
+    background-color: transparent;
+    max-width: 750px;
+    max-height: 600px;
+    width: 100%;
+    height: auto;
+}
+
+.deets-title {
+    font-size: 2.5rem;
+    color: #D96758;
+    align-self: flex-start;
+    margin-top: 700px;
+    font-weight: 700;
+}
+
+.image-container {
+    margin-bottom: 20px;
+}
+
+.winner-image {
+    width: 100%; /* Responsive width */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 800px; /* Maximum width */
+    max-height: 480px; /* Maximum height */
+    object-fit: cover; /* Fit image into the defined dimensions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+}
+
+.rsvp-detail {
+    font-size: 15px;
+    color: #5F767C;
+    font-weight: 500;
+    margin-top: 40px;
+}
+
+.rsvp-form-card {
+    max-width: 800px; /* Increased width */
+    min-height: 600px; /* Increased height */
+    width: 50%;
+    border-radius: 10px;
+    margin-left: 700px;
+    margin-top: 78px;
+    padding: 20px; /* Added padding for better spacing */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Added box shadow */
+}
+
+.header-container {
+    margin-top: 50px;
+    margin-left: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   
+}
+
+.profile-picture-container {
+    text-align: center;
+    margin-bottom: 16px;  
+    border: 2px solid #e3e3e3; /* Adjust border width, style, and color */
+
+  }
+  
+  .user-profile-picture {
+    margin-right: 500px;
+    width: 140px;
+    height: 140px;
+    margin-top: 10px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-block;
+    margin-bottom: 16px;
+    position: absolute;
+    border: 3px solid #1CA8DD; /* Adjust border width, style, and color */
+  }
+  
+  .rsvp-user-info{
+    margin-left: 180px;
+    margin-top: 10px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-block;
+    margin-bottom: 60px;
+  }
+
+  .rsvp-username{
+    font-family: "Quicksand";
+  }
+
+  .rsvp-idea-deets{
+    font-size: 25px;
+    margin-left: 50px;
+ 
+  }
+
+  .rsvp-idea{
+    font-size: 20px;
+    font-weight:1;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #5d5d63;
+  }
+
+  .profile-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  
+  .profile-info .user-details {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .profile-info .user-details .icon {
+    font-size: 20px;
+    margin-right: 8px;
+    color: #D96758;
+  }
+  
+  .rsvp-questions-section {
+    padding: 10px; /* Adjust as needed */
+}
+
+.rsvp-question {
+    margin-bottom: 15px; /* Adjust spacing between questions */
+}
+
+
+
+.rsvp-question .MuiRadio-root {
+    margin-right: 8px; /* Space between radio button and label */
+}
+
+.rsvp-question .radio-label {
+    margin-right: 20px; /* Space between radio buttons */
+}
+
+.rsvp-question .MuiFormControlLabel-root {
+    margin-left: 0; /* Remove default margin */
+    margin-right: 10px; /* Add margin between radio buttons */
+    font-family: "Quicksand";
+    color:#7a7774;
+}
+
+  .rsvp-question{
+    margin-bottom: 10px;
+    margin-left: 50px;
+
+  }
+
+  .rsvp-title{
+    font-size:20px;
+    margin-left:60px;
+    font-family: "Quicksand";
+    font-weight: 600;
+    color:#5d5d63;
+    margin-top:20px;
+  }
+
+  .rsvp-mandatory-question{
+    margin-top: 20px;
+    font-family: "Quicksand";
+    color:#5d5d63;
+    font-size: 20px;
+    margin-bottom: 25px;
+  }
+
+.rsvp-no-button {
+    background-color: #D96758 !important; /* Primary color (blue) */
+    color: #fff; /* Text color (white) */
+    font-size: 16px; /* Font size */
+    font-family: "Quicksand";
+    padding: 10px 20px; /* Padding (top-bottom, left-right) */
+    border-radius: 4px; /* Rounded corners */
+    border: none; /* Remove default border */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transition effects */
+}
+    
+    
+.rsvp-no-button:hover {
+background-color: #a14c40; /* Darker blue on hover */
+transform: scale(1.05); /* Slightly enlarge button */
+}
+
+
+
+  

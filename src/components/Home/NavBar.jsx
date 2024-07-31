@@ -106,6 +106,8 @@ function NavBar({eventId}) {
           </>
         );
    
+
+
       case '/eventform':
         return (
           <>
@@ -118,7 +120,7 @@ function NavBar({eventId}) {
           <>
              <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
              <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideas`)}>View Ideas</Button>
-             {userRole === "admin" && (
+             {userRole === "admin" && !location.pathname.includes("rsvp") && (
              <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideaform`)}> Add Idea + </Button>)}
           </>
         );

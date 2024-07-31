@@ -19,9 +19,6 @@ const PastIdeas = ({ idea, eventId, eventTitle}) => {
 
   useEffect(() => {
     if (idea && authUser) {
-
-
-     
     }
   }, [idea]);
 
@@ -48,16 +45,10 @@ const PastIdeas = ({ idea, eventId, eventTitle}) => {
         <CardContent className="display-card-content">
           <Typography gutterBottom variant="h5" component="div">
             <h3 className='past-event-title'>{eventTitle}</h3>
-
             {idea.title}
-          
-          
-          
           </Typography>
 
-          
-          
-        
+  
         </CardContent>
       </CardActionArea>
       
