@@ -219,7 +219,7 @@ const IdeasPage = () => {
         const eventName = await fetchEventName(eventId);
 
         // Send winner notification email
-        await sendWinnerNotificationEmail(winningIdea.title, eventName);
+        // await sendWinnerNotificationEmail(winningIdea.title, eventName);
       }
     } catch (error) {
       console.error("Error determining winner idea:", error);
@@ -250,6 +250,9 @@ const IdeasPage = () => {
         });
   
         // Store the winner idea in the "details" subcollection
+
+     
+
         await setDoc(doc(db, "events", eventId, "details", "winnerIdea"), {
           ideaId: winnerIdea.id,
           title: winnerIdea.title,
@@ -257,6 +260,9 @@ const IdeasPage = () => {
           description: winnerIdea.description,
           images: winnerIdea.images,
         });
+
+
+        
   
         console.log("Winner idea stored successfully");
       }
@@ -613,8 +619,6 @@ const IdeasPage = () => {
 
                
               </div>
-
-              
             </div>
             
           )}
