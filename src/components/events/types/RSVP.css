@@ -8,21 +8,19 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    min-height: 1200vh;
+    min-height: 100vh;
   
 }
 
 .rsvp-page {
     background-color: white;
-    min-height: 50vh; /* Ensures the page covers the full viewport height */
-    min-width: 100vw; /* Ensures the page covers the full viewport width */
+    min-height: 50vh; 
+    min-width: 100vw; 
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
 }
-
-
 
 .image-container {
     flex: 1;

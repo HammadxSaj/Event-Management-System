@@ -239,7 +239,7 @@ const RSVP = () => {
                   <h2 className="rsvp-idea">{new Date(idea.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</h2>
                 </Typography>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center',  marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                 <FaMapMarkerAlt style={{ marginRight: '8px', color: "#D96758" }} />
                 <Typography variant="body2" color="text.secondary">
                   <h2  className="rsvp-idea">{idea.location}</h2>
@@ -292,10 +292,6 @@ const RSVP = () => {
           <hr></hr>
           <div className="rsvp-question">
 
-
-
-
-        
           <Typography variant="h6" component="div" gutterBottom>
             <h3 className="rsvp-mandatory-question">Will you be available to be part of this event?</h3>
           </Typography>
