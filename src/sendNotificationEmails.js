@@ -48,6 +48,21 @@ const fetchEventName = async (eventId) => {
   }
 };
 
+const fetchWinnerIdeaName = async (eventId) => {
+  try {
+    const winnerIdeaDoc = await getDoc(
+
+      doc(db, "events", eventId, "details", "winnerIdea")
+    );
+    if (winnerIdeaDoc.exists()) {
+      return winnerIdeaDoc.data().title;
+    }
+  } catch (error) {
+    console.error("Error fetching winner idea hosting date:", error);
+  }
+  return null;
+};
+
 // Check voting end date and send emails
 const checkVotingAndSendEmails = async (eventId) => {
   try {
@@ -58,9 +73,11 @@ const checkVotingAndSendEmails = async (eventId) => {
       const data = votingDetailsDoc.data();
       const votingEndDate = data.votingEndDate.toDate();
       const now = new Date();
+      const winnerIdeaTitle= await fetchWinnerIdeaName(eventId); // Get the winner idea title
       const eventName = await fetchEventName(eventId);
       const emailSent = data.emailSent;
 
+      console.log(`Winner Idea Title: ${winnerIdeaTitle}`);
       console.log(`Event Name: ${eventName}`);
       console.log(`Voting end date: ${votingEndDate}`);
       console.log(`Current date: ${now}`);
@@ -73,7 +90,7 @@ const checkVotingAndSendEmails = async (eventId) => {
           html: `
             <div>
               <p> Congratulations! 🎉</p>
-              <p>We are thrilled to announce that the winner is <strong>${eventName}</strong>! 🏆✨ Your incredible contribution has truly made a difference, and we couldn't be happier for you.</p>
+              <p>We are thrilled to announce that the winner is <strong>${winnerIdeaTitle}</strong>! 🏆✨ Your incredible contribution has truly made a difference, and we couldn't be happier for you.</p>
               <p>Don't miss out on the excitement! 🥳 Register now to stay updated and be part of the celebration.</p>
               <p>Thank you for being a part of our amazing community. We look forward to seeing you at the event!</p>
               <p>Warmest regards,<br>The Frontend Interns</p>
