@@ -64,13 +64,9 @@ const fetchWinnerIdeaName = async (eventId) => {
 };
 
 // Check voting end date and send emails
-const checkVotingAndSendEmails = async (eventId) => {
+const checkVotingAndSendEmails = async (eventId,votingDetailsData) => {
   try {
-    const votingDetailsDoc = await getDoc(doc(db, "events", eventId, "details", "votingDetails"));
-
-    if (votingDetailsDoc.exists()) {
-      console.log("Voting details document found.");
-      const data = votingDetailsDoc.data();
+      const data = votingDetailsData;
       const votingEndDate = data.votingEndDate.toDate();
       const now = new Date();
       const winnerIdeaTitle= await fetchWinnerIdeaName(eventId); // Get the winner idea title
@@ -86,11 +82,11 @@ const checkVotingAndSendEmails = async (eventId) => {
         const userEmails = await fetchUserEmails();
         const emailData = {
           to: userEmails,
-          subject: `Exciting News: The Winner is ${eventName}! Register Now!`,
+          subject: `Exciting News: The Winner for ${eventName} is ${winnerIdeaTitle}! Register Now!`,
           html: `
             <div>
               <p> Congratulations! 🎉</p>
-              <p>We are thrilled to announce that the winner is <strong>${winnerIdeaTitle}</strong>! 🏆✨ Your incredible contribution has truly made a difference, and we couldn't be happier for you.</p>
+              <p>We are thrilled to announce that the winner for the event ${eventName} is <strong>${winnerIdeaTitle}</strong>! 🏆✨ Your incredible contribution has truly made a difference, and we couldn't be happier for you.</p>
               <p>Don't miss out on the excitement! 🥳 Register now to stay updated and be part of the celebration.</p>
               <p>Thank you for being a part of our amazing community. We look forward to seeing you at the event!</p>
               <p>Warmest regards,<br>The Frontend Interns</p>
@@ -107,11 +103,8 @@ const checkVotingAndSendEmails = async (eventId) => {
         }
       } else {
         console.log(`Voting has not ended yet for event: ${eventId}`);
-        await updateDoc(doc(db, "events", eventId, "details", "votingDetails"), { emailSent: false });
       }
-    } else {
-      console.log("Voting details document does not exist for event: ", eventId);
-    }
+    
   } catch (error) {
     console.error(`Error processing event ${eventId}:`, error);
   }
@@ -145,13 +138,13 @@ const setVotingEndDateListener = (eventId) => {
         }
 
         const currentTime = new Date();
-        const timeUntilEnd = votingEndDate - currentTime;
+        const timeUntilEnd = votingEndDate.getTime() - currentTime.getTime();
         console.log(`Time until end for event ${eventId}: ${timeUntilEnd} milliseconds`);
 
         if (timeUntilEnd > 0) {
           timers[eventId] = setTimeout(async () => {
             console.log(`Timer triggered for event: ${eventId}`);
-            await checkVotingAndSendEmails(eventId);
+            await checkVotingAndSendEmails(eventId,data);
           }, timeUntilEnd);
         } else {
           console.log(`Voting end date ${votingEndDate} has already passed for event: ${eventId}`);
