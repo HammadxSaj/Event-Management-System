@@ -27,7 +27,7 @@ const PastIdeas = ({ idea, eventId, eventTitle}) => {
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/event/${eventId}/ideas/winningIdea/${idea.id}`)
+    navigate(`/events/${eventId}/ideas/winningIdea/${idea.id}`)
   };
 
 

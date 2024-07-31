@@ -582,7 +582,7 @@ const IdeasPage = () => {
                   onClick={() => {
                     handleRSVP(auth.currentUser.uid, winnerIdea.id);
                     setHasRSVPed(true);
-                    navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`);
+                    navigate(`/events/${eventId}/ideas/${winnerIdea.id}/rsvp`);
                   }}
                   style={{ marginTop: 10, marginRight: 10, backgroundColor: '#0096FF' }}
                   disabled={
@@ -590,7 +590,7 @@ const IdeasPage = () => {
                     // || shouldDisableRSVP()
                   }
                 >
-                  RSVP 
+                  RSVP
                 </Button>
                 {userRole === "admin" && (
                   <Button
@@ -598,7 +598,7 @@ const IdeasPage = () => {
                     variant="contained"
                     onClick={() =>
                       navigate(
-                        `/event/${eventId}/ideas/${winnerIdea.id}/analytics`
+                        `/events/${eventId}/ideas/${winnerIdea.id}/analytics`
                       )
                     }
                     style={{ marginTop: 10, backgroundColor: '#D96758' }}

@@ -196,7 +196,7 @@ const IdeasPage = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<AddIcon />}
-                onClick={() => navigate(`/event/${eventId}/ideas/${winnerIdea.id}/rsvp`)}
+                onClick={() => navigate(`/events/${eventId}/ideas/${winnerIdea.id}/rsvp`)}
                 style={{ marginTop: 10, marginRight: 10 }}
             >
                 RSVP

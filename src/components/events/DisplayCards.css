@@ -1,3 +1,4 @@
+/*DisplayCards.css*/
 @font-face {
   font-family: 'Quicksand';
   src: url('../../fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
@@ -179,15 +180,12 @@
 }
 
 .display-card-actions {
-
-  flex-grow: 1;
-
-  overflow: hidden; /* Ensure content does not overflow */
-  /* position: absolute; */
-  pointer-events: auto; /* Ensure this is set */
-  z-index: 10; /* or any value higher than the overlapping elements */
-
-  
+  position: absolute;
+  z-index: 10;
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  margin-top: -50px;
 }
 
 .display-card-content .MuiTypography-root {
@@ -223,4 +221,5 @@
 .display-card-actions {
   margin-top: -10px;
 }
+
 

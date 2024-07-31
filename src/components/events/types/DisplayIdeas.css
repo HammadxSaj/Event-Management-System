@@ -119,3 +119,52 @@ h4 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Adding text shadow */
 }
 
+.date-banner {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.7);
+  /* Dark background with transparency */
+  color: white;
+  padding: 10px 10px;
+  border-radius: 5px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  font-weight: light;
+  z-index: 2;
+  /* Ensure the date banner is above other elements */
+  width: 20%;
+  height: 20%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, #853F32 100%);
+  box-shadow: 16px 11px 35.400001525878906px rgba(216.88, 216.88, 216.88, 0.67)
+}
+
+.svg-banner-container {
+  position: absolute;
+  top: 0px;
+  /* Adjust as needed */
+  left: -35px;
+  /* Adjust as needed */
+  width: 200px;
+  /* Adjust the width as needed */
+  height: 150px;
+  /* Adjust the height as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  /* Ensure the SVG banner is above other elements */
+}
+.svg-banner-date {
+  position: absolute;
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 20px;
+  /* Adjust font size to fit within the banner */
+  font-weight: light;
+  text-align: center;
+  padding: 100px 100px;
+  margin-right: 27%;
+  margin-bottom: 20%;
+  /* Adjust padding as needed */
+}

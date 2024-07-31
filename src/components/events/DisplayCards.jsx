@@ -81,7 +81,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/event/${event.id}/ideas`);
+    navigate(`/events/${event.id}/ideas`);
     // commenting to visit ideas page instead
     //navigate(`/event/${event.id}`);
   };
@@ -196,7 +196,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
 
   return (
 
-  <div class="card-container">
+  <div className="card-container">
     <img src="src/assets/bg2.png" class="background-common background-image3" alt="Background Image"></img>
     <img src="src/assets/bg4.jpeg" class="background-common background-image2" alt="Background Image"></img>
     <img src="src/assets/bg3.jpeg" class="background-common background-image1" alt="Background Image"></img>
@@ -221,8 +221,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
         </CardContent>
       </CardActionArea>
       {userRole === 'admin' && (
-        <CardActions className="display-card-actions">
-          <div className='display-card-delete'>
+        <CardActions className="display-card-actions" style={{ pointerEvents: 'none' }}>
+          <div className='display-card-delete' style={{ pointerEvents: 'auto' }}>
           <Button
             size="small"
             color="error"
