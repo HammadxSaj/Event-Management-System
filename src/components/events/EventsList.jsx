@@ -13,7 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import PastIdeas from './types/PastIdeas';
 import { ThreeDots} from 'react-loader-spinner';
 import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
-import PastWinnersCarousel from './types/PastWinnerCarousel';
+
+
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [userRole, setUserRole] = useState(null);
@@ -439,18 +440,16 @@ const EventsList = () => {
 
         <hr className='main-page-divider'></hr>
 
-
-
         {winners.length > 0 && (
           
           <div>
             <Element name="pastEvents">
             <h2 className='past-winner-title'>Past Events</h2>
-            </Element> 
-
-
+            </Element>
+         
             
-            <div className="past-winners-section"> 
+            
+            <div className="past-winners-section">
             {eventsWithWinners.map(event => (
               <div key={event.id}>
               
@@ -469,7 +468,7 @@ const EventsList = () => {
                   ))}
                 </div>
               </div>
-            ))} 
+            ))}
           </div>
           
           </div>
