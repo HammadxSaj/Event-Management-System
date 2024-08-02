@@ -1,0 +1,131 @@
+.winning-idea-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-button {
+    margin-bottom: 20px;
+}
+
+.header-title {
+    text-align: center;
+}
+
+.header-slogan {
+    text-align: center;
+}
+
+.winning-idea-card {
+    margin-top: 20px;
+}
+
+.winning-idea-image {
+    width: 100%;
+    height: auto;
+}
+
+.winning-idea-content {
+    padding: 20px;
+}
+
+.winning-idea-title {
+    font-weight: bold;
+}
+
+.winning-idea-datetime {
+    color: #666;
+}
+
+.winning-idea-divider {
+    margin: 20px 0;
+}
+
+.winning-idea-section-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.winning-idea-description,
+.winning-idea-details {
+    margin-bottom: 20px;
+}
+
+.edit-title-field,
+.edit-description-field,
+.edit-details-field,
+.edit-embed-code-field,
+.edit-location-field,
+.edit-feedback-field {
+    margin-bottom: 10px;
+}
+
+.winning-idea-location {
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.winning-idea-location-iframe {
+    width: 100%;
+    height: 300px;
+    border: none;
+}
+
+.winning-idea-location-text {
+    margin-top: 10px;
+}
+
+.feedback-container {
+    margin-top: 20px;
+}
+
+.feedback-item {
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.feedback-author {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.feedback-text {
+    margin-top: 5px;
+}
+
+.feedback-actions {
+    margin-top: 10px;
+}
+
+.add-feedback-container {
+    margin-top: 20px;
+}
+
+.add-feedback-field {
+    margin-bottom: 10px;
+}
+
+.post-feedback-button {
+    align-self: flex-end;
+}
+
+.delete-dialog-title {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-dialog-content {
+    padding: 20px;
+}
+
+.delete-dialog-actions {
+    padding: 15px;
+}
+
+.cancel-delete-button {
+    color: #2196f3;
+}
+
+.confirm-delete-button {
+    color: #f44336;
+}

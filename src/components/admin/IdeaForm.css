@@ -95,22 +95,22 @@
 .form-card{
     font-family: "Quicksand";
     font-weight: 600;
-    position: absolute;
-    top: 35%;
-    left: 50%;
+    /* position: absolute; */
+    /* top: 35%; */
+    /* left: 50%; */
     margin-top: 50px;
-    transform: translate(-50%, -50%); /* Center the form */
-    width: 70%; /* Adjust as needed for larger size */
-    max-width: 800px; /* Adjust as needed */
-    height: auto; /* Adjust height as needed */
-    padding: 40px; /* Increased padding for more space */
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque background */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 1); /* More pronounced shadow */
-    overflow-y: auto; /* Allow vertical scrolling if content exceeds height */
+    /* transform: translate(-50%, -50%);  */
+    width: 70%;
+    max-width: 800px;
+    height: auto; 
+    padding: 40px; 
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 1);
+    overflow-y: auto; 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center contents vertically */
+    justify-content: center;
   }
   
 

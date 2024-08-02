@@ -231,7 +231,7 @@ const EventForm = () => {
       openDialog("Success", "The event has been added successfully");
 
       // Navigate to /event page after successful addition
-      navigate("/event");
+      navigate("/events");
     } catch (error) {
       console.error("Error adding event: ", error);
       openDialog("Error", "Error adding event, please resolve all errors");
@@ -291,16 +291,16 @@ const EventForm = () => {
               />
               {imageError && <div className="text-danger">{imageError}</div>}
               {formErrors.images && <div className="text-danger"></div>}
-              <div className="image-preview mt-3">
+              <div className="image-preview2 mt-3">
                 {formData.images.map((image, index) => (
-                  <div key={index} className="image-container">
+                  <div key={index} className="image-container2">
                     <img
                       src={URL.createObjectURL(image)}
                       alt={`preview ${index}`}
-                      className="image-preview-item"
+                      className="image-preview-item2"
                     />
                     <IconButton
-                      className="image-remove-button"
+                      className="image-remove-button2"
                       onClick={() => removeImage(index)}
                     >
                       <CloseIcon />
@@ -317,7 +317,8 @@ const EventForm = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '38px'
+                height: '38px',
+                marginTop: '10px',
               }}
             >
               {loading ? (

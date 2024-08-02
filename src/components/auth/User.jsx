@@ -6,7 +6,7 @@ export default function User() {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('/event');
+    navigate('/events');
   };
 
   return (
