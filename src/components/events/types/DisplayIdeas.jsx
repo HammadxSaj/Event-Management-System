@@ -23,6 +23,7 @@ import { updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../Firebase';
 import { useAuth } from '../../auth/AuthContext';
 import { ThreeDots } from 'react-loader-spinner';
+import SvgBanner from './SvgBanner';
 
 const DisplayIdeas = ({
   idea,
@@ -147,7 +148,7 @@ const DisplayIdeas = ({
 
   const handleDetails = (e) => {
     e.stopPropagation();
-    navigate(`/event/${eventId}/ideas/${idea.id}`);
+    navigate(`/events/${eventId}/ideas/${idea.id}`);
   };
 
   const handleUpvote = async () => {
@@ -193,6 +194,9 @@ const DisplayIdeas = ({
     setOpenDeleteDialog(false);
   };
 
+  //print date of the idea
+  console.log(new Date(idea.dateTime));
+
   return (
     <Card className={userRole === 'admin' ? 'idea-card' : 'idea-user-card'}>
       {loadingRole ? (
@@ -209,6 +213,7 @@ const DisplayIdeas = ({
       ) : (
         <>
           <CardActionArea onClick={handleDetails}>
+          <SvgBanner date={new Date(idea.dateTime).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })} />
             <div className="idea-wrapper">
 
            
@@ -229,10 +234,10 @@ const DisplayIdeas = ({
             <CardContent className="event-card-content">
         
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />
+                {/* <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />
                 <Typography variant="body2" color="text.secondary">
                   Date: {new Date(idea.dateTime).toLocaleDateString()}
-                </Typography>
+                </Typography> */}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <FaClock style={{ marginRight: '8px', color: "#D96758" }} />

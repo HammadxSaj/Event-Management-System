@@ -8,7 +8,7 @@ const Admin = () => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('/event');
+    navigate('/events');
   };
 
   const handleIdeas = () => {

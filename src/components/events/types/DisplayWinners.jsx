@@ -8,6 +8,7 @@ import {
   CardActionArea,
 } from "@mui/material";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaSleigh } from 'react-icons/fa';
+import SvgBanner from "./SvgBanner";
 
 
 import ideaImage from '../../../assets/event1.jpg'; // Replace with appropriate idea image
@@ -25,7 +26,7 @@ const DisplayWinner = ({
 
     const handleDetails = (e) => {
         e.stopPropagation();
-        navigate(`/event/${eventId}/ideas/${idea.id}`);
+        navigate(`/events/${eventId}/ideas/${idea.id}`);
       };
   
 
@@ -36,6 +37,7 @@ const DisplayWinner = ({
 
         <>
           <CardActionArea onClick={handleDetails}>
+            <SvgBanner date={new Date(idea.dateTime).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })} />
             <CardMedia
               component="img"
               className="winner-event-card-media"
@@ -49,12 +51,12 @@ const DisplayWinner = ({
               <Typography gutterBottom variant="h5" component="div">
                 <h3 className="deets">{idea.description}</h3>
               </Typography>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+              {/* <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <FaCalendarAlt style={{ marginRight: '8px', color: "#D96758" }} />
                 <Typography variant="body2" color="text.secondary">
                   Date: {new Date(idea.dateTime).toLocaleDateString()}
                 </Typography>
-              </div>
+              </div> */}
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <FaClock style={{ marginRight: '8px', color: "#D96758" }} />
                 <Typography variant="body2" color="text.secondary">

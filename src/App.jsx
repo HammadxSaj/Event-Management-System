@@ -43,14 +43,14 @@ function App() {
         
             <Route path="/admin" element={<Admin />} />
             <Route path="/user" element={<User />} />
-            <Route path="/event" element={<EventsPage />} />
-            <Route path="/event/:eventId/ideas" element={<IdeasPage />} />
-            <Route path="/event/:eventId/ideaform" element={<IdeaForm />} />
-            <Route path="/event/:eventId/ideas/:ideaId" element={<IdeaDetails />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:eventId/ideas" element={<IdeasPage />} />
+            <Route path="/events/:eventId/ideaform" element={<IdeaForm />} />
+            <Route path="/events/:eventId/ideas/:ideaId" element={<IdeaDetails />} />
             <Route path="/eventform" element={<EventForm />} />
-            <Route path="/event/:eventId/ideas/:ideaId/rsvp" element={<RSVP />} />
-            <Route path="/event/:eventId/ideas/winningIdea/:ideaId" element={<WinningIdea />} />
-            <Route path="/event/:eventId/ideas/:ideaId/analytics" element={<Analytics />} />
+            <Route path="/events/:eventId/ideas/:ideaId/rsvp" element={<RSVP />} />
+            <Route path="/events/:eventId/ideas/winningIdea/:ideaId" element={<WinningIdea />} />
+            <Route path="/events/:eventId/ideas/:ideaId/analytics" element={<Analytics />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

@@ -149,7 +149,7 @@ const RSVP = () => {
       });
 
       setTimeout(() => {
-        navigate(`/event/${eventId}/ideas`);
+        navigate(`/events/${eventId}/ideas`);
       }, 2000);
     } catch (error) {
       console.error("Error updating response:", error);

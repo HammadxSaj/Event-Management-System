@@ -41,7 +41,7 @@ import NavBar from "../../Home/NavBar";
 const IdeaDetails = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
-  console.log("event is:", eventId)
+  console.log("event is:", eventId);
   const { ideaId } = useParams();
   const [idea, setIdea] = useState(null); // State for storing idea details
   const [userProfile, setUserProfile] = useState(null);
@@ -352,7 +352,7 @@ const IdeaDetails = () => {
       </button> */}
 
       <Card>
-        <NavBar eventId={eventId}/>
+        <NavBar eventId={eventId} />
         <div className="description-card-content">
           <Box
             display="flex"
@@ -580,7 +580,7 @@ const IdeaDetails = () => {
             <Box
               display="flex"
               justifyContent="space-between"
-              alignItems="center"
+              alignContent={"center"}
             >
               <Typography variant="h5" component="div" gutterBottom>
                 <h2>Location</h2>
@@ -608,14 +608,14 @@ const IdeaDetails = () => {
             </Box>
             {editMode.location ? (
               <Box display="flex" flexDirection="column">
-                <TextField
+                {/* <TextField
                   name="location"
                   value={updatedIdea.location}
                   onChange={handleChange}
                   variant="outlined"
                   fullWidth
-                  style={{ marginBottom: "1rem" }}
-                />
+                  style={{ marginBottom: "3rem" }}
+                /> */}
                 <TextField
                   name="embedCode"
                   value={updatedIdea.embedCode}
@@ -641,7 +641,7 @@ const IdeaDetails = () => {
               </Box>
             ) : (
               <>
-                <Paper elevation={3} className="location-container">
+                <Paper elevation={3} className="location-container" style={{marginBottom: "2rem"}}>
                   {idea.embedCode && (
                     <div
                       dangerouslySetInnerHTML={{ __html: idea.embedCode }}
@@ -653,11 +653,11 @@ const IdeaDetails = () => {
                     style={{ marginTop: "0.5rem" }}
                   ></Typography>
                 </Paper>
-                <h2 classname = "location-detail">{idea.location}</h2>
+                {/* <h2 classname="location-detail">{idea.location}</h2> */}
               </>
             )}
 
-            <hr className="divider" />
+            {/* <hr className="divider" /> */}
             <Divider style={{ margin: "1rem 0" }} />
             <Box
               display="flex"
@@ -678,24 +678,73 @@ const IdeaDetails = () => {
                 <Paper
                   className="comment-container"
                   key={comment.id}
-                  style={{ padding: "1rem", marginBottom: "1rem" }}
+                  style={{
+                    padding: "0.5rem 0.5rem 1rem 0.75rem",
+                    marginBottom: "1rem",
+                    paddingBottom: "0rem",
+                    backgroundColor: "#E8F6FC",
+                  }}
                 >
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     gutterBottom
                   >
-                    <img
-                      src={comment.profile}
-                      referrerPolicy="no-referrer"
-                      alt="Profile"
-                      className="profile-comment"
-                    />
-                    {comment.author} -{" "}
-                    {new Date(
-                      comment.timestamp.seconds * 1000
-                    ).toLocaleString()}
+                    <Box display="flex" alignItems="center">
+                      <img
+                        src={comment.profile}
+                        referrerPolicy="no-referrer"
+                        alt="Profile"
+                        className="profile-comment"
+                      />
+                      <Box flexGrow={1}>
+                        {comment.author} -{" "}
+                        {new Date(
+                          comment.timestamp.seconds * 1000
+                        ).toLocaleString()}
+                      </Box>
+                      {auth.currentUser &&
+                        (auth.currentUser.email === comment.author ||
+                          userRole === "admin") && (
+                          <Box display="flex" justifyContent="flex-end">
+                            {editCommentId === comment.id ? (
+                              <>
+                                <Button
+                                  onClick={handleSaveEditComment}
+                                  color="primary"
+                                >
+                                  Save
+                                </Button>
+                                <Button onClick={handleCancelEditComment}>
+                                  Cancel
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                {auth.currentUser.email === comment.author && (
+                                  <IconButton
+                                    onClick={() =>
+                                      handleEditComment(
+                                        comment.id,
+                                        comment.text
+                                      )
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                )}
+                                <IconButton
+                                  onClick={() => openDialog(comment.id)}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </>
+                            )}
+                          </Box>
+                        )}
+                    </Box>
                   </Typography>
+
                   {editCommentId === comment.id ? (
                     <TextField
                       value={editCommentText}
@@ -709,7 +758,7 @@ const IdeaDetails = () => {
                       {comment.text}
                     </Typography>
                   )}
-                  {auth.currentUser &&
+                  {/* {auth.currentUser &&
                     (auth.currentUser.email === comment.author ||
                       userRole === "admin") && (
                       <Box display="flex" justifyContent="flex-end">
@@ -742,7 +791,7 @@ const IdeaDetails = () => {
                           </>
                         )}
                       </Box>
-                    )}
+                    )} */}
                 </Paper>
               ))}
               {auth.currentUser && (
@@ -752,10 +801,14 @@ const IdeaDetails = () => {
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     multiline
-                    rows={4}
+                    rows={1}
                     variant="outlined"
                     fullWidth
-                    style={{ marginBottom: "1rem" }}
+                    style={{
+                      marginBottom: "1rem",
+                      backgroundColor: "#E8F6FC",
+                      width: "100%",
+                    }}
                   />
                   <Button
                     onClick={handleAddComment}

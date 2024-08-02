@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { ThreeDots } from "react-loader-spinner";
+import "./EventForm.css"
 import "../admin/IdeaForm.css";
 import NavBar from "../Home/NavBar";
 
@@ -266,7 +267,7 @@ const IdeaForm = () => {
 
         openDialog("Success", "The idea has been added successfully");
 
-        navigate(`/event/${eventId}/ideas`);
+        navigate(`/events/${eventId}/ideas`);
       } else {
         console.error("eventId is undefined");
       }
@@ -289,17 +290,17 @@ const IdeaForm = () => {
           <h1 className="header-title">🎉 Propose Your Next Inspiring Event!</h1>
           <h3 className='header-slogan'>Share your ideas and contribute to our dynamic office culture.</h3>
         </div>
-        <div className="content-container">
+        <div className="content-container" style={{position: "relative"}}>
         <img
           src="/src/assets/form.png" // Ensure the path is correct
           alt="Event"
           className="idea-image"
         />
       
-      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+      <Container className="d-flex justify-content-center align-items-center" style={{position: "absolute", top: 0, left: "10%"}}>
         <Card className="p-4 shadow-lg form-card">
           <h2 className="text-idea">Idea Form</h2>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit} style = {{height: "1000px", overflow: "scroll"}}>
 
             <Form.Group className="title">
             <Form.Label>Idea Title</Form.Label>
@@ -313,7 +314,7 @@ const IdeaForm = () => {
                 required
               />
             </Form.Group>
-            <Form.Group className="title">
+            {/* <Form.Group className="title">
             <Form.Label>Location Name</Form.Label>
               <TextField
                 fullWidth
@@ -324,7 +325,7 @@ const IdeaForm = () => {
                 variant="outlined"
                 required
               />
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group className="title">
            
             
@@ -424,22 +425,21 @@ const IdeaForm = () => {
               <Form.Label>Title Image</Form.Label>
               <Form.Control
                 type="file"
-                multiple
                 onChange={handleImageChange}
                 required
               />
               {imageError && <div className="text-danger">{imageError}</div>}
               {formErrors.images && <div className="text-danger"></div>}
-              <div className="image-preview mt-3">
+              <div className="image-preview2 mt-3">
                 {formData.images.map((image, index) => (
-                  <div key={index} className="image-container">
+                  <div key={index} className="image-container2">
                     <img
                       src={URL.createObjectURL(image)}
                       alt={`preview ${index}`}
-                      className="image-preview-item"
+                      className="image-preview-item2"
                     />
                     <IconButton
-                      className="image-remove-button"
+                      className="image-remove-button2"
                       onClick={() => removeImage(index)}
                     >
                       <CloseIcon />
@@ -485,6 +485,7 @@ const IdeaForm = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 height: "38px",
+                marginTop: '10px',
               }}
             >
               {loading ? (

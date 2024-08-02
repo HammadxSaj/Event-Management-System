@@ -35,7 +35,7 @@ const AddIdeasButton = ({ eventId }) => {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            onClick={() => navigate(`/event/${eventId}/ideaform`)}
+            onClick={() => navigate(`/events/${eventId}/ideaform`)}
             style={{ marginTop: 10, marginRight: 10 }}
         >
             Add Ideas

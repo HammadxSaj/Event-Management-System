@@ -7,6 +7,8 @@ import { Card, Container, Typography, Modal, Box } from "@mui/material";
 import Chart from 'chart.js/auto'; // Make sure to import chart.js/auto for the latest version
 import "./Analytics.css";
 
+import NavBar from "../../Home/NavBar";
+
 const Analytics = () => {
   const { eventId, ideaId } = useParams();
   const [responses, setResponses] = useState({});
@@ -99,18 +101,13 @@ const Analytics = () => {
 
   return (
     <>
-      <button
-        className="back-button"
-        onClick={() => navigate(`/event/${eventId}/ideas`)}
-      >
-        Back
-      </button>
+      <NavBar eventId={eventId} ideaId={ideaId}/>
       <Container className="d-flex flex-column align-items-center">
-        <Typography variant="h4" gutterBottom>
+        <div className="h4">
           RSVP Analytics
-        </Typography>
-        <Card className="p-4 m-3 shadow-lg w-100">
-          <Typography variant="h6">Will you be available to be part of this event?</Typography>
+        </div>
+        <Card className="custom-card">
+          <div className="questions">Will you be available to be part of this event?</div>
           <div className="chart-container">
             <Pie
               data={{
@@ -144,8 +141,8 @@ const Analytics = () => {
             ],
           };
           return (
-            <Card className="p-4 m-3 shadow-lg w-100" key={index}>
-              <Typography variant="h6">{question}</Typography>
+            <Card className="custom-card" key={index}>
+              <text className="questions">{question}</text>
               <div className="chart-container">
                 <Pie
                   data={data}
@@ -164,19 +161,19 @@ const Analytics = () => {
         aria-describedby="modal-description"
       >
         <Box className="modal-box">
-          <Typography id="modal-title" variant="h6" component="h2">
+          <text id="modal-title" className="question">
             Users who responded {selectedAnswer === "yes" ? "Yes" : "No"}
-          </Typography>
+          </text>
           {selectedEmails.length > 0 ? (
-            <ul id="modal-description">
+            <ul id="modal-description" className="emails">
               {selectedEmails.map((email, index) => (
                 <li key={index}>{email}</li>
               ))}
             </ul>
           ) : (
-            <Typography id="modal-description" sx={{ mt: 2 }}>
-              No emails to display.
-            </Typography>
+            <div id="modal-description" className="emails">
+              No responses.
+            </div>
           )}
         </Box>
       </Modal>

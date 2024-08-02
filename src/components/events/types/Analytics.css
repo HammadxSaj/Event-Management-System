@@ -1,21 +1,63 @@
 /* Analytics.css */
 .chart-container {
-    width: 300px;
-    /* Adjust the width as needed */
-    height: 300px;
-    /* Adjust the height as needed */
-    margin: 0 auto;
-    /* Center the chart */
+  width: 300px;
+  /* Adjust the width as needed */
+  height: 300px;
+  /* Adjust the height as needed */
+  margin: 0 auto;
+  /* Center the chart */
 }
 
 .modal-box {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    background-color: white;
-    box-shadow: 24;
-    padding: 20px;
-    border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: white;
+  box-shadow: 24;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.custom-card {
+  padding: 16px;
+  margin: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  cursor: pointer;
+}
+
+.h4 {
+  margin-top: 50px;
+  font-family: "Quicksand";
+  font-weight: 800;
+  color: #d96758;
+  text-align: left;
+  font-size: xxx-large;
+}
+
+.questions {
+  /* margin-top: 20px; */
+  font-family: "Quicksand";
+  color: #5d5d63;
+  font-size: 20px;
+  margin-bottom: 25px;
+  font-weight: 500;
+}
+
+.question {
+  font-family: "Quicksand";
+  color: #1ca8dd;
+  font-size: 20px;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.emails {
+  font-family: "Quicksand";
+  color: #5d5d63;
+  font-size: 15px;
+  margin-top: 2%;
+  font-weight: 500;
 }

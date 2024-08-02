@@ -9,7 +9,7 @@ import Logo from '../../assets/Logo.png';
 import { useAuth } from '../auth/AuthContext';
 import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
 
-function NavBar({eventId}) {
+function NavBar({eventId, ideaId = ""}) {
   const [userProfile, setUserProfile] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -97,7 +97,7 @@ function NavBar({eventId}) {
 
   const renderNavButtons = () => {
     switch (location.pathname) {
-      case '/event':
+      case '/events':
         return (
           <>
            {userRole === "admin" && (
@@ -111,17 +111,26 @@ function NavBar({eventId}) {
       case '/eventform':
         return (
           <>
-            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
+           {userRole === "admin" && (
+            <Button color="inherit" className="custom-event-button" onClick={() => navigate('/events')}>View Events</Button>)}
+           
+          </>
+        );
+
+      case `/events/${eventId}/ideas/${ideaId}/analytics`:
+        return (
+          <>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideas`)}>View Ideas</Button>
           </>
         );
 
       default:
         return (
           <>
-             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/event')}>View Events</Button>
-             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideas`)}>View Ideas</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/events')}>View Events</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideas`)}>View Ideas</Button>
              {userRole === "admin" && !location.pathname.includes("rsvp") && (
-             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/event/${eventId}/ideaform`)}> Add Idea + </Button>)}
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideaform`)}> Add Idea + </Button>)}
           </>
         );
     }
@@ -138,6 +147,8 @@ function NavBar({eventId}) {
             width="45"
             height="45"
             className="d-inline-block align-top"
+            style={{ flexGrow: 1, cursor: 'pointer'}}
+            onClick={() => {navigate('/events')}}
           />{' '}
           <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
 
