@@ -3,16 +3,28 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    font-family:'Times New Roman', Times, serif;
-    color: #556268;
+    font-family:"Quicksand";
+   
+    color: #fffcfc;
     /* background-color: #1CA8DD; */
     padding: 20px;
     border-radius: 10px;
     width: fit-content;
     margin: 0 auto;
-    margin-top: 50px;
-    padding-right: 100px;
+    margin-top: 20px;
+    padding-right: 90px;
     
+  }
+
+  .timer-value {
+    font-size: 2em; /* Adjust size as needed */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Dark text shadow */
+  }
+  
+  .timer-label {
+    font-size: 1em; /* Adjust size as needed */
+    color: #7d8188; /* Color for labels */
+    font-weight: 600;
   }
   
   .timer-component {
@@ -24,7 +36,7 @@
   .timer-value {
     font-size: 2em;
     font-weight: bold;
-    background-color: #ffffff;
+    background-color: #1caadd81;
     padding: 10px;
     border-radius: 5px;
   }

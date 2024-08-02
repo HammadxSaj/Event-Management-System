@@ -7,6 +7,7 @@
   padding-left: 100px;
   padding-right: 100px;
   padding-bottom: 50px;
+ 
   margin: 50px auto 0; /* Center align the container and add top margin */
   max-width: 1200px;
 }
@@ -155,3 +156,167 @@
   color: #666666 !important; /* Darker grey text for disabled state */
   box-shadow: none !important; /* Remove shadow for disabled state */
 }
+
+/* Header styling */
+.react-datepicker__header {
+  font-family: "Quicksand";
+  background-color:  #d05d4d; /* Primary color */
+  border-bottom: 1px solid  #112735; /* Darker shade */
+  border-radius: 8px 8px 0 0;
+  padding: 8px;
+  
+}
+
+/* Current month and year styling */
+.react-datepicker__current-month {
+  font-family: "Quicksand";
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+}
+
+/* Day names styling */
+.react-datepicker__day-names {
+  font-weight: 600;
+  color: #333333;
+}
+
+/* Day cell styling */
+.react-datepicker__day {
+  font-family: "Quicksand";
+  border-radius: 4px;
+  font-size: 11px;
+  color: #333333;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.react-datepicker__day--selected {
+  background-color:  #D96758 ; /* Match the header color */
+  color: #ffffff;
+}
+
+.react-datepicker__day:hover {
+  background-color: #e27d70;
+  color: #ffffff;
+}
+
+/* Time picker container styling */
+.react-datepicker__time-container {
+  border-left: 1px solid #0b9cb9;
+  border-radius: 0 0 8px px;
+  padding: 4px;
+  font-family: "Quicksand";
+  font-size: 12px;
+}
+
+/* Time picker styling */
+.react-datepicker__time-picker {
+  padding: 8px;
+}
+
+/* Time input styling */
+.react-datepicker__time-input {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 5px;
+}
+
+/* Time item styling */
+.react-datepicker__time-list-item {
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.react-datepicker__time-list-item:hover {
+  color: #000000;
+}
+
+
+/* Clear button styling (if used) */
+.react-datepicker__close-icon {
+  color:  #0b9cb9;;
+}
+
+
+
+.react-datepicker__input-container {
+  position: relative;
+
+
+}
+.react-datepicker__input-container input {
+  padding-right: 2.5rem; /* Adjust as needed */
+}
+
+/* Input styling with calendar icon */
+.react-datepicker__input-container {
+  position: relative;
+  margin-left: 10px;
+  margin-bottom: 8px; /* Added spacing between date pickers */
+}
+
+.calendar-icon {
+  position: absolute;
+  margin-top:-5px;
+  margin-left: 180px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.8;;
+  pointer-events: none;
+  color: #D96758;;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #D96758;
+  background: transparent !important;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding-right: 2.5rem; /* Adjust as needed */
+  font-family: "Quicksand";
+  font-size: 14px;
+  color:rgb(105, 101, 101);
+}
+
+.date-picker-label {
+  font-family:"Quicksand";
+  font-size: 12px;
+  color: #5d5a5a;
+  margin-left: 20px;
+  font-weight: 600;
+  margin-bottom: 5px; /* Space between label and input */
+}
+
+
+.date-picker-spacing {
+  margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.date-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Adjust space between the date picker sections */
+  margin-left:550px; /* Adjust the margin from the right as needed  220 for right side*/
+  margin-top:50px;
+}
+
+.date-picker-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-left:1px;
+  margin-bottom: 10px;
+}
+
+.date-picker-wrapper-2 {
+  display: flex;
+  flex-direction: column;
+  margin-left:240px;
+  margin-top:-112px;
+  margin-bottom: 10px;
+}
+
+
+
