@@ -13,8 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import PastIdeas from './types/PastIdeas';
 import { ThreeDots} from 'react-loader-spinner';
 import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
-
-
+import PastWinnersCarousel from './types/PastWinnerCarousel';
+import "./Carousel.css"
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [userRole, setUserRole] = useState(null);
@@ -382,7 +382,23 @@ const EventsList = () => {
   }, []);
   fetchUserRole();
   
-
+const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
+  return (
+    <div className="logos">
+      <div className="logos-slide">
+        {eventsWithWinners.map(event => (
+          winnerIdeas.map((idea, index) => (
+            idea && idea.id === event.winnerIdea && (
+              <div key={index} className="carousel-card">
+                <PastIdeas idea={idea} eventId={event.id} eventTitle={event.title} />
+              </div>
+            )
+          ))
+        ))}
+      </div>
+    </div>
+  );
+};
   return (
     <>
       <NavBar />
@@ -440,17 +456,18 @@ const EventsList = () => {
 
         <hr className='main-page-divider'></hr>
 
+
+
         {winners.length > 0 && (
           
           <div>
             <Element name="pastEvents">
             <h2 className='past-winner-title'>Past Events</h2>
-            </Element>
-         
-            
-            
-            <div className="past-winners-section">
-            {eventsWithWinners.map(event => (
+            </Element> 
+
+            <div className="past-winners-section"> 
+            <Carousel eventsWithWinners={eventsWithWinners} winnerIdeas={winnerIdeas} />
+            {/* {eventsWithWinners.map(event => (
               <div key={event.id}>
               
                 <div>
@@ -468,12 +485,17 @@ const EventsList = () => {
                   ))}
                 </div>
               </div>
-            ))}
+            ))}  */}
           </div>
           
           </div>
         )}
+
+       
+        
       </div>
+
+
     </>
   );
 };

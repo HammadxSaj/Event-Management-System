@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Confetti from 'react-confetti';
 import './CountdownTimer.css'; // Import the CSS file
 
-const CountdownTimer = ({ timeRemaining, votingEnded, votingStarted }) => {
+const CountdownTimer = ({ timeRemaining, votingEnded}) => {
   const getTimeComponents = (time) => {
     const [days, hours, minutes, seconds] = time.split(/d|h|m|s/).map(Number);
     return { days, hours, minutes, seconds };
@@ -18,18 +17,7 @@ const CountdownTimer = ({ timeRemaining, votingEnded, votingStarted }) => {
 
   return (
     <div className="countdown-timer">
-      {votingEnded && (
-        <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
-          numberOfPieces={500}
-          gravity={0.3}
-          wind={0}
-          run={votingEnded}
-          recycle={false}
-          initialVelocityY={30}
-        />
-      )}
+      
       <div className="timer-component">
         <div className="timer-value">{days}</div>
         <div className="timer-label">Days</div>

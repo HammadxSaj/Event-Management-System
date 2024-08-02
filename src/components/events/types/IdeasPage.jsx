@@ -10,6 +10,7 @@ import {
   setDoc,
   Timestamp,
 } from "firebase/firestore";
+import { FaCalendarAlt } from 'react-icons/fa';
 import { onAuthStateChanged } from "firebase/auth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -22,8 +23,8 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import './IdeasPage.css'
 import DisplayWinner from "./DisplayWinners";
-
 import { ThreeDots} from 'react-loader-spinner';
+import Confetti from 'react-confetti';
 
 const IdeasPage = () => {
   const navigate = useNavigate();
@@ -404,8 +405,6 @@ const IdeasPage = () => {
                 }
               });
 
-              setWinnerIdea(winnerIdea);
-              setWinnerDetermined(true);
             }
           }
         } catch (error) {
@@ -494,6 +493,8 @@ const IdeasPage = () => {
         votingEndDate: Timestamp.fromDate(date),
         votingStartDate: Timestamp.fromDate(votingStartDate),
       });
+      setWinnerIdea(null);
+      setWinnerDetermined(false);
     } catch (error) {
       console.error("Error updating voting end date:", error);
     }
@@ -520,31 +521,7 @@ const IdeasPage = () => {
     <>
       <NavBar eventId={eventId}/>
 
-
-      {userRole === "admin" && (
-        <div style={{ float: "right" }}>
-          <DatePicker
-            selected={votingEndDate}
-            onChange={handleDateUpdate}
-            showTimeSelect
-            dateFormat="Pp"
-            placeholderText="Select Voting End Date"
-          />
-          <DatePicker
-            selected={votingStartDate}
-            onChange={handleStartDateUpdate}
-            showTimeSelect
-            dateFormat="Pp"
-            placeholderText="Select Voting Start Date"
-          />
-          {/* <AddIdeasButton eventId={eventId} /> */}
-        </div>
-      )}
-
-
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-        { !votingEnded &&(
+      { !votingEnded &&(
           <>
            <h1 className="header-title">Choose the event that will spark our community's celebration!</h1>
            <h3 className='header-slogan'>Your vote, calls for our next epic event</h3>
@@ -558,20 +535,73 @@ const IdeasPage = () => {
            </>
         )
         }
-       
-     
-          
-      
+
+      {userRole === "admin" && (
+      <div className="date-picker-container">
+        <div className="date-picker-wrapper">
+          <label className="date-picker-label">End Date</label>
+          <div className="react-datepicker__input-container">
+            <FaCalendarAlt className="calendar-icon" />
+            <DatePicker
+              selected={votingEndDate}
+              onChange={handleDateUpdate}
+              showTimeSelect
+              dateFormat="Pp"
+              placeholderText="Select Voting End Date"
+              className="date-picker-spacing"
+            />
+          </div>
+        </div>
+        
+        <div className="date-picker-wrapper-2">
+          <label className="date-picker-label">Start Date</label>
+          <div className="react-datepicker__input-container">
+          <FaCalendarAlt className="calendar-icon" />
+            <DatePicker
+              selected={votingStartDate}
+              onChange={handleStartDateUpdate}
+              showTimeSelect
+              dateFormat="Pp"
+              placeholderText="Select Voting Start Date"
+              className="date-picker-spacing"
+            />
+          </div>
+        </div>
+        
+        {/* <AddIdeasButton eventId={eventId} /> */}
+      </div>
+    )}
+
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+
+
 
           {timeRemaining && !votingEnded &&(
             <Grid item xs={12}>
-              <CountdownTimer timeRemaining={timeRemaining} />
+              <CountdownTimer timeRemaining={timeRemaining} votingEnded={votingEnded} />
               {/* <h1>{`${winnerDetermined}`}</h1> */}
 
+   
+
             </Grid>
+            
           )}
           {winnerDetermined && votingEnded && (
+
             <div>
+              <Confetti
+              width={window.innerWidth}
+              height={window.innerHeight}
+              numberOfPieces={800}
+              gravity={0.2}
+              wind={0}
+              run={votingEnded}
+              recycle={false}
+              initialVelocityY={30}
+              
+             />
               <div className="winner-idea-section">
               
                 <div className="winner-idea">
