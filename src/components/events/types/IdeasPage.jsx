@@ -30,6 +30,7 @@ const IdeasPage = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
   const [ideas, setIdeas] = useState([]);
+  const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState("");
   const [votingEnded, setVotingEnded] = useState(false);
@@ -358,6 +359,7 @@ const IdeasPage = () => {
 
           if (now >= fetchedEndDate && winnerDetermined) {
             await fetchWinnerIdea();
+            
           } else {
             // Clear winner idea state if voting is still ongoing
             setWinnerIdea(null);
@@ -419,7 +421,7 @@ const IdeasPage = () => {
       await fetchUserRole(user);
       await fetchVotingDates();
 
-      if (user) {
+      if (user && winnerIdea) {
         const rsvpStatus = await checkRSVPStatus(user.uid, winnerIdea?.id);
         setHasRSVPed(rsvpStatus);
       }
@@ -430,10 +432,18 @@ const IdeasPage = () => {
       // }
     };
 
+ 
+  
+  
+
+    
+
     const authListener = onAuthStateChanged(auth, (user) => {
       if (user) {
         fetchData(user);
+        setUser(user);
       } else {
+        setUser(null);
         setUserRole(null);
       }
     });
@@ -441,6 +451,20 @@ const IdeasPage = () => {
     return () => authListener();
   }, []);
 
+  useEffect(() => {
+    const fetchRSVPStatus = async () => {
+      if (user && winnerIdea) {
+        try {
+          const rsvpStatus = await checkRSVPStatus(user.uid, winnerIdea?.id);
+          setHasRSVPed(rsvpStatus);
+        } catch (error) {
+          console.error("Error fetching RSVP status:", error);
+        }
+      }
+    };
+
+    fetchRSVPStatus();
+  }, [winnerIdea, user]);
   useEffect(() => {
   
     const interval = setInterval(() => {
@@ -471,6 +495,7 @@ const IdeasPage = () => {
   }, [votingEndDate, votingStartDate, votingStarted]);
 
 
+ 
   useEffect(() => {
     if (votingEnded && !winnerDetermined){
       console.log("CALCULATING WINNER HERE");
@@ -623,7 +648,7 @@ const IdeasPage = () => {
                   style={{ marginTop: 10, marginRight: 10, backgroundColor: '#0096FF' }}
                   disabled={
                     hasRSVPed
-                    // || shouldDisableRSVP()
+                    // || shouldDisableRSVP() 
                   }
                 >
                   RSVP
