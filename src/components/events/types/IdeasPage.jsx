@@ -421,11 +421,7 @@ const IdeasPage = () => {
       await fetchUserRole(user);
       await fetchVotingDates();
 
-      if (user && winnerIdea) {
-        const rsvpStatus = await checkRSVPStatus(user.uid, winnerIdea?.id);
-        setHasRSVPed(rsvpStatus);
-      }
-
+  
       // if (winnerIdea) {
       //   const hostingDate = await fetchWinnerIdeaHostingDate(winnerIdea.id);
       //   setHostingDate(hostingDate);
@@ -648,7 +644,7 @@ const IdeasPage = () => {
                   style={{ marginTop: 10, marginRight: 10, backgroundColor: '#0096FF' }}
                   disabled={
                     hasRSVPed
-                    // || shouldDisableRSVP() 
+                    // || shouldDisableRSVP()
                   }
                 >
                   RSVP
