@@ -19,6 +19,7 @@ import { ThreeDots } from "react-loader-spinner";
 import "./EventForm.css"
 import "../admin/IdeaForm.css";
 import NavBar from "../Home/NavBar";
+import form from '../../assets/form.png'
 
 const IdeaForm = () => {
   const navigate = useNavigate();
@@ -292,7 +293,7 @@ const IdeaForm = () => {
         </div>
         <div className="content-container" style={{position: "relative"}}>
         <img
-          src="/src/assets/form.png" // Ensure the path is correct
+          src={form} // Ensure the path is correct
           alt="Event"
           className="idea-image"
         />
@@ -314,7 +315,7 @@ const IdeaForm = () => {
                 required
               />
             </Form.Group>
-            {/* <Form.Group className="title">
+            <Form.Group className="title">
             <Form.Label>Location Name</Form.Label>
               <TextField
                 fullWidth
@@ -325,7 +326,7 @@ const IdeaForm = () => {
                 variant="outlined"
                 required
               />
-            </Form.Group> */}
+            </Form.Group>
             <Form.Group className="title">
            
             

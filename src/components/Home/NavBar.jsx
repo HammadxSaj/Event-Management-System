@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import './NavBar.css';
 import Logo from '../../assets/Logo.png';
 import { useAuth } from '../auth/AuthContext';
+import securiti2 from '../../assets/securiti2.png';
 import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
 
 function NavBar({eventId, ideaId = ""}) {
@@ -103,6 +104,7 @@ function NavBar({eventId, ideaId = ""}) {
            {userRole === "admin" && (
             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/eventform')}>Add Event +</Button>)}
             <Button color="inherit" className="custom-event-button" onClick={() => handleScroll('pastEvents')}>Past Events</Button>
+            <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
           </>
         );
    
@@ -113,7 +115,7 @@ function NavBar({eventId, ideaId = ""}) {
           <>
            {userRole === "admin" && (
             <Button color="inherit" className="custom-event-button" onClick={() => navigate('/events')}>View Events</Button>)}
-           
+            <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
           </>
         );
 
@@ -121,6 +123,23 @@ function NavBar({eventId, ideaId = ""}) {
         return (
           <>
              <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideas`)}>View Ideas</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
+          </>
+        );
+      case `/events/${eventId}/ideas/winningIdea/${ideaId}`:
+        return (
+          <>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events`)}>View Events</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
+          </>
+        );
+
+      case `/events/${eventId}/ideas/${ideaId}`:
+        return (
+          <>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events`)}>View Events</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideas`)}>View Ideas</Button>
+             <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
           </>
         );
 
@@ -131,6 +150,7 @@ function NavBar({eventId, ideaId = ""}) {
              <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideas`)}>View Ideas</Button>
              {userRole === "admin" && !location.pathname.includes("rsvp") && (
              <Button color="inherit" className="custom-event-button" onClick={() => navigate(`/events/${eventId}/ideaform`)}> Add Idea + </Button>)}
+             <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
           </>
         );
     }
@@ -140,7 +160,7 @@ function NavBar({eventId, ideaId = ""}) {
   return (
     <AppBar position="relative" className="custom-NavBar">
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1}}>
+        <Typography variant="h6" sx={{ flexGrow: 1, marginTop: 1}}>
           <img
             alt="Eventiti Logo"
             src={Logo}
@@ -150,7 +170,9 @@ function NavBar({eventId, ideaId = ""}) {
             style={{ flexGrow: 1, cursor: 'pointer'}}
             onClick={() => {navigate('/events')}}
           />{' '}
-          <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button>
+          <img src={securiti2} width="200"
+            height="50" className="d-inline-block align-top" alt="Securiti" />
+          {/* <Button color="inherit" className="custom-event-button" onClick={() => { handleSignOut(); navigate('/');}}>Sign Out</Button> */}
 
         </Typography>
         <div>

@@ -37,6 +37,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import "./IdeaDetails.css";
 import { useAuth } from "../../auth/AuthContext";
 import NavBar from "../../Home/NavBar";
+import { ThreeDots } from "react-loader-spinner";
 
 const IdeaDetails = () => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const IdeaDetails = () => {
   const [editCommentText, setEditCommentText] = useState(""); // State for editing comment text
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const [loader, setLoader] = useState(true);
 
   // Additional state for real-time validation
   const [descriptionCount, setDescriptionCount] = useState(0);
@@ -126,6 +128,8 @@ const IdeaDetails = () => {
         }
       } catch (error) {
         console.error("Error fetching idea:", error);
+      } finally {
+        setLoader(false);
       }
     };
 
@@ -326,9 +330,9 @@ const IdeaDetails = () => {
     setEditCommentText("");
   };
 
-  if (!idea) {
-    return <p>Loading...</p>;
-  }
+  // if (!idea) {
+  //   return <p>Loading...</p>;
+  // }
 
   const openDialog = (commentId) => {
     setCommentToDelete(commentId);
@@ -350,220 +354,107 @@ const IdeaDetails = () => {
       >
         Back
       </button> */}
-
-      <Card>
-        <NavBar eventId={eventId} />
-        <div className="description-card-content">
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h4" component="div" gutterBottom>
-              {editMode.title ? (
-                <TextField
-                  name="title"
-                  value={updatedIdea.title}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  style={{ marginBottom: "1rem" }}
-                />
-              ) : (
-                <h1 className="details-title">{idea.title}</h1>
-              )}
-            </Typography>
-            {userRole === "admin" && (
-              <>
-                <Button onClick={() => handleEditToggle("title")}>
-                  {editMode.title ? (
-                    "Cancel"
-                  ) : (
-                    <EditIcon sx={{ color: "grey" }} />
-                  )}
-                </Button>
-                {editMode.title && (
-                  <Button onClick={() => handleSave("title")}>Save</Button>
-                )}
-              </>
-            )}
-          </Box>
-
-          <Divider style={{ margin: "1rem 0" }} />
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h5" component="div" gutterBottom></Typography>
-
-            {userRole === "admin" && (
-              <>
-                <Button onClick={() => handleEditToggle("description")}>
-                  {editMode.description ? (
-                    "Cancel"
-                  ) : (
-                    <EditIcon sx={{ color: "grey" }} />
-                  )}
-                </Button>
-                {editMode.description && (
-                  <Button onClick={() => handleSave("description")}>
-                    Save
-                  </Button>
-                )}
-              </>
-            )}
-          </Box>
-          {editMode.description ? (
-            <Box display="flex" flexDirection="column">
-              <TextField
-                name="description"
-                value={updatedIdea.description}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                style={{
-                  marginBottom: "1rem",
-                  whiteSpace: "pre-wrap",
-                  wordWrap: "break-word",
-                }}
-                error={formErrors.description}
-                helperText={`Character Count: ${descriptionCount}/250`}
-              />
-              {formErrors.description && (
-                <Typography color="error">
-                  Description exceeds 250 characters.
-                </Typography>
-              )}
-            </Box>
-          ) : (
-            <Typography
-              variant="body1"
-              style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}
-            >
-              {idea.description}
-            </Typography>
-          )}
-
-          <Divider style={{ margin: "1rem 0" }} />
+      {loader ? (
+        <div className="loader-container">
+          <ThreeDots
+            height="80"
+            width="80"
+            radius="9"
+            color="#1CA8DD"
+            ariaLabel="three-dots-loading"
+            visible={true}
+          />
         </div>
+      ) : (
+      <Card>
 
-        {idea.images.length > 0 && (
-          <div className="detail-image-wrapper">
-            <CardMedia
-              className="detail-image"
-              component="img"
-              height="300"
-              image={idea.images[0]}
-              alt={idea.title}
-            />
-
-            <div className="overlay-content">
-              <div className="ribbon"></div>
-
-              <h1 className="text-overlay">{idea.title}</h1>
-            </div>
-          </div>
-        )}
-
-        <div className="detail-card">
-          <CardContent className="detail-card-content">
-            <h2>Date & Time</h2>
+      <NavBar eventId={eventId} ideaId={ideaId}/>
+          <div className="description-card-content">
             <Box
               display="flex"
               justifyContent="space-between"
               alignItems="center"
             >
-              <Typography variant="h6" color="textSecondary" gutterBottom>
-                {editMode.dateTime ? (
-                  <DateTimePicker
-                    label="Date & Time"
-                    value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
-                    onChange={handleDateTimeChange}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        error={formErrors.dateTime}
-                        helperText={
-                          formErrors.dateTime &&
-                          "Date and time must be in the future."
-                        }
-                      />
-                    )}
+              <Typography variant="h4" component="div" gutterBottom>
+                {editMode.title ? (
+                  <TextField
+                    name="title"
+                    value={updatedIdea.title}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    style={{ marginBottom: "1rem" }}
                   />
                 ) : (
-                  dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
+                  <h1 className="details-title">{idea.title}</h1>
                 )}
               </Typography>
-
               {userRole === "admin" && (
                 <>
-                  <Button onClick={() => handleEditToggle("dateTime")}>
-                    {editMode.dateTime ? (
+                  <Button onClick={() => handleEditToggle("title")}>
+                    {editMode.title ? (
                       "Cancel"
                     ) : (
                       <EditIcon sx={{ color: "grey" }} />
                     )}
                   </Button>
-                  {editMode.dateTime && (
-                    <Button
-                      onClick={() => handleSave("dateTime")}
-                      disabled={formErrors.dateTime}
-                    >
+                  {editMode.title && (
+                    <Button onClick={() => handleSave("title")}>Save</Button>
+                  )}
+                </>
+              )}
+            </Box>
+
+            <Divider style={{ margin: "1rem 0" }} />
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography
+                variant="h5"
+                component="div"
+                gutterBottom
+              ></Typography>
+
+              {userRole === "admin" && (
+                <>
+                  <Button onClick={() => handleEditToggle("description")}>
+                    {editMode.description ? (
+                      "Cancel"
+                    ) : (
+                      <EditIcon sx={{ color: "grey" }} />
+                    )}
+                  </Button>
+                  {editMode.description && (
+                    <Button onClick={() => handleSave("description")}>
                       Save
                     </Button>
                   )}
                 </>
               )}
             </Box>
-
-            <hr className="divider" />
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography variant="h5" component="div" gutterBottom>
-                <h2>Idea Details</h2>
-              </Typography>
-              {userRole === "admin" && (
-                <>
-                  <Button onClick={() => handleEditToggle("details")}>
-                    {editMode.details ? (
-                      "Cancel"
-                    ) : (
-                      <EditIcon sx={{ color: "grey" }} />
-                    )}
-                  </Button>
-                  {editMode.details && (
-                    <Button onClick={() => handleSave("details")}>Save</Button>
-                  )}
-                </>
-              )}
-            </Box>
-            {editMode.details ? (
+            {editMode.description ? (
               <Box display="flex" flexDirection="column">
                 <TextField
-                  name="details"
-                  value={updatedIdea.details}
+                  name="description"
+                  value={updatedIdea.description}
                   onChange={handleChange}
                   variant="outlined"
                   fullWidth
                   multiline
-                  rows={6}
+                  rows={4}
                   style={{
                     marginBottom: "1rem",
                     whiteSpace: "pre-wrap",
                     wordWrap: "break-word",
                   }}
-                  error={formErrors.details}
-                  helperText={`Character Count: ${detailsCount}/1000`}
+                  error={formErrors.description}
+                  helperText={`Character Count: ${descriptionCount}/250`}
                 />
-                {formErrors.details && (
+                {formErrors.description && (
                   <Typography color="error">
-                    Details exceed 1000 characters.
+                    Description exceeds 250 characters.
                   </Typography>
                 )}
               </Box>
@@ -572,43 +463,174 @@ const IdeaDetails = () => {
                 variant="body1"
                 style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}
               >
-                {idea.details}
+                {idea.description}
               </Typography>
             )}
+
             <Divider style={{ margin: "1rem 0" }} />
+          </div>
 
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignContent={"center"}
-            >
-              <Typography variant="h5" component="div" gutterBottom>
-                <h2>Location</h2>
-              </Typography>
+          {idea.images.length > 0 && (
+            <div className="detail-image-wrapper">
+              <CardMedia
+                className="detail-image"
+                component="img"
+                height="300"
+                image={idea.images[0]}
+                alt={idea.title}
+              />
 
-              {userRole === "admin" && (
-                <>
-                  <Button onClick={() => handleEditToggle("location")}>
-                    {editMode.location ? (
-                      "Cancel"
-                    ) : (
-                      <EditIcon sx={{ color: "grey" }} />
-                    )}
-                  </Button>
-                  {editMode.location && (
-                    <Button
-                      onClick={() => handleSave("location")}
-                      disabled={formErrors.embedCode}
-                    >
-                      Save
-                    </Button>
+              <div className="overlay-content">
+                <div className="ribbon"></div>
+
+                <h1 className="text-overlay">{idea.title}</h1>
+              </div>
+            </div>
+          )}
+
+          <div className="detail-card">
+            <CardContent className="detail-card-content">
+              <h2>Date & Time</h2>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="h6" color="textSecondary" gutterBottom>
+                  {editMode.dateTime ? (
+                    <DateTimePicker
+                      label="Date & Time"
+                      value={dayjs(updatedIdea.dateTime, "MMMM D, YYYY h:mm A")}
+                      onChange={handleDateTimeChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          error={formErrors.dateTime}
+                          helperText={
+                            formErrors.dateTime &&
+                            "Date and time must be in the future."
+                          }
+                        />
+                      )}
+                    />
+                  ) : (
+                    dayjs(idea.dateTime).format("MMMM D, YYYY h:mm A")
                   )}
-                </>
+                </Typography>
+
+                {userRole === "admin" && (
+                  <>
+                    <Button onClick={() => handleEditToggle("dateTime")}>
+                      {editMode.dateTime ? (
+                        "Cancel"
+                      ) : (
+                        <EditIcon sx={{ color: "grey" }} />
+                      )}
+                    </Button>
+                    {editMode.dateTime && (
+                      <Button
+                        onClick={() => handleSave("dateTime")}
+                        disabled={formErrors.dateTime}
+                      >
+                        Save
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Box>
+
+              <hr className="divider" />
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="h5" component="div" gutterBottom>
+                  <h2>Idea Details</h2>
+                </Typography>
+                {userRole === "admin" && (
+                  <>
+                    <Button onClick={() => handleEditToggle("details")}>
+                      {editMode.details ? (
+                        "Cancel"
+                      ) : (
+                        <EditIcon sx={{ color: "grey" }} />
+                      )}
+                    </Button>
+                    {editMode.details && (
+                      <Button onClick={() => handleSave("details")}>
+                        Save
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Box>
+              {editMode.details ? (
+                <Box display="flex" flexDirection="column">
+                  <TextField
+                    name="details"
+                    value={updatedIdea.details}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={6}
+                    style={{
+                      marginBottom: "1rem",
+                      whiteSpace: "pre-wrap",
+                      wordWrap: "break-word",
+                    }}
+                    error={formErrors.details}
+                    helperText={`Character Count: ${detailsCount}/1000`}
+                  />
+                  {formErrors.details && (
+                    <Typography color="error">
+                      Details exceed 1000 characters.
+                    </Typography>
+                  )}
+                </Box>
+              ) : (
+                <Typography
+                  variant="body1"
+                  style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}
+                >
+                  {idea.details}
+                </Typography>
               )}
-            </Box>
-            {editMode.location ? (
-              <Box display="flex" flexDirection="column">
-                {/* <TextField
+              <Divider style={{ margin: "1rem 0" }} />
+
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignContent={"center"}
+              >
+                <Typography variant="h5" component="div" gutterBottom>
+                  <h2>Location</h2>
+                </Typography>
+
+                {userRole === "admin" && (
+                  <>
+                    <Button onClick={() => handleEditToggle("location")}>
+                      {editMode.location ? (
+                        "Cancel"
+                      ) : (
+                        <EditIcon sx={{ color: "grey" }} />
+                      )}
+                    </Button>
+                    {editMode.location && (
+                      <Button
+                        onClick={() => handleSave("location")}
+                        disabled={formErrors.embedCode}
+                      >
+                        Save
+                      </Button>
+                    )}
+                  </>
+                )}
+              </Box>
+              {editMode.location ? (
+                <Box display="flex" flexDirection="column">
+                  {/* <TextField
                   name="location"
                   value={updatedIdea.location}
                   onChange={handleChange}
@@ -616,149 +638,154 @@ const IdeaDetails = () => {
                   fullWidth
                   style={{ marginBottom: "3rem" }}
                 /> */}
-                <TextField
-                  name="embedCode"
-                  value={updatedIdea.embedCode}
-                  onChange={(e) => {
-                    const embedCode = e.target.value;
-                    const isValidEmbedCode = embedCode.startsWith("<iframe");
-                    setEmbedCodeError(!isValidEmbedCode);
-                    setFormErrors((prevErrors) => ({
-                      ...prevErrors,
-                      embedCode: !isValidEmbedCode,
-                    }));
-                    setUpdatedIdea({ ...updatedIdea, embedCode });
-                  }}
-                  variant="outlined"
-                  fullWidth
-                  style={{ marginBottom: "1rem" }}
-                  error={embedCodeError}
-                  helperText={embedCodeError}
-                />
-                {embedCodeError && (
-                  <Typography color="error">Invalid embed code.</Typography>
-                )}
-              </Box>
-            ) : (
-              <>
-                <Paper elevation={3} className="location-container" style={{marginBottom: "2rem"}}>
-                  {idea.embedCode && (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: idea.embedCode }}
-                      className="location-iframe"
-                    />
+                  <TextField
+                    name="embedCode"
+                    value={updatedIdea.embedCode}
+                    onChange={(e) => {
+                      const embedCode = e.target.value;
+                      const isValidEmbedCode = embedCode.startsWith("<iframe");
+                      setEmbedCodeError(!isValidEmbedCode);
+                      setFormErrors((prevErrors) => ({
+                        ...prevErrors,
+                        embedCode: !isValidEmbedCode,
+                      }));
+                      setUpdatedIdea({ ...updatedIdea, embedCode });
+                    }}
+                    variant="outlined"
+                    fullWidth
+                    style={{ marginBottom: "1rem" }}
+                    error={embedCodeError}
+                    helperText={embedCodeError}
+                  />
+                  {embedCodeError && (
+                    <Typography color="error">Invalid embed code.</Typography>
                   )}
-                  <Typography
-                    variant="body1"
-                    style={{ marginTop: "0.5rem" }}
-                  ></Typography>
-                </Paper>
-                {/* <h2 classname="location-detail">{idea.location}</h2> */}
-              </>
-            )}
-
-            {/* <hr className="divider" /> */}
-            <Divider style={{ margin: "1rem 0" }} />
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography variant="h5" component="div" gutterBottom>
-                <h2>Comments</h2>
-              </Typography>
-            </Box>
-
-            <Box
-              display="flex"
-              flexDirection="column"
-              style={{ marginTop: "1rem" }}
-            >
-              {comments.map((comment) => (
-                <Paper
-                  className="comment-container"
-                  key={comment.id}
-                  style={{
-                    padding: "0.5rem 0.5rem 1rem 0.75rem",
-                    marginBottom: "1rem",
-                    paddingBottom: "0rem",
-                    backgroundColor: "#E8F6FC",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    gutterBottom
+                </Box>
+              ) : (
+                <>
+                  <Paper
+                    elevation={3}
+                    className="location-container"
+                    style={{ marginBottom: "2rem" }}
                   >
-                    <Box display="flex" alignItems="center">
-                      <img
-                        src={comment.profile}
-                        referrerPolicy="no-referrer"
-                        alt="Profile"
-                        className="profile-comment"
+                    {idea.embedCode && (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: idea.embedCode }}
+                        className="location-iframe"
                       />
-                      <Box flexGrow={1}>
-                        {comment.author} -{" "}
-                        {new Date(
-                          comment.timestamp.seconds * 1000
-                        ).toLocaleString()}
-                      </Box>
-                      {auth.currentUser &&
-                        (auth.currentUser.email === comment.author ||
-                          userRole === "admin") && (
-                          <Box display="flex" justifyContent="flex-end">
-                            {editCommentId === comment.id ? (
-                              <>
-                                <Button
-                                  onClick={handleSaveEditComment}
-                                  color="primary"
-                                >
-                                  Save
-                                </Button>
-                                <Button onClick={handleCancelEditComment}>
-                                  Cancel
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                {auth.currentUser.email === comment.author && (
-                                  <IconButton
-                                    onClick={() =>
-                                      handleEditComment(
-                                        comment.id,
-                                        comment.text
-                                      )
-                                    }
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                )}
-                                <IconButton
-                                  onClick={() => openDialog(comment.id)}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </>
-                            )}
-                          </Box>
-                        )}
-                    </Box>
-                  </Typography>
+                    )}
+                    <Typography
+                      variant="body1"
+                      style={{ marginTop: "0.5rem" }}
+                    ></Typography>
+                  </Paper>
+                  {/* <h2 classname="location-detail">{idea.location}</h2> */}
+                </>
+              )}
 
-                  {editCommentId === comment.id ? (
-                    <TextField
-                      value={editCommentText}
-                      onChange={(e) => setEditCommentText(e.target.value)}
-                      multiline
-                      fullWidth
-                      rows={2}
-                    />
-                  ) : (
-                    <Typography variant="body1" gutterBottom>
-                      {comment.text}
+              {/* <hr className="divider" /> */}
+              <Divider style={{ margin: "1rem 0" }} />
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="h5" component="div" gutterBottom>
+                  <h2>Comments</h2>
+                </Typography>
+              </Box>
+
+              <Box
+                display="flex"
+                flexDirection="column"
+                style={{ marginTop: "1rem" }}
+              >
+                {comments.map((comment) => (
+                  <Paper
+                    className="comment-container"
+                    key={comment.id}
+                    style={{
+                      padding: "0.5rem 0.5rem 1rem 0.75rem",
+                      marginBottom: "1rem",
+                      paddingBottom: "0rem",
+                      backgroundColor: "#E8F6FC",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      <Box display="flex" alignItems="center">
+                        <img
+                          src={comment.profile}
+                          referrerPolicy="no-referrer"
+                          alt="Profile"
+                          className="profile-comment"
+                        />
+                        <Box flexGrow={1}>
+                          {comment.author} -{" "}
+                          {new Date(
+                            comment.timestamp.seconds * 1000
+                          ).toLocaleString()}
+                        </Box>
+                        {auth.currentUser &&
+                          (auth.currentUser.email === comment.author ||
+                            userRole === "admin") && (
+                            <Box display="flex" justifyContent="flex-end">
+                              {editCommentId === comment.id ? (
+                                <>
+                                  <Button
+                                    onClick={handleSaveEditComment}
+                                    color="primary"
+                                  >
+                                    Save
+                                  </Button>
+                                  <Button onClick={handleCancelEditComment}>
+                                    Cancel
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  {auth.currentUser.email ===
+                                    comment.author && (
+                                    <IconButton
+                                      onClick={() =>
+                                        handleEditComment(
+                                          comment.id,
+                                          comment.text
+                                        )
+                                      }
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  )}
+                                  <IconButton
+                                    onClick={() => openDialog(comment.id)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </>
+                              )}
+                            </Box>
+                          )}
+                      </Box>
                     </Typography>
-                  )}
-                  {/* {auth.currentUser &&
+
+                    {editCommentId === comment.id ? (
+                      <TextField
+                        value={editCommentText}
+                        onChange={(e) => setEditCommentText(e.target.value)}
+                        multiline
+                        fullWidth
+                        rows={2}
+                      />
+                    ) : (
+                      <Typography variant="body1" gutterBottom>
+                        {comment.text}
+                      </Typography>
+                    )}
+                    {/* {auth.currentUser &&
                     (auth.currentUser.email === comment.author ||
                       userRole === "admin") && (
                       <Box display="flex" justifyContent="flex-end">
@@ -792,61 +819,66 @@ const IdeaDetails = () => {
                         )}
                       </Box>
                     )} */}
-                </Paper>
-              ))}
-              {auth.currentUser && (
-                <Box display="flex" flexDirection="column">
-                  <TextField
-                    label="Add a comment"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    multiline
-                    rows={1}
-                    variant="outlined"
-                    fullWidth
-                    style={{
-                      marginBottom: "1rem",
-                      backgroundColor: "#E8F6FC",
-                      width: "100%",
-                    }}
-                  />
-                  <Button
-                    onClick={handleAddComment}
-                    variant="contained"
-                    className="post-comment"
-                  >
-                    Post Comment
-                  </Button>
-                </Box>
-              )}
-              <Dialog
-                open={openDeleteDialog}
-                onClose={closeDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Confirm Delete"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete this comment? This action
-                    cannot be undone.
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={closeDialog} color="primary">
-                    Cancel
-                  </Button>
-                  <Button onClick={handleDeleteComment} color="error" autoFocus>
-                    Delete
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </Box>
-          </CardContent>
-        </div>
+                  </Paper>
+                ))}
+                {auth.currentUser && (
+                  <Box display="flex" flexDirection="column">
+                    <TextField
+                      label="Add a comment"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      multiline
+                      rows={1}
+                      variant="outlined"
+                      fullWidth
+                      style={{
+                        marginBottom: "1rem",
+                        backgroundColor: "#E8F6FC",
+                        width: "100%",
+                      }}
+                    />
+                    <Button
+                      onClick={handleAddComment}
+                      variant="contained"
+                      className="post-comment"
+                    >
+                      Post Comment
+                    </Button>
+                  </Box>
+                )}
+                <Dialog
+                  open={openDeleteDialog}
+                  onClose={closeDialog}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Confirm Delete"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you want to delete this comment? This action
+                      cannot be undone.
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={closeDialog} color="primary">
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleDeleteComment}
+                      color="error"
+                      autoFocus
+                    >
+                      Delete
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </Box>
+            </CardContent>
+          </div>
       </Card>
+      )}
     </>
   );
 };

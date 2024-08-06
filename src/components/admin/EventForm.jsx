@@ -20,6 +20,7 @@ import "../admin/EventForm.css";
 import { ThreeDots } from "react-loader-spinner";
 import { alignCenter } from "fontawesome";
 import NavBar from "../Home/NavBar";
+import form from "../../assets/form.png";
 
 const EventForm = () => {
   const navigate = useNavigate();
@@ -223,9 +224,36 @@ const EventForm = () => {
       // Send email notifications
       await axios.post("https://eventiti-backend.vercel.app/send-email", {
         to: userEmails,
-        subject: "New Event Created",
-        html: `<strong>${formData.title} event has been created!</strong>
-              <p>You can now go ahead and vote for the idea that suits you the most.</p>`,
+        subject: "New Event Created - Cast Your Vote Now!",
+        html: `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <h2 style="color: #1E90FF;">🎉 A New Event Has Been Created!</h2>
+      <p>
+        <strong>${formData.title}</strong> event has been created! We are thrilled to invite you to participate and make your voice heard.
+      </p>
+      <p>
+        <strong>What's Next?</strong>
+      </p>
+      <ul style="list-style-type: disc; margin-left: 20px;">
+        <li>Explore the exciting event details.</li>
+        <li>Review the ideas and proposals.</li>
+        <li>Cast your vote for the idea that suits you the most.</li>
+      </ul>
+      <p>
+        Your participation is crucial in shaping the outcome, so don't miss out on the excitement! 🥳
+      </p>
+      <p>
+        <a href="https://eventiti-ec4f0.web.app/" style="display: inline-block; padding: 10px 20px; background-color: #1E90FF; color: #fff; text-decoration: none; border-radius: 5px;">Vote Now</a>
+      </p>
+      <p>
+        Thank you for being an active member of our community. We look forward to your valuable input!
+      </p>
+      <p>
+        Warmest regards,<br>
+        <strong>The Eventiti Team</strong>
+      </p>
+    </div>
+  `,
       });
 
       openDialog("Success", "The event has been added successfully");
@@ -242,101 +270,93 @@ const EventForm = () => {
 
   return (
     <>
-    <NavBar/>
-     
+      <NavBar />
 
-        <div className="header-section">
-          <h1 className="header-title">🚀 Launch Your Next Big Event!</h1>
-          <h3 className='header-slogan'>Get ready to bring people together and make memories!</h3>
-        </div>
-   
+      <div className="header-section">
+        <h1 className="header-title">🚀 Launch Your Next Big Event!</h1>
+        <h3 className="header-slogan">
+          Get ready to bring people together and make memories!
+        </h3>
+      </div>
 
+      <img
+        src={form} // Replace this with your image file path
+        alt="Event"
+        className="left-image"
+      />
 
+      <div className="form-container">
+        <h2 className="text">Event Form</h2>
 
-       
-          <img
-            src="src/assets/form.png" // Replace this with your image file path
-            alt="Event"
-            className="left-image"
-          />
-      
-
-        
-  
-         <div className="form-container">
-
-      
-          <h2 className="text">Event Form</h2>
-          
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="title">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="title">
             <Form.Label>Event Title</Form.Label>
-              <TextField
-                fullWidth
-                label="Event Title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                variant="outlined"
-                required
+            <TextField
+              fullWidth
+              label="Event Title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              variant="outlined"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="title2">
+            <Form.Label>Title Image</Form.Label>
+            <Form.Control
+              type="file"
+              multiple
+              onChange={handleImageChange}
+              required
+            />
+            {imageError && <div className="text-danger">{imageError}</div>}
+            {formErrors.images && <div className="text-danger"></div>}
+            <div className="image-preview2 mt-3">
+              {formData.images.map((image, index) => (
+                <div key={index} className="image-container2">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`preview ${index}`}
+                    className="image-preview-item2"
+                  />
+                  <IconButton
+                    className="image-remove-button2"
+                    onClick={() => removeImage(index)}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+          <Button
+            variant="primary"
+            type="submit"
+            className="w-101"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "38px",
+              marginTop: "10px",
+            }}
+          >
+            {loading ? (
+              <ThreeDots
+                color="#fff"
+                height={20}
+                width={20}
+                style={{
+                  alignCenter: true,
+                }}
               />
-            </Form.Group>
-            <Form.Group className="title2">
-              <Form.Label>Title Image</Form.Label>
-              <Form.Control
-                type="file"
-                multiple
-                onChange={handleImageChange}
-                required
-              />
-              {imageError && <div className="text-danger">{imageError}</div>}
-              {formErrors.images && <div className="text-danger"></div>}
-              <div className="image-preview2 mt-3">
-                {formData.images.map((image, index) => (
-                  <div key={index} className="image-container2">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`preview ${index}`}
-                      className="image-preview-item2"
-                    />
-                    <IconButton
-                      className="image-remove-button2"
-                      onClick={() => removeImage(index)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                ))}
-              </div>
-            </Form.Group>
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-101"
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '38px',
-                marginTop: '10px',
-              }}
-            >
-              {loading ? (
-                <ThreeDots
-                  color="#fff"
-                  height={20}
-                  width={20}
-                  style={{
-                    alignCenter: true
-                  }}
-                />
-              ) : (
-                "Add Event"
-              )}
-            </Button>
-          </Form>
-          </div>
-        
+            ) : (
+              "Add Event"
+            )}
+          </Button>
+        </Form>
+      </div>
+
       <Dialog open={dialogOpen} onClose={closeDialog}>
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>

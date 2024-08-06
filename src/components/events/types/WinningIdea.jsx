@@ -37,6 +37,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import "./IdeaDetails.css";
 import { useAuth } from "../../auth/AuthContext";
 import NavBar from "../../Home/NavBar";
+import { ThreeDots } from "react-loader-spinner";
 
 const WinningIdea = () => {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ const WinningIdea = () => {
   const [editFeedbackText, setEditFeedbackText] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const [loader, setLoader] = useState(true);
 
   const fetchUserRole = async () => {
     try {
@@ -106,6 +108,8 @@ const WinningIdea = () => {
         }
       } catch (error) {
         console.error("Error fetching idea:", error);
+      } finally {
+        setLoader(false);
       }
     };
 
@@ -256,9 +260,9 @@ const WinningIdea = () => {
     setEditFeedbackText("");
   };
 
-  if (!idea) {
-    return <p>Loading...</p>;
-  }
+  // if (!idea) {
+  //   return <p>Loading...</p>;
+  // }
 
   fetchUserRole();
 
@@ -276,8 +280,21 @@ const WinningIdea = () => {
 
     <>
 
+    {loader ? (
+        <div className="loader-container">
+          <ThreeDots
+            height="80"
+            width="80"
+            radius="9"
+            color="#1CA8DD"
+            ariaLabel="three-dots-loading"
+            visible={true}
+          />
+        </div>
+      ) : (
+
     <Card>
-        <NavBar eventId={eventId} />
+        <NavBar eventId={eventId} ideaId={ideaId}/>
         <div className="description-card-content">
           <Box
             display="flex"
@@ -769,6 +786,7 @@ const WinningIdea = () => {
             </CardContent>
           </div>
       </Card>
+      )}
       </>
             
 

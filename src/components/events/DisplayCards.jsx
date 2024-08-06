@@ -15,6 +15,10 @@ import { updateDoc, doc, getDoc, deleteDoc, setDoc, getDocs, collection } from '
 import { deleteObject, ref } from 'firebase/storage';
 import { db, storage } from '../../Firebase';
 import { useAuth } from '../auth/AuthContext';
+import bg2 from '../../assets/bg2.png'
+import bg4 from '../../assets/bg4.jpeg'
+import bg3 from '../../assets/bg3.jpeg'
+import form from '../../assets/form.png'
 
 const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onDeleteEvent }) => {
 
@@ -31,6 +35,8 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(true); 
+  const [ideaImages, setIdeaImages] = useState([]);
+
   
   useEffect(() => {
     if (event && authUser) {
@@ -43,6 +49,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
       fetchRsvp();
       checkIfWinner();
       fetchUserRole();
+      fetchIdeaImages();
     }
   }, [event, authUser]);
 
@@ -155,6 +162,28 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
     setRsvpLoading(false);
   };
 
+  const fetchIdeaImages = async () => {
+  try {
+    const ideasSnapshot = await getDocs(collection(db, 'events', event.id, 'ideas'));
+    const images = [];
+
+    ideasSnapshot.forEach(async (ideaDoc) => {
+      const ideaId = ideaDoc.id;
+      const imagesSnapshot = await getDocs(collection(db, 'events', event.id, 'ideas', ideaId, 'images'));
+      imagesSnapshot.forEach((imageDoc) => {
+        const imageUrl = imageDoc.data().imageUrls;
+        if (imageUrl && images.length < 3) {
+          images.push(imageUrl[0]);
+        }
+      });
+    });
+
+    setIdeaImages(images);
+  } catch (error) {
+    console.error('Error fetching idea images:', error);
+  }
+};
+
   const handleDeleteEvent = async () => {
   
   try {
@@ -197,10 +226,14 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
   return (
 
   <div className="card-container">
-    <img src="src/assets/bg2.png" class="background-common background-image3" alt="Background Image"></img>
-    <img src="src/assets/bg4.jpeg" class="background-common background-image2" alt="Background Image"></img>
-    <img src="src/assets/bg3.jpeg" class="background-common background-image1" alt="Background Image"></img>
-    <img src="src/assets/form.png" class="background-common background-image" alt="Background Image"></img>
+    {/* <img src={bg2} class="background-common background-image3" alt="Background Image"></img>
+    <img src={bg4} class="background-common background-image2" alt="Background Image"></img>
+    <img src={bg3} class="background-common background-image1" alt="Background Image"></img>
+    <img src={form} class="background-common background-image" alt="Background Image"></img> */}
+
+    {ideaImages.map((image, index) => (
+    <img key={index} src={image} className={`background-common background-image${index + 1}`} alt={`Background Image ${index + 1}`} />
+  ))}
     
     
     <Card className={userRole === 'admin' ? 'display-card' : 'display-user-card'}>
@@ -259,7 +292,7 @@ const DisplayCards = ({ event, votingEnded, winningEventprop, votingStarted, onD
       
 
     </Card>
-    <h2 className='event-title'>{event.title}</h2>
+    {/* <h2 className='event-title'>{event.title}</h2> */}
     </div>
   );
 };

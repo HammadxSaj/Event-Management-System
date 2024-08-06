@@ -42,6 +42,7 @@ const IdeasPage = () => {
   const [hasRSVPed, setHasRSVPed] = useState(false);
   const [hostingDate, setHostingDate] = useState(null);
   const [loading, setLoading] = useState(true)
+  // const [user, setUser] = useState(null);
 
 
   const checkRSVPStatus = async (userId, ideaId) => {
@@ -275,7 +276,20 @@ const IdeasPage = () => {
   
 
 
-  
+  useEffect(() => {
+    const fetchRSVPStatus = async () => {
+      if (user && winnerIdea) {
+        try {
+          const rsvpStatus = await checkRSVPStatus(user.uid, winnerIdea?.id);
+          setHasRSVPed(rsvpStatus);
+        } catch (error) {
+          console.error("Error fetching RSVP status:", error);
+        }
+      }
+    };
+
+    fetchRSVPStatus();
+  }, [winnerIdea, user]);
 
 
   useEffect(() => {
@@ -407,6 +421,9 @@ const IdeasPage = () => {
                 }
               });
 
+              setWinnerIdea(winnerIdea);
+              console.log("the winner idea is:", winnerIdea?.id)
+              setWinnerDetermined(true);
             }
           }
         } catch (error) {
@@ -420,8 +437,14 @@ const IdeasPage = () => {
       await fetchIdeas();
       await fetchUserRole(user);
       await fetchVotingDates();
+      await fetchWinnerIdea();
 
-  
+      // if (user) {
+      //   const rsvpStatus = await checkRSVPStatus(user.uid, winnerIdea.id);
+      //   console.log(rsvpStatus);
+      //   setHasRSVPed(rsvpStatus);
+      // }
+
       // if (winnerIdea) {
       //   const hostingDate = await fetchWinnerIdeaHostingDate(winnerIdea.id);
       //   setHostingDate(hostingDate);

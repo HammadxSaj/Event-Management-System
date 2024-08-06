@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, TextField } from '@mui/material';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import DisplayCards from './DisplayCards';
-import NavBar from '../Home/NavBar';
-import { db, auth } from '../../Firebase';
-import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
-import './EventsList.css';
-import AddEventButton from '../admin/AddEventButton';
-import CountdownTimer from './CountdownTimer';
-import { useNavigate } from 'react-router-dom';
-import PastIdeas from './types/PastIdeas';
-import { ThreeDots} from 'react-loader-spinner';
-import { Link, Element, animateScroll as scroll, scroller } from 'react-scroll';
-import PastWinnersCarousel from './types/PastWinnerCarousel';
-import "./Carousel.css"
+import React, { useState, useEffect } from "react";
+import { Grid, TextField } from "@mui/material";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import DisplayCards from "./DisplayCards";
+import NavBar from "../Home/NavBar";
+import { db, auth } from "../../Firebase";
+import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
+import "./EventsList.css";
+import AddEventButton from "../admin/AddEventButton";
+import CountdownTimer from "./CountdownTimer";
+import { useNavigate } from "react-router-dom";
+import PastIdeas from "./types/PastIdeas";
+import { ThreeDots } from "react-loader-spinner";
+import { Link, Element, animateScroll as scroll, scroller } from "react-scroll";
+import PastWinnersCarousel from "./types/PastWinnerCarousel";
+import "./Carousel.css";
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [userRole, setUserRole] = useState(null);
-  const [timeRemaining, setTimeRemaining] = useState('');
+  const [timeRemaining, setTimeRemaining] = useState("");
   const [votingEnded, setVotingEnded] = useState(false);
   const [votingEndDate, setVotingEndDate] = useState(null);
   const [winnerEvent, setWinnerEvent] = useState(null);
@@ -29,26 +29,23 @@ const EventsList = () => {
   const [votingStarted, setVotingStarted] = useState(false);
   const [eventsWithWinners, setEventsWithWinners] = useState([]);
   const [winnerIdeas, setWinnerIdeas] = useState([]);
-  const [loading, setLoading] = useState(true); 
-
-  
-
+  const [loading, setLoading] = useState(true);
 
   const handleBack = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleDeleteEvent = (eventId) => {
-  
-    setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
- 
+    setEvents((prevEvents) =>
+      prevEvents.filter((event) => event.id !== eventId)
+    );
   };
 
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const eventsSnapshot = await getDocs(collection(db, 'events'));
+        const eventsSnapshot = await getDocs(collection(db, "events"));
         const eventPromises = eventsSnapshot.docs.map(async (docRef) => {
           const event = {
             id: docRef.id,
@@ -60,7 +57,7 @@ const EventsList = () => {
             downvote: docRef.data().downvote || [],
           };
 
-          const imagesCollection = collection(docRef.ref, 'images');
+          const imagesCollection = collection(docRef.ref, "images");
           const imagesSnapshot = await getDocs(imagesCollection);
           imagesSnapshot.forEach((imageDoc) => {
             const imageUrl = imageDoc.data().imageUrls;
@@ -69,34 +66,38 @@ const EventsList = () => {
             }
           });
 
-          const winnerIdeaDoc = await getDoc(doc(docRef.ref, 'details', 'winnerIdea'));
+          const winnerIdeaDoc = await getDoc(
+            doc(docRef.ref, "details", "winnerIdea")
+          );
           if (winnerIdeaDoc.exists()) {
-            console.log('Winner here: ',winnerIdeaDoc.data().ideaId);
+            console.log("Winner here: ", winnerIdeaDoc.data().ideaId);
             event.winnerIdea = winnerIdeaDoc.data().ideaId;
           }
-          
 
           return event;
         });
 
         const fetchedEvents = await Promise.all(eventPromises);
         setEvents(fetchedEvents);
-        const winnersList = fetchedEvents.filter(event => event.winnerIdea).map(event => ({
-          ideaId: event.winnerIdea,
-          eventId: event.id,
-        }));
+        const winnersList = fetchedEvents
+          .filter((event) => event.winnerIdea)
+          .map((event) => ({
+            ideaId: event.winnerIdea,
+            eventId: event.id,
+          }));
         setWinners(winnersList);
       } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-      finally {
-        setLoading(false); 
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     const fetchVotingEndDate = async () => {
       try {
-        const votingEndDateDoc = await getDoc(doc(db, 'settings', 'votingEndDate'));
+        const votingEndDateDoc = await getDoc(
+          doc(db, "settings", "votingEndDate")
+        );
         if (votingEndDateDoc.exists()) {
           const fetchedDate = votingEndDateDoc.data().date.toDate();
           setVotingEndDate(fetchedDate);
@@ -109,13 +110,15 @@ const EventsList = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching voting end date:', error);
+        console.error("Error fetching voting end date:", error);
       }
     };
 
     const fetchVotingStartDate = async () => {
       try {
-        const votingStartDateDoc = await getDoc(doc(db, 'settings', 'votingStartDate'));
+        const votingStartDateDoc = await getDoc(
+          doc(db, "settings", "votingStartDate")
+        );
         if (votingStartDateDoc.exists()) {
           const fetchedDate = votingStartDateDoc.data().date.toDate();
           setVotingStartDate(fetchedDate);
@@ -124,16 +127,16 @@ const EventsList = () => {
           setVotingStarted(now >= fetchedDate);
         }
       } catch (error) {
-        console.error('Error fetching voting start date:', error);
+        console.error("Error fetching voting start date:", error);
       }
     };
 
     const fetchWinnerEvent = async () => {
       try {
-        const winnerEventDoc = await getDoc(doc(db, 'settings', 'winnerEvent'));
+        const winnerEventDoc = await getDoc(doc(db, "settings", "winnerEvent"));
         if (winnerEventDoc.exists()) {
           const winnerEventId = winnerEventDoc.data().eventId;
-          const winnerEventDocRef = doc(db, 'events', winnerEventId);
+          const winnerEventDocRef = doc(db, "events", winnerEventId);
           const winnerEventDocSnapshot = await getDoc(winnerEventDocRef);
 
           if (winnerEventDocSnapshot.exists()) {
@@ -147,7 +150,7 @@ const EventsList = () => {
               downvote: winnerEventDocSnapshot.data().downvote,
             };
 
-            const imagesCollection = collection(winnerEventDocRef, 'images');
+            const imagesCollection = collection(winnerEventDocRef, "images");
             const imagesSnapshot = await getDocs(imagesCollection);
             imagesSnapshot.forEach((imageDoc) => {
               const imageUrl = imageDoc.data().imageUrls;
@@ -158,15 +161,15 @@ const EventsList = () => {
 
             setWinnerEvent(winnerEvent);
             setWinnerDetermined(true);
-            console.log('Winner event fetched from Firebase:', winnerEvent);
+            console.log("Winner event fetched from Firebase:", winnerEvent);
           } else {
-            console.log('Winner event document does not exist.');
+            console.log("Winner event document does not exist.");
           }
         } else {
-          console.log('Winner event ID does not exist in settings.');
+          console.log("Winner event ID does not exist in settings.");
         }
       } catch (error) {
-        console.error('Error fetching winner event from Firebase:', error);
+        console.error("Error fetching winner event from Firebase:", error);
       }
     };
 
@@ -175,15 +178,13 @@ const EventsList = () => {
     fetchVotingStartDate();
   }, []);
 
-
-
   const fetchWinnerEventIdea = async () => {
     try {
-      const eventsSnapshot = await getDocs(collection(db, 'events'));
-  
+      const eventsSnapshot = await getDocs(collection(db, "events"));
+
       // Array to store events with winner ideas
       const eventsWithWinners = [];
-  
+
       // Iterate through each event document
       for (const docRef of eventsSnapshot.docs) {
         // Initialize event object
@@ -196,9 +197,9 @@ const EventsList = () => {
           upvote: docRef.data().upvote || [],
           downvote: docRef.data().downvote || [],
         };
-  
+
         // Fetch images for the event
-        const imagesCollection = collection(docRef.ref, 'images');
+        const imagesCollection = collection(docRef.ref, "images");
         const imagesSnapshot = await getDocs(imagesCollection);
         imagesSnapshot.forEach((imageDoc) => {
           const imageUrl = imageDoc.data().imageUrls;
@@ -206,9 +207,11 @@ const EventsList = () => {
             event.images.push(imageUrl[0]); // Assuming you want to push only the first image URL
           }
         });
-  
+
         // Fetch winner idea for the event
-        const winnerIdeaDoc = await getDoc(doc(docRef.ref, 'details', 'winnerIdea'));
+        const winnerIdeaDoc = await getDoc(
+          doc(docRef.ref, "details", "winnerIdea")
+        );
         if (winnerIdeaDoc.exists()) {
           event.winnerIdea = winnerIdeaDoc.data().ideaId;
           eventsWithWinners.push(event); // Push event with winner idea to array
@@ -216,42 +219,43 @@ const EventsList = () => {
           console.log(`No winner idea found for event ${docRef.id}`);
         }
       }
-  
-      console.log('Events with winners:', eventsWithWinners);
+
+      console.log("Events with winners:", eventsWithWinners);
       return eventsWithWinners;
     } catch (error) {
-      console.error('Error fetching events with winners:', error);
+      console.error("Error fetching events with winners:", error);
       return []; // Return empty array or handle error as per your requirement
     }
   };
-  
-  
+
   const fetchIdeaById = async (eventId, ideaId) => {
     try {
-      const ideaDoc = doc(db, 'events', eventId, 'ideas', ideaId);
+      const ideaDoc = doc(db, "events", eventId, "ideas", ideaId);
       const ideaSnapshot = await getDoc(ideaDoc);
 
       if (ideaSnapshot.exists()) {
         const ideaData = ideaSnapshot.data();
 
         // Fetch images for the idea
-        const imagesCollection = collection(ideaDoc, 'images');
+        const imagesCollection = collection(ideaDoc, "images");
         const imagesSnapshot = await getDocs(imagesCollection);
-        const imageUrls = imagesSnapshot.docs.map(imageDoc => imageDoc.data().imageUrls[0]);
+        const imageUrls = imagesSnapshot.docs.map(
+          (imageDoc) => imageDoc.data().imageUrls[0]
+        );
 
         const ideaWithImages = {
           id: ideaSnapshot.id,
           ...ideaData,
-          images: imageUrls
+          images: imageUrls,
         };
 
         return ideaWithImages;
       } else {
-        console.error('Idea not found');
+        console.error("Idea not found");
         return null;
       }
     } catch (error) {
-      console.error('Error fetching idea:', error);
+      console.error("Error fetching idea:", error);
       return null;
     }
   };
@@ -263,7 +267,9 @@ const EventsList = () => {
         const distance = votingEndDate - now;
 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -289,9 +295,9 @@ const EventsList = () => {
     setVotingEnded(false);
 
     try {
-      await setDoc(doc(db, 'settings', 'votingEndDate'), { date });
+      await setDoc(doc(db, "settings", "votingEndDate"), { date });
     } catch (error) {
-      console.error('Error updating voting end date:', error);
+      console.error("Error updating voting end date:", error);
     }
   };
 
@@ -300,9 +306,9 @@ const EventsList = () => {
     setVotingStarted(false);
 
     try {
-      await setDoc(doc(db, 'settings', 'votingStartDate'), { date });
+      await setDoc(doc(db, "settings", "votingStartDate"), { date });
     } catch (error) {
-      console.error('Error updating voting start date:', error);
+      console.error("Error updating voting start date:", error);
     }
   };
 
@@ -312,7 +318,8 @@ const EventsList = () => {
       let maxVotes = -Infinity;
 
       for (const event of events) {
-        const netVotes = (event.upvote || []).length - (event.downvote || []).length;
+        const netVotes =
+          (event.upvote || []).length - (event.downvote || []).length;
 
         if (netVotes > maxVotes) {
           maxVotes = netVotes;
@@ -321,12 +328,14 @@ const EventsList = () => {
       }
 
       if (winningEvent) {
-        await setDoc(doc(db, 'settings', 'winnerEvent'), { eventId: winningEvent.id });
+        await setDoc(doc(db, "settings", "winnerEvent"), {
+          eventId: winningEvent.id,
+        });
         setWinnerEvent(winningEvent);
         setWinnerDetermined(true);
       }
     } catch (error) {
-      console.error('Error determining winner:', error);
+      console.error("Error determining winner:", error);
     }
   };
 
@@ -335,7 +344,7 @@ const EventsList = () => {
       const user = auth.currentUser;
 
       if (user) {
-        const userDocRef = doc(db, 'users', user.uid);
+        const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
@@ -343,20 +352,16 @@ const EventsList = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      console.error("Error fetching user role:", error);
     }
   };
 
-
-
   useEffect(() => {
-    
     fetchUserRole();
   }, []);
 
   // useEffect(() => {
 
-    
   //   if (winners.length > 0) {
   //    // fetchAllWinnerIdeas().then((fetchedWinnerIdeas) => {
   //      // setWinners(fetchedWinnerIdeas);
@@ -369,7 +374,7 @@ const EventsList = () => {
       const eventsWithWinnersData = await fetchWinnerEventIdea();
       setEventsWithWinners(eventsWithWinnersData);
 
-      const ideasPromises = eventsWithWinnersData.map(event => 
+      const ideasPromises = eventsWithWinnersData.map((event) =>
         fetchIdeaById(event.id, event.winnerIdea)
       );
 
@@ -378,43 +383,49 @@ const EventsList = () => {
     };
 
     fetchData();
-
   }, []);
   fetchUserRole();
-  
-const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
-  return (
-    <div className="logos">
-      <div className="logos-slide">
-        {eventsWithWinners.map(event => (
-          winnerIdeas.map((idea, index) => (
-            idea && idea.id === event.winnerIdea && (
-              <div key={index} className="carousel-card">
-                <PastIdeas idea={idea} eventId={event.id} eventTitle={event.title} />
-              </div>
+
+  const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
+    return (
+      <div className="logos">
+        <div className="logos-slide">
+          {eventsWithWinners.map((event) =>
+            winnerIdeas.map(
+              (idea, index) =>
+                idea &&
+                idea.id === event.winnerIdea && (
+                  <div key={index} className="carousel-card">
+                    <PastIdeas
+                      idea={idea}
+                      eventId={event.id}
+                      eventTitle={event.title}
+                    />
+                  </div>
+                )
             )
-          ))
-        ))}
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
   return (
     <>
       <NavBar />
 
-      {userRole === 'admin' && (
-        <div style={{ float: 'right' }}>
-    
+      {userRole === "admin" && (
+        <div style={{ float: "right" }}>
           <AddEventButton />
         </div>
       )}
       <div className="events-list-container">
         <div className="header-section">
           <h1 className="header-title">Your Choice, Our Arrangement</h1>
-          <h3 className='header-slogan'>View events to help us choose ideas for your Happiness</h3>
+          <h3 className="header-slogan">
+            View events to help us choose ideas for your Happiness
+          </h3>
         </div>
-        
+
         {/* {votingEnded && winnerEvent && (
           <div className="winner-event-section">
             <h2>The Winner Event!</h2>
@@ -425,11 +436,11 @@ const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
 
         {loading ? (
           <div className="loader-container">
-            <ThreeDots 
-              height="80" 
-              width="80" 
+            <ThreeDots
+              height="80"
+              width="80"
               radius="9"
-              color="#1CA8DD" 
+              color="#1CA8DD"
               ariaLabel="three-dots-loading"
               visible={true}
             />
@@ -450,24 +461,28 @@ const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
           </Grid>
         )}
 
-
-
-
-
-        <hr className='main-page-divider'></hr>
-
-
+        <hr className="main-page-divider"></hr>
 
         {winners.length > 0 && (
-          
           <div>
             <Element name="pastEvents">
-            <h2 className='past-winner-title'>Past Events</h2>
-            </Element> 
+              <div className="header-section">
+                <h1 className="header-title">
+                  Event Reflections: Past Highlights
+                </h1>
+                <h3 className="header-slogan">
+                  Explore our past events and share your feedback to shape
+                  future experiences.
+                </h3>
+              </div>
+            </Element>
 
-            <div className="past-winners-section"> 
-            <Carousel eventsWithWinners={eventsWithWinners} winnerIdeas={winnerIdeas} />
-            {/* {eventsWithWinners.map(event => (
+            <div className="past-winners-section">
+              <Carousel
+                eventsWithWinners={eventsWithWinners}
+                winnerIdeas={winnerIdeas}
+              />
+              {/* {eventsWithWinners.map(event => (
               <div key={event.id}>
               
                 <div>
@@ -486,16 +501,10 @@ const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
                 </div>
               </div>
             ))}  */}
-          </div>
-          
+            </div>
           </div>
         )}
-
-       
-        
       </div>
-
-
     </>
   );
 };
