@@ -119,27 +119,27 @@ const IdeasPage = () => {
     }
   };
 
-  const sendNotificationEmail = async () => {
-    try {
-      // Fetch all user emails
-      const userEmails = await fetchUserEmails();
-      console.log(userEmails)
-      // Fetch event name
-      const eventName = await fetchEventName(eventId);
+  // const sendNotificationEmail = async () => {
+  //   try {
+  //     // Fetch all user emails
+  //     const userEmails = await fetchUserEmails();
+  //     console.log(userEmails)
+  //     // Fetch event name
+  //     const eventName = await fetchEventName(eventId);
 
-      // Send email notifications
-      await axios.post("https://eventiti-backend.vercel.app/send-email", {
-        to: userEmails,
-        subject: "Voting Ending Soon",
-        html: `<strong>One hour left before the voting ends!</strong>
-             <p>Don't forget to cast your vote for the event: ${eventName}.</p>`,
-      });
+  //     // Send email notifications
+  //     await axios.post("https://eventiti-backend.vercel.app/send-email", {
+  //       to: userEmails,
+  //       subject: "Voting Ending Soon",
+  //       html: `<strong>One hour left before the voting ends!</strong>
+  //            <p>Don't forget to cast your vote for the event: ${eventName}.</p>`,
+  //     });
 
-      console.log("Notification email sent successfully");
-    } catch (error) {
-      console.error("Error sending notification email: ", error);
-    }
-  };
+  //     console.log("Notification email sent successfully");
+  //   } catch (error) {
+  //     console.error("Error sending notification email: ", error);
+  //   }
+  // };
 
 
   const sendWinnerNotificationEmail = async (ideaName, eventName) => {
@@ -367,7 +367,7 @@ const IdeasPage = () => {
             if (now < oneHourBeforeEnd) {
               const timeUntilNotification =
                 oneHourBeforeEnd.getTime() - now.getTime();
-              setTimeout(sendNotificationEmail, timeUntilNotification);
+              // setTimeout(sendNotificationEmail, timeUntilNotification);
             }
           }
 

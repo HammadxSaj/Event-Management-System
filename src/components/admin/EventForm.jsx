@@ -337,7 +337,7 @@ const EventForm = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              height: "38px",
+              height: "40px",
               marginTop: "10px",
             }}
           >
