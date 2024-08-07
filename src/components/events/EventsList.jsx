@@ -387,28 +387,34 @@ const EventsList = () => {
   fetchUserRole();
 
   const Carousel = ({ eventsWithWinners, winnerIdeas }) => {
+    const items = eventsWithWinners.flatMap((event) =>
+      winnerIdeas.map(
+        (idea, index) =>
+          idea &&
+          idea.id === event.winnerIdea && (
+            <div key={index} className="carousel-card">
+              <PastIdeas
+                idea={idea}
+                eventId={event.id}
+                eventTitle={event.title}
+              />
+            </div>
+          )
+      )
+    );
+  
+    // Duplicate the items for a seamless effect
+    const duplicatedItems = [...items, ...items];
+  
     return (
       <div className="logos">
         <div className="logos-slide">
-          {eventsWithWinners.map((event) =>
-            winnerIdeas.map(
-              (idea, index) =>
-                idea &&
-                idea.id === event.winnerIdea && (
-                  <div key={index} className="carousel-card">
-                    <PastIdeas
-                      idea={idea}
-                      eventId={event.id}
-                      eventTitle={event.title}
-                    />
-                  </div>
-                )
-            )
-          )}
+          {duplicatedItems}
         </div>
       </div>
     );
   };
+  
   return (
     <>
       <NavBar />
