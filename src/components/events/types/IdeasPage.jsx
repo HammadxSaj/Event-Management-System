@@ -583,6 +583,20 @@ const IdeasPage = () => {
       {userRole === "admin" && (
       <div className="date-picker-container">
         <div className="date-picker-wrapper">
+          <label className="date-picker-label">Start Date</label>
+          <div className="react-datepicker__input-container">
+          <FaCalendarAlt className="calendar-icon" />
+            <DatePicker
+              selected={votingStartDate}
+              onChange={handleStartDateUpdate}
+              showTimeSelect
+              dateFormat="Pp"
+              placeholderText="Select Voting Start Date"
+              className="date-picker-spacing"
+            />
+          </div>
+        </div>
+        <div className="date-picker-wrapper-2">
           <label className="date-picker-label">End Date</label>
           <div className="react-datepicker__input-container">
             <FaCalendarAlt className="calendar-icon" />
@@ -597,20 +611,7 @@ const IdeasPage = () => {
           </div>
         </div>
         
-        <div className="date-picker-wrapper-2">
-          <label className="date-picker-label">Start Date</label>
-          <div className="react-datepicker__input-container">
-          <FaCalendarAlt className="calendar-icon" />
-            <DatePicker
-              selected={votingStartDate}
-              onChange={handleStartDateUpdate}
-              showTimeSelect
-              dateFormat="Pp"
-              placeholderText="Select Voting Start Date"
-              className="date-picker-spacing"
-            />
-          </div>
-        </div>
+
         
         {/* <AddIdeasButton eventId={eventId} /> */}
       </div>
